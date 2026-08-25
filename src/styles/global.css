@@ -1,1 +1,76 @@
 @import "tailwindcss";
+@import "@fontsource-variable/oswald";
+@import "@fontsource-variable/source-sans-3";
+
+/*
+  T4Q design tokens. Brand colours (black/white/red) — do not introduce
+  additional primary colours here.
+
+  WCAG contrast, verified: red/white 4.77:1 (passes AA normal text, 4.5:1
+  min — narrow margin, never lighten red for hover/active states or it
+  can drop below); red/black 3.56:1 (fails AA normal text, passes only
+  large text/non-text UI at 3:1). This is why red text on a black
+  background is restricted to large text, backgrounds, and non-text
+  accents per the /accessibility skill — not a hypothetical restriction.
+*/
+@theme {
+  /* Colours */
+  --color-white: #fafafa;
+  --color-black: #181818;
+  --color-brand-red: #db1d24;
+
+  /* Fonts */
+  --font-display: "Oswald Variable", "Oswald", sans-serif;
+  --font-sans: "Source Sans 3 Variable", "Source Sans 3", sans-serif;
+
+  /* Type scale */
+  --text-display: clamp(3rem, 2rem + 4vw, 4.5rem);
+  --text-display--line-height: 1.05;
+  --text-display--font-weight: 700;
+
+  --text-h1: 2.25rem;
+  --text-h1--line-height: 1.15;
+  --text-h1--font-weight: 700;
+
+  --text-h2: 1.75rem;
+  --text-h2--line-height: 1.2;
+  --text-h2--font-weight: 700;
+
+  --text-h3: 1.375rem;
+  --text-h3--line-height: 1.25;
+  --text-h3--font-weight: 600;
+
+  --text-h4: 1.125rem;
+  --text-h4--line-height: 1.3;
+  --text-h4--font-weight: 600;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.5;
+
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.2;
+  --text-label--letter-spacing: 0.05em;
+  --text-label--font-weight: 700;
+}
+
+/*
+  Base defaults. Component-level type-scale utilities (text-h1, text-h2, ...)
+  are applied explicitly per component — this layer only sets the font
+  family split (display vs body) and the page-level colour/background,
+  so it never fights a component's own sizing choice.
+*/
+@layer base {
+  body {
+    @apply bg-white text-black font-sans text-body;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+  }
+}
