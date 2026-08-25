@@ -1,6 +1,6 @@
 # T4Q Progress Tracker
 
-Last updated: 2026-08-24
+Last updated: 2026-08-25
 
 ## Status at a glance
 
@@ -29,7 +29,7 @@ Last updated: 2026-08-24
 
 **Open before Phase 1 starts:**
 
-- [ ] Claude Code design system proposal reviewed and locked (type scale, spacing scale, exact brand red hex + AA verification)
+- [x] Design system locked (type scale, spacing scale, exact brand red hex + AA verification) — implemented directly as `@theme` tokens in `global.css` rather than a separate proposal doc; see COMPLETED TASKS below
 - [ ] `fallback.ts` content drafted for the four `fetchWithFallback` models (News, Sponsor, Hero, TeamPage) — RD-shaped, satisfies each model's Required fields
 
 ---
@@ -51,7 +51,7 @@ Last updated: 2026-08-24
 
 - [ ] `Base.astro` layout (nav, footer)
 - [ ] SEO component + `src/constants/seo.ts` (static SEO data) + dynamic derivation for `/news/[slug]`
-- [ ] `@theme` design tokens (from locked Claude Code proposal)
+- [x] `@theme` design tokens — done ahead of phase, see COMPLETED TASKS
 - [ ] 404 page
 - [ ] Astro hybrid mode config (static + SSR for `/contact`)
 - [ ] HG → Vercel rebuild webhook
@@ -105,3 +105,6 @@ Last updated: 2026-08-24
 ## COMPLETED TASKS
 
 - use this section to write a brief review of completed tasks. This section will act as a review for the developer to keep track of progress. Mark each task completed with a date, review (anything else you feel is usefull). Keep the review short but concise.
+
+- **2026-08-25 — Design system tokens.** Went straight from brief to locked `@theme` tokens in `global.css` (colours, Oswald/Source Sans 3 self-hosted variable fonts, full type scale with paired line-height/letter-spacing/weight), skipping the intermediate written-proposal step. Brand red verified against WCAG AA: 4.77:1 on white (passes, narrow margin), 3.56:1 on black (fails normal text — restriction on red-on-black confirmed necessary, not hypothetical). Ratios are documented as a comment in `global.css` itself. Fixture past/upcoming visual split resolved (black result box vs. outlined upcoming box + primary red CTA). Typeface pairing (Oswald + Source Sans 3) was a developer decision, not assumed.
+- **2026-08-25 — Workflow doc established.** `workflow.md` added: Plan → Confirm → Execute → Review → Build loop, git-command scope (read-only always fine, mutating ops are the developer's), scope discipline, and on-demand doc/skill reading per feature rather than reading everything up front.
