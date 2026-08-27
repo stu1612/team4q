@@ -1,7 +1,19 @@
-// TODO: implement in Phase 1 task 4 / Phase 2 (see /data-mapping and /graphql skills)
-// Will call fetchWithFallback from src/lib/hygraphClient.ts, transform SponsorRD into a
-// SponsorVM (to be defined in ./types once this is written).
+// Phase 2 will swap sponsorFallback for a real fetchWithFallback(query, sponsorFallback)
+// call via src/lib/hygraphClient.ts. For now the fallback data stands in directly as the RD.
 
-export async function getSponsorVMs(): Promise<unknown> {
-  throw new Error("Sponsor mapper not implemented yet");
+import { sponsorFallback } from "./fallback";
+import type { SponsorRD, SponsorVM } from "./types";
+
+function toVM(rd: SponsorRD): SponsorVM {
+  return {
+    name: rd.name,
+    logo: rd.logo as ImageMetadata,
+    url: rd.url,
+    tier: rd.tier,
+    tagline: rd.tagline ?? "",
+  };
+}
+
+export async function getSponsorVMs(): Promise<SponsorVM[]> {
+  return sponsorFallback.map(toVM);
 }

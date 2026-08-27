@@ -22,3 +22,20 @@ export interface FixtureRD {
   coverImage: ImageMetadata | string | null;
   affiliations: AffiliationRD[];
 }
+
+export interface FixtureVM {
+  heading: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  location: string;
+  homeTeam: string;
+  awayTeam: string;
+  teamName: string;
+  hasCoverImage: boolean;
+  // Narrower than FixtureRD's coverImage — only local imports occur before Phase 2.
+  // Revisit once live Hygraph asset URLs need distinct <Image> handling (remote
+  // width/height).
+  coverImage: ImageMetadata | null;
+  affiliationLabels: string[];
+}

@@ -1,5 +1,15 @@
 ---
-// TODO: implement in Phase 4 UI Build (see /data-mapping skill)
+// Simple test render — not brand UI, see /data-mapping skill for the real build in Phase 4.
+import { Image } from "astro:assets";
+import { getHeroVM } from "./mappers";
+
+const hero = await getHeroVM();
 ---
 
-<!-- Hero UI not implemented yet -->
+<section>
+	<h2>Hero</h2>
+	<h3>{hero.heading}</h3>
+	<p>{hero.subheading}</p>
+	<Image src={hero.coverImage} alt="" width={400} height={225} />
+	{hero.hasCTA && <p><a href={hero.ctaUrl}>{hero.ctaLabel}</a></p>}
+</section>

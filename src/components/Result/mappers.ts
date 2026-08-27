@@ -1,8 +1,36 @@
-// TODO: implement in Phase 1 task 4 / Phase 2 (see /data-mapping and /graphql skills)
-// Will call fetchOrFail from src/lib/hygraphClient.ts, transform ResultRD into a
-// ResultVM (to be defined in ./types once this is written), deriving isStale/isVisible
-// from publishedAt. On failure, render nothing per /graphql skill — no fallback.ts.
+// Phase 2 will swap resultDummy for a real fetchOrFail(query) call via
+// src/lib/hygraphClient.ts, checking result.ok before mapping (render nothing on failure,
+// per /graphql skill). For now the dummy data stands in directly as the RD.
 
-export async function getResultVMs(): Promise<unknown> {
-  throw new Error("Result mapper not implemented yet");
+import type { ResultRD, ResultVM } from "./types";
+import { resultDummy } from "./dummy";
+
+const STALE_AFTER_DAYS = 28;
+
+function isVisible(rd: ResultRD): boolean {
+  const publishedAt = new Date(rd.publishedAt);
+  const daysSincePublished = (Date.now() - publishedAt.getTime()) / (1000 * 60 * 60 * 24);
+  const isStale = daysSincePublished > STALE_AFTER_DAYS;
+  // isActive may only suppress early — staleness can still hide an active result,
+  // but never the reverse. See /data-mapping skill's compound-visibility pattern.
+  return rd.isActive && !isStale;
+}
+
+function toVM(rd: ResultRD): ResultVM {
+  return {
+    homeTeam: rd.homeTeam,
+    homeScore: rd.homeScore,
+    awayTeam: rd.awayTeam,
+    awayScore: rd.awayScore,
+    teamName: rd.team.name,
+    backgroundImage: rd.backgroundImage as ImageMetadata,
+    hasDate: Boolean(rd.date),
+    date: rd.date,
+  };
+}
+
+export async function getResultVMs(): Promise<ResultVM[]> {
+  // isVisible is resolved and applied here, not left for the UI to filter on —
+  // an invisible result should never reach any consumer of this mapper.
+  return resultDummy.filter(isVisible).map(toVM);
 }

@@ -18,5 +18,5 @@ export interface TrainingRD {
   trainingType: string;
   coach: CoachRD;
   team: TrainingTeamRD;
-  information: string;
+  information: string | null;
 }

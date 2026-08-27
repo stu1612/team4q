@@ -1,5 +1,10 @@
 ---
 import "../styles/global.css";
+import Hero from "../components/Hero/index.astro";
+import NewsCard from "../components/NewsCard/index.astro";
+import Fixture from "../components/Fixture/index.astro";
+import Result from "../components/Result/index.astro";
+import Sponsor from "../components/Sponsor/index.astro";
 ---
 
 <html lang="sv">
@@ -12,6 +17,27 @@ import "../styles/global.css";
 		<title>Team Fourth Quarter</title>
 	</head>
 	<body>
+		<!-- Test-only nav — replaced by Base.astro's real nav in Phase 3, remove this whole block then -->
+		<nav>
+			<ul>
+				<li><a href="/">Home</a></li>
+				<li><a href="/mens">Herrlaget</a></li>
+				<li><a href="/womens">Damlaget</a></li>
+				<li><a href="/juniors">Ungdomslaget</a></li>
+				<li><a href="/news">News</a></li>
+				<li><a href="/news/placeholder">News article (placeholder)</a></li>
+				<li><a href="/sponsors">Sponsors</a></li>
+				<li><a href="/contact">Contact</a></li>
+			</ul>
+		</nav>
+
 		<h1>Team Fourth Quarter</h1>
+
+		<!-- Test-only component wiring below — not brand UI, see /data-mapping skill for Phase 4 -->
+		<Hero />
+		<NewsCard />
+		<Fixture />
+		<Result />
+		<Sponsor />
 	</body>
 </html>

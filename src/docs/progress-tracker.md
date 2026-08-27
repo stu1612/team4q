@@ -7,7 +7,7 @@ Last updated: 2026-08-25
 | Phase                                   | Status         |
 | --------------------------------------- | -------------- |
 | Planning — skills, schema, design brief | ✅ Done        |
-| Phase 1 — Foundation                    | ⬜ Not started |
+| Phase 1 — Foundation                    | ✅ Done        |
 | Phase 2 — HG Connection                 | ⬜ Not started |
 | Phase 3 — Global                        | ⬜ Not started |
 | Phase 4 — UI Build                      | ⬜ Not started |
@@ -38,8 +38,8 @@ Last updated: 2026-08-25
 
 - [x] Folder structure (`src/components/[name]/{index.astro,mappers.ts,types.ts,fallback.ts?}`)
 - [x] Page routes scaffolded (`/`, `/mens`, `/womens`, `/juniors`, `/news`, `/news/[slug]`, `/sponsors`, `/contact`)
-- [ ] Dummy data matching reconciled HG field shapes (not the original pre-reconciliation guesses)
-- [ ] Data mapping pattern validated end-to-end (RD → mapper → VM → UI) on at least one component
+- [x] Dummy data matching reconciled HG field shapes (not the original pre-reconciliation guesses)
+- [x] Data mapping pattern validated end-to-end (RD → mapper → VM → UI) on at least one component
 
 ## Phase 2 — HG Connection
 
@@ -105,6 +105,12 @@ Last updated: 2026-08-25
 ## COMPLETED TASKS
 
 - use this section to write a brief review of completed tasks. This section will act as a review for the developer to keep track of progress. Mark each task completed with a date, review (anything else you feel is usefull). Keep the review short but concise.
+
+- **2026-08-27 — Homepage dev/test wiring (not Phase 4 UI); Phase 1 complete.** At the developer's request, added a plain-text nav + wired up Hero, NewsCard, Fixture, Result, and Sponsor on `/` so the pipeline can be checked visually in a browser. Explicitly throwaway: no styling, marked with comments to be removed once `Base.astro` (Phase 3) and real branded markup (Phase 4) land. Player and Training were left out — they belong to the team-page pattern, not the homepage. This implemented real `mappers.ts` + VM types for all 5 components (RD → mapper → VM → UI, reading from each component's `fallback.ts`/`dummy.ts` in place of a live Hygraph call, which doesn't exist until Phase 2) — legitimate, permanent mapper logic, not part of the throwaway UI. Result's mapper implements the documented `isStale`/`isVisible` compound-flag derivation from `publishedAt`, filtering internally so no consumer ever needs to check the flag itself; verified against the build output that an active-but-stale dummy result is correctly hidden while two active-and-fresh ones render.
+  - **Follow-up round, same day:** developer review caught two violations of the `/data-mapping` skill's "mapper resolves, UI only renders" rule — plain `<img>` instead of `astro:assets`' `<Image />`, and `typeof x === "string" ? x.src : x` type-narrowing ternaries sitting in the templates. Fixed across all 5 components: every image-carrying VM field is now resolved to a plain `ImageMetadata` in the mapper (RD's `ImageMetadata | string` union narrowed down, since only local imports occur before Phase 2's live Hygraph URLs — flagged in comments for revisiting then), and templates call `<Image>` directly with no branching. Result's visibility filter also moved fully into the mapper (was a page-level `.filter()`). Surfaced a real missing dependency in the process: Astro's `<Image />` needs `sharp` for build-time optimization, which wasn't installed — added it (`sharp` now a dependency); rebuild confirms real optimization (e.g. hero cover 367kB → 25kB WebP) where the plain `<img>` version had none. This fully exercises the RD → mapper → VM → UI pattern end-to-end across 5 components, so Phase 1's last item is now checked off — **Phase 1: Foundation is complete.**
+  - `astro check` (0 errors, 42 files) and `astro build` (8 pages, all images optimized) verified, plus a manual grep of the built `dist/index.html` confirming dummy content, the Result visibility filter, and real `<Image>`-generated markup (`loading="lazy"`, `.webp` output) all render correctly.
+
+- **2026-08-27 — Phase 1: dummy data for the four `fetchOrFail` models.** Hero/NewsCard/Sponsor/TeamPage already had real dummy data via `fallback.ts` (done ahead of schedule, pre-Phase 1). For Fixture, Training, Player, Result — all `fetchOrFail` — added `dummy.ts` per component instead: a new, explicitly dev-only file, since the `/graphql` skill forbids these four ever having a `fallback.ts` (they show a message block or nothing on failure, never fallback content). Each `dummy.ts` is flagged in a header comment as temporary scaffolding to delete once Phase 2 wires real Hygraph queries — unlike `fallback.ts`, which stays permanently as runtime fallback content. Data covers all three teams (Herrlaget/Damlaget/Ungdomslaget) with realistic Skåne-region opponents, and deliberately mixes flagged-field presence/absence (`coverImage`, `jerseyNumber`, `information`, `date`) to exercise both true/false paths once mappers derive their `hasX` flags. Result's `backgroundImage` reuses the three existing team cover assets per `fallback-reference.md`'s "preset branded asset" rule — no new images needed. Also fixed a bug from the prior folder-structure task: `Training/types.ts`'s `information` field was typed as plain `string`, inconsistent with the established RD pattern of `string | null` for Default-category optional fields (matching `HeroRD.subheading`/`TeamPageRD.subheading`) — corrected. `astro check` (0 errors, 42 files) and `astro build` (8 pages) both verified.
 
 - **2026-08-27 — Phase 1: page routes scaffolded.** All 8 routes now exist: `/`, `/mens`, `/womens`, `/juniors`, `/news`, `/news/[slug]`, `/sponsors`, `/contact`. Each is a standalone stub (own `<html>`/`<head>`/`<title>`, Swedish `<h1>` placeholder) since `Base.astro` doesn't exist until Phase 3 — deliberately not building a shared layout early. `/news/[slug]` uses `getStaticPaths` with a single hardcoded `"placeholder"` slug to prove the dynamic-route pattern compiles and builds, without wiring into NewsCard's fallback data yet (kept separate from Phase 1's dummy-data/end-to-end-mapping items). `/contact` stays a static stub for now — its SSR (Astro hybrid mode) conversion is a Phase 3 item. `astro check` (0 errors, 38 files) and `astro build` (8 pages) both verified.
 
