@@ -37,7 +37,7 @@ Last updated: 2026-08-25
 ## Phase 1 — Foundation
 
 - [x] Folder structure (`src/components/[name]/{index.astro,mappers.ts,types.ts,fallback.ts?}`)
-- [ ] Page routes scaffolded (`/`, `/mens`, `/womens`, `/juniors`, `/news`, `/news/[slug]`, `/sponsors`, `/contact`)
+- [x] Page routes scaffolded (`/`, `/mens`, `/womens`, `/juniors`, `/news`, `/news/[slug]`, `/sponsors`, `/contact`)
 - [ ] Dummy data matching reconciled HG field shapes (not the original pre-reconciliation guesses)
 - [ ] Data mapping pattern validated end-to-end (RD → mapper → VM → UI) on at least one component
 
@@ -105,6 +105,8 @@ Last updated: 2026-08-25
 ## COMPLETED TASKS
 
 - use this section to write a brief review of completed tasks. This section will act as a review for the developer to keep track of progress. Mark each task completed with a date, review (anything else you feel is usefull). Keep the review short but concise.
+
+- **2026-08-27 — Phase 1: page routes scaffolded.** All 8 routes now exist: `/`, `/mens`, `/womens`, `/juniors`, `/news`, `/news/[slug]`, `/sponsors`, `/contact`. Each is a standalone stub (own `<html>`/`<head>`/`<title>`, Swedish `<h1>` placeholder) since `Base.astro` doesn't exist until Phase 3 — deliberately not building a shared layout early. `/news/[slug]` uses `getStaticPaths` with a single hardcoded `"placeholder"` slug to prove the dynamic-route pattern compiles and builds, without wiring into NewsCard's fallback data yet (kept separate from Phase 1's dummy-data/end-to-end-mapping items). `/contact` stays a static stub for now — its SSR (Astro hybrid mode) conversion is a Phase 3 item. `astro check` (0 errors, 38 files) and `astro build` (8 pages) both verified.
 
 - **2026-08-25 — Phase 1: component folder structure.** All 8 UI-rendering models now have a `src/components/[name]/` folder matching the `/data-mapping` skill's structure. Hero/NewsCard/Sponsor/TeamPage (already had `types.ts` + `fallback.ts`) got their missing `index.astro` + `mappers.ts` added; Fixture/Training/Player/Result are new folders with real `types.ts` RD interfaces written against `fallback-reference.md`, correctly omitting `fallback.ts` since all four are `fetchOrFail` models. `TeamModel` itself got no folder — it's relation-only, inlined per consumer as `[Component]TeamRD`, matching the existing `NewsCardTeamRD`/`TeamPageTeamRD` precedent. `mappers.ts`/`index.astro` across all 8 are intentionally non-functional stubs (throw/placeholder comment) — real mapper logic and markup are separate Phase 1/Phase 4 items, deferred on purpose since `hygraphClient.ts` doesn't exist until Phase 2. One open item to verify against Hygraph directly: `AffiliationComponent`'s fields weren't in the reconciled reference doc, so `Fixture/types.ts`'s `AffiliationRD` is a placeholder pending confirmation. `astro check` (0 errors) and `astro build` both verified after all additions.
 
