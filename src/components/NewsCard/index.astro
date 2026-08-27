@@ -1,0 +1,25 @@
+---
+// Simple test render — not brand UI, see /data-mapping skill for the real build in Phase 4.
+import { Image } from "astro:assets";
+import { getNewsCardVMs } from "./mappers";
+
+const newsCards = await getNewsCardVMs();
+---
+
+<section>
+	<h2>News</h2>
+	<ul>
+		{newsCards.map((card) => (
+			<li>
+				<Image src={card.coverImage} alt="" width={200} height={120} />
+				<strong>{card.heading}</strong> — {card.publishedDate}
+				<p>{card.excerpt}</p>
+				<p>
+					By {card.authorName}
+					{card.hasAuthorPhoto && <Image src={card.authorPhoto!} alt="" width={40} height={40} />}
+					{card.hasTeamTag && <span> · {card.teamName}</span>}
+				</p>
+			</li>
+		))}
+	</ul>
+</section>

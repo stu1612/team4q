@@ -1,0 +1,24 @@
+---
+// Simple test render — not brand UI, see /data-mapping skill for the real build in Phase 4.
+import { Image } from "astro:assets";
+import { getFixtureVMs } from "./mappers";
+
+const fixtures = await getFixtureVMs();
+---
+
+<section>
+	<h2>Fixtures</h2>
+	<ul>
+		{fixtures.map((fixture) => (
+			<li>
+				{fixture.hasCoverImage && (
+					<Image src={fixture.coverImage!} alt="" width={200} height={120} />
+				)}
+				<strong>{fixture.heading}</strong> ({fixture.teamName})
+				<p>{fixture.date} {fixture.startTime}–{fixture.endTime} · {fixture.location}</p>
+				<p>{fixture.homeTeam} vs {fixture.awayTeam}</p>
+				{fixture.affiliationLabels.length > 0 && <p>{fixture.affiliationLabels.join(", ")}</p>}
+			</li>
+		))}
+	</ul>
+</section>

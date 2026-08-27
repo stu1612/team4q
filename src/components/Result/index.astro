@@ -1,0 +1,21 @@
+---
+// Simple test render — not brand UI, see /data-mapping skill for the real build in Phase 4.
+import { Image } from "astro:assets";
+import { getResultVMs } from "./mappers";
+
+const results = await getResultVMs();
+---
+
+<section>
+	<h2>Results</h2>
+	{results.length === 0 && <p>No visible results.</p>}
+	<ul>
+		{results.map((result) => (
+			<li>
+				<Image src={result.backgroundImage} alt="" width={200} height={120} />
+				<strong>{result.teamName}</strong>: {result.homeTeam} {result.homeScore} – {result.awayScore} {result.awayTeam}
+				{result.hasDate && <p>{result.date}</p>}
+			</li>
+		))}
+	</ul>
+</section>

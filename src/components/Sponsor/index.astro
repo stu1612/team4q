@@ -1,0 +1,19 @@
+---
+// Simple test render — not brand UI, see /data-mapping skill for the real build in Phase 4.
+import { Image } from "astro:assets";
+import { getSponsorVMs } from "./mappers";
+
+const sponsors = await getSponsorVMs();
+---
+
+<section>
+	<h2>Sponsors</h2>
+	<ul>
+		{sponsors.map((sponsor) => (
+			<li>
+				<Image src={sponsor.logo} alt="" width={80} height={80} />
+				<a href={sponsor.url}>{sponsor.name}</a> ({sponsor.tier})
+			</li>
+		))}
+	</ul>
+</section>

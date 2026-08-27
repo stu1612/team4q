@@ -7,3 +7,15 @@ export interface HeroRD {
   ctaLabel: string | null;
   ctaUrl: string | null;
 }
+
+export interface HeroVM {
+  heading: string;
+  // Narrower than HeroRD's coverImage — only local imports occur before Phase 2.
+  // Revisit once live Hygraph asset URLs need distinct <Image> handling (remote
+  // width/height).
+  coverImage: ImageMetadata;
+  subheading: string;
+  hasCTA: boolean;
+  ctaLabel: string;
+  ctaUrl: string;
+}
