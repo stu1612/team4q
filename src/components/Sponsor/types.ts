@@ -1,28 +1,25 @@
-// interim — replace RD with graphql-codegen output in the codegen task (see /graphql skill)
+// RD types derive from graphql-codegen output (src/gql/generated.ts). Only the logo is
+// widened (RawImage) so fallback.ts can keep a local import.
 
-export type SponsorTier = "main" | "partner" | "community";
-export type IsActive = "active" | "inactive";
+import type { SponsorListQuery } from "../../gql/generated";
+import type { RawImage } from "../../lib/resolveImage";
 
-// Hygraph Asset selection shape. Interim union with ImageMetadata — see Hero/types.ts.
-export interface AssetRD {
-  url: string;
-  width: number | null;
-  height: number | null;
+type SponsorRow = SponsorListQuery["sponsorModels"][number];
+
+export interface SponsorRD extends Omit<SponsorRow, "logo"> {
+  logo: RawImage;
 }
 
-export interface SponsorRD {
-  name: string;
-  logo: AssetRD | ImageMetadata;
-  url: string;
-  tier: SponsorTier;
-  isActive: IsActive;
-  tagline: string | null;
+export interface SponsorResponseRD {
+  sponsorModels: SponsorRD[];
 }
+
+// Re-exported from generated for consumers that want the union without importing gql/.
+export type SponsorTier = SponsorRow["tier"];
 
 export interface SponsorVM {
   name: string;
-  // Narrowed to ImageMetadata for the interim — see Hero/types.ts.
-  logo: ImageMetadata;
+  logo: ImageMetadata | string;
   url: string;
   tier: SponsorTier;
   tagline: string;

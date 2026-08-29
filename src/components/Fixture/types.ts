@@ -1,35 +1,25 @@
-// interim — replace RD with graphql-codegen output in the codegen task (see /graphql skill)
+// RD types derive from graphql-codegen output (src/gql/generated.ts). Image fields are
+// widened (RawImage) for consistency with the fetchWithFallback models. Affiliation now
+// lives on the team relation.
 
-// Hygraph Asset selection shape. Interim union with ImageMetadata — see Hero/types.ts.
-export interface AssetRD {
-  url: string;
-  width: number | null;
-  height: number | null;
+import type { FixtureListQuery } from "../../gql/generated";
+import type { RawImage } from "../../lib/resolveImage";
+import type { ClubContact } from "../../constants/contact";
+
+type FixtureRow = FixtureListQuery["fixtureModels"][number];
+type FixtureTeamRow = NonNullable<FixtureRow["teamModel"]>;
+
+export interface FixtureTeamRD extends Omit<FixtureTeamRow, "affiliationLogo"> {
+  affiliationLogo: RawImage | null;
 }
 
-// FixtureModel.teamModel — affiliation now lives on TeamModel (three inline fields),
-// no longer a repeatable component on the fixture itself.
-export interface FixtureTeamRD {
-  name: string;
-  slug: string;
-  teamAffiliation: string | null;
-  affiliationUrl: string | null;
-  affiliationLogo: AssetRD | ImageMetadata | null;
-}
-
-export type IsActive = "active" | "inactive";
-
-export interface FixtureRD {
-  heading: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  location: string;
-  homeTeam: string;
-  awayTeam: string;
-  isActive: IsActive;
+export interface FixtureRD extends Omit<FixtureRow, "coverImage" | "teamModel"> {
+  coverImage: RawImage | null;
   teamModel: FixtureTeamRD | null;
-  coverImage: AssetRD | ImageMetadata | null;
+}
+
+export interface FixtureResponseRD {
+  fixtureModels: FixtureRD[];
 }
 
 export interface FixtureVM {
@@ -43,10 +33,14 @@ export interface FixtureVM {
   hasTeam: boolean;
   teamLabel: string;
   hasCoverImage: boolean;
-  // Narrowed to ImageMetadata for the interim — see Hero/types.ts.
-  coverImage: ImageMetadata | null;
+  coverImage: ImageMetadata | string | null;
   hasAffiliation: boolean;
   affiliationName: string;
   affiliationUrl: string;
-  affiliationLogo: ImageMetadata | null;
+  affiliationLogo: ImageMetadata | string | null;
 }
+
+// fetchOrFail model: the mapper returns a message-block signal on failure, never fake data.
+export type FixtureListVM =
+  | { ok: true; fixtures: FixtureVM[] }
+  | { ok: false; contact: ClubContact };

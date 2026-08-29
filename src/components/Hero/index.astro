@@ -1,6 +1,6 @@
 ---
 // Simple test render — not brand UI, see /data-mapping skill for the real build in Phase 4.
-import { Image } from "astro:assets";
+import ResolvedImage from "../ResolvedImage.astro";
 import { getHeroVM } from "./mappers";
 
 const hero = await getHeroVM();
@@ -10,6 +10,6 @@ const hero = await getHeroVM();
 	<h2>Hero</h2>
 	<h3>{hero.heading}</h3>
 	<p>{hero.subheading}</p>
-	<Image src={hero.coverImage} alt="" width={400} height={225} />
+	<ResolvedImage src={hero.coverImage} alt="" width={400} height={225} />
 	{hero.hasCTA && <p><a href={hero.ctaUrl}>{hero.ctaLabel}</a></p>}
 </section>

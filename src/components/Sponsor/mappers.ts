@@ -1,14 +1,30 @@
-// The codegen task will swap sponsorFallback for a real fetchWithFallback(query,
-// sponsorFallback) call via src/lib/hygraphClient.ts. For now the fallback data stands
-// in directly as the RD.
-
+import { gql } from "graphql-request";
+import { fetchWithFallback } from "../../lib/hygraphClient";
+import { resolveImage } from "../../lib/resolveImage";
 import { sponsorFallback } from "./fallback";
-import type { SponsorRD, SponsorVM } from "./types";
+import type { SponsorRD, SponsorResponseRD, SponsorVM } from "./types";
+
+const SPONSOR_QUERY = gql`
+  query SponsorList {
+    sponsorModels {
+      name
+      url
+      tagline
+      tier
+      isActive
+      logo {
+        url
+        width
+        height
+      }
+    }
+  }
+`;
 
 function toVM(rd: SponsorRD): SponsorVM {
   return {
     name: rd.name,
-    logo: rd.logo as ImageMetadata,
+    logo: resolveImage(rd.logo),
     url: rd.url,
     tier: rd.tier,
     tagline: rd.tagline ?? "",
@@ -16,6 +32,7 @@ function toVM(rd: SponsorRD): SponsorVM {
 }
 
 export async function getSponsorVMs(): Promise<SponsorVM[]> {
+  const data = await fetchWithFallback<SponsorResponseRD>(SPONSOR_QUERY, sponsorFallback);
   // isActive === "active" gates visibility; an inactive sponsor never reaches a consumer.
-  return sponsorFallback.filter((rd) => rd.isActive === "active").map(toVM);
+  return data.sponsorModels.filter((rd) => rd.isActive === "active").map(toVM);
 }

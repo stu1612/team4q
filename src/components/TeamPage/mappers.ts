@@ -1,21 +1,32 @@
-// The codegen task will swap the fallback lookup for a real fetchWithFallback(query,
-// fallbackForSlug, { slug }) call via src/lib/hygraphClient.ts. For now the fallback data
-// stands in directly as the RD. Not yet wired to a page — the /mens /womens /juniors
-// routes are built in Phase 4.
+// Wired to fetchWithFallback, keyed by team slug. Not rendered until the /mens /womens
+// /juniors routes are built in Phase 4.
 
+import { gql } from "graphql-request";
+import { fetchWithFallback } from "../../lib/hygraphClient";
+import { resolveImage } from "../../lib/resolveImage";
 import { teamLabel } from "../../lib/teamLabel";
 import {
-  teamPageFallbackJuniors,
-  teamPageFallbackMens,
-  teamPageFallbackWomens,
+  teamPageFallbackBySlug,
 } from "./fallback";
-import type { TeamPageRD, TeamPageVM } from "./types";
+import type { TeamPageRD, TeamPageResponseRD, TeamPageVM } from "./types";
 
-const FALLBACK_BY_SLUG: Record<string, TeamPageRD> = {
-  herrlaget: teamPageFallbackMens,
-  damlaget: teamPageFallbackWomens,
-  ungdomslaget: teamPageFallbackJuniors,
-};
+const TEAM_PAGE_QUERY = gql`
+  query TeamPageBySlug($slug: String!) {
+    teamPageModels(where: { teamModel: { slug: $slug } }, first: 1) {
+      heading
+      subheading
+      coverImage {
+        url
+        width
+        height
+      }
+      teamModel {
+        name
+        slug
+      }
+    }
+  }
+`;
 
 function toVM(rd: TeamPageRD): TeamPageVM {
   if (!rd.teamModel) {
@@ -26,12 +37,16 @@ function toVM(rd: TeamPageRD): TeamPageVM {
     heading: rd.heading,
     subheading: rd.subheading ?? "",
     teamLabel: teamLabel(rd.teamModel.slug),
-    coverImage: rd.coverImage as ImageMetadata,
+    coverImage: resolveImage(rd.coverImage),
   };
 }
 
 export async function getTeamPageVM(slug: string): Promise<TeamPageVM> {
-  const rd = FALLBACK_BY_SLUG[slug];
-  if (!rd) throw new Error(`No TeamPage data for slug "${slug}"`);
+  const fallback = teamPageFallbackBySlug[slug];
+  if (!fallback) throw new Error(`No TeamPage fallback for slug "${slug}"`);
+  const data = await fetchWithFallback<TeamPageResponseRD>(TEAM_PAGE_QUERY, fallback, {
+    slug,
+  });
+  const rd = data.teamPageModels[0] ?? fallback.teamPageModels[0];
   return toVM(rd);
 }

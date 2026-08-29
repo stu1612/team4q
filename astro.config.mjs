@@ -15,6 +15,10 @@ export default defineConfig({
     // Fail the build on a missing/blank secret rather than a runtime request.
     validateSecrets: true
   },
+  image: {
+    // Hygraph asset CDN — required for <Image> to optimise live remote assets.
+    domains: ['eu-west-2.graphassets.com']
+  },
   vite: {
     plugins: [tailwindcss()]
   }

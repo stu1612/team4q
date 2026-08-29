@@ -1,41 +1,24 @@
-// interim — replace RD with graphql-codegen output in the codegen task (see /graphql skill)
+// RD types derive from graphql-codegen output (src/gql/generated.ts). Image fields are
+// widened (RawImage) so fallback.ts keeps local imports. Author (clubMemberModel) keeps
+// a separate RD/VM per /data-mapping even though the shape matches TrainingModel's coach.
 
-// Hygraph Asset selection shape. Interim union with ImageMetadata — see Hero/types.ts.
-export interface AssetRD {
-  url: string;
-  width: number | null;
-  height: number | null;
+import type { NewsCardListQuery } from "../../gql/generated";
+import type { RawImage } from "../../lib/resolveImage";
+
+type NewsCardRow = NewsCardListQuery["newsCardModels"][number];
+type AuthorRow = NonNullable<NewsCardRow["clubMemberModel"]>;
+
+export interface AuthorRD extends Omit<AuthorRow, "profileImage"> {
+  profileImage: RawImage | null;
 }
 
-// NewsCardModel.body is a Hygraph RichText field. We select the pre-rendered `html`
-// (for display via set:html) and `text` (plain text for meta descriptions / SEO).
-export interface RichTextRD {
-  html: string;
-  text: string;
-}
-
-// NewsCardModel.clubMemberModel (the author relation). Standalone ClubMemberModel, all
-// fields nullable. Separate RD/VM per usage per /data-mapping — this is the author usage.
-export interface AuthorRD {
-  name: string | null;
-  role: string | null;
-  profileImage: AssetRD | ImageMetadata | null;
-}
-
-export interface NewsCardTeamRD {
-  name: string;
-  slug: string;
-}
-
-export interface NewsCardRD {
-  heading: string;
-  slug: string;
-  publishedDate: string;
-  excerpt: string;
-  body: RichTextRD;
-  coverImage: AssetRD | ImageMetadata | null;
-  teamModel: NewsCardTeamRD | null;
+export interface NewsCardRD extends Omit<NewsCardRow, "coverImage" | "clubMemberModel"> {
+  coverImage: RawImage | null;
   clubMemberModel: AuthorRD | null;
+}
+
+export interface NewsCardResponseRD {
+  newsCardModels: NewsCardRD[];
 }
 
 export interface NewsCardVM {
@@ -48,9 +31,8 @@ export interface NewsCardVM {
   authorName: string;
   authorRole: string;
   hasAuthorPhoto: boolean;
-  // Narrowed to ImageMetadata for the interim — see Hero/types.ts.
-  authorPhoto: ImageMetadata | null;
+  authorPhoto: ImageMetadata | string | null;
   hasTeam: boolean;
   teamLabel: string;
-  coverImage: ImageMetadata;
+  coverImage: ImageMetadata | string;
 }
