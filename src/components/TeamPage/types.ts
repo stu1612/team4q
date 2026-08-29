@@ -1,4 +1,12 @@
-// interim — replace with graphql-codegen output in Phase 2 (see /graphql skill)
+// interim — replace RD with graphql-codegen output in the codegen task (see /graphql skill)
+// The mapper is still a stub; VM shape here is provisional and may expand in Phase 4.
+
+// Hygraph Asset selection shape. Interim union with ImageMetadata — see Hero/types.ts.
+export interface AssetRD {
+  url: string;
+  width: number | null;
+  height: number | null;
+}
 
 export interface TeamPageTeamRD {
   name: string;
@@ -7,7 +15,17 @@ export interface TeamPageTeamRD {
 
 export interface TeamPageRD {
   heading: string;
-  coverImage: ImageMetadata | string;
+  coverImage: AssetRD | ImageMetadata;
   subheading: string | null;
-  team: TeamPageTeamRD;
+  // Schema permits null, but the page is meaningless without it — the mapper treats a
+  // missing relation as a developer-facing error, not a silent empty state.
+  teamModel: TeamPageTeamRD | null;
+}
+
+export interface TeamPageVM {
+  heading: string;
+  subheading: string;
+  teamLabel: string;
+  // Narrowed to ImageMetadata for the interim — see Hero/types.ts.
+  coverImage: ImageMetadata;
 }

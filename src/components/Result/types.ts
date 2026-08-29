@@ -1,20 +1,30 @@
-// interim — replace with graphql-codegen output in Phase 2 (see /graphql skill)
+// interim — replace RD with graphql-codegen output in the codegen task (see /graphql skill)
+
+// Hygraph Asset selection shape. Interim union with ImageMetadata — see Hero/types.ts.
+export interface AssetRD {
+  url: string;
+  width: number | null;
+  height: number | null;
+}
 
 export interface ResultTeamRD {
   name: string;
   slug: string;
 }
 
+export type IsActive = "active" | "inactive";
+
 export interface ResultRD {
   homeTeam: string;
   homeScore: number;
   awayTeam: string;
   awayScore: number;
-  team: ResultTeamRD;
-  backgroundImage: ImageMetadata | string;
-  isActive: boolean;
+  teamModel: ResultTeamRD | null;
+  backgroundImage: AssetRD | ImageMetadata;
+  isActive: IsActive;
   date: string | null;
-  publishedAt: string;
+  // Hygraph system field. Nullable DateTime; a null value counts as not-stale.
+  publishedAt: string | null;
 }
 
 export interface ResultVM {
@@ -22,10 +32,9 @@ export interface ResultVM {
   homeScore: number;
   awayTeam: string;
   awayScore: number;
-  teamName: string;
-  // Narrower than ResultRD's backgroundImage — only local imports occur before
-  // Phase 2. Revisit once live Hygraph asset URLs need distinct <Image> handling
-  // (remote width/height).
+  hasTeam: boolean;
+  teamLabel: string;
+  // Narrowed to ImageMetadata for the interim — see Hero/types.ts.
   backgroundImage: ImageMetadata;
   hasDate: boolean;
   date: string | null;
