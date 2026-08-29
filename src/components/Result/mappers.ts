@@ -1,13 +1,34 @@
-// The codegen task will swap resultDummy for a real fetchOrFail(query) call via
-// src/lib/hygraphClient.ts, checking result.ok before mapping (render nothing on failure,
-// per /graphql skill). For now the dummy data stands in directly as the RD.
-
+import { gql } from "graphql-request";
+import { fetchOrFail } from "../../lib/hygraphClient";
+import { resolveImage } from "../../lib/resolveImage";
 import { teamLabel } from "../../lib/teamLabel";
-import type { ResultRD, ResultVM } from "./types";
-import { resultDummy } from "./dummy";
+import type { ResultRD, ResultResponseRD, ResultVM } from "./types";
 
 const STALE_AFTER_DAYS = 28;
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+const RESULT_QUERY = gql`
+  query ResultList {
+    resultModels(orderBy: publishedAt_DESC) {
+      homeTeam
+      homeScore
+      awayTeam
+      awayScore
+      date
+      isActive
+      publishedAt
+      teamModel {
+        name
+        slug
+      }
+      backgroundImage {
+        url
+        width
+        height
+      }
+    }
+  }
+`;
 
 function isVisible(rd: ResultRD): boolean {
   // publishedAt is a nullable system field; a null value counts as not-stale.
@@ -27,14 +48,15 @@ function toVM(rd: ResultRD): ResultVM {
     awayScore: rd.awayScore,
     hasTeam: Boolean(rd.teamModel),
     teamLabel: rd.teamModel ? teamLabel(rd.teamModel.slug) : "",
-    backgroundImage: rd.backgroundImage as ImageMetadata,
+    backgroundImage: resolveImage(rd.backgroundImage),
     hasDate: Boolean(rd.date),
     date: rd.date,
   };
 }
 
 export async function getResultVMs(): Promise<ResultVM[]> {
-  // isVisible is resolved and applied here, not left for the UI to filter on —
-  // an invisible result should never reach any consumer of this mapper.
-  return resultDummy.filter(isVisible).map(toVM);
+  const res = await fetchOrFail<ResultResponseRD>(RESULT_QUERY);
+  // ResultModel is a cosmetic banner — on failure render nothing, no message (per /graphql).
+  if (!res.ok) return [];
+  return res.data.resultModels.filter(isVisible).map(toVM);
 }

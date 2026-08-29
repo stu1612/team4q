@@ -1,6 +1,6 @@
 ---
 // Simple test render — not brand UI, see /data-mapping skill for the real build in Phase 4.
-import { Image } from "astro:assets";
+import ResolvedImage from "../ResolvedImage.astro";
 import { getResultVMs } from "./mappers";
 
 const results = await getResultVMs();
@@ -12,7 +12,7 @@ const results = await getResultVMs();
 	<ul>
 		{results.map((result) => (
 			<li>
-				<Image src={result.backgroundImage} alt="" width={200} height={120} />
+				<ResolvedImage src={result.backgroundImage} alt="" width={200} height={120} />
 				{result.hasTeam && <strong>{result.teamLabel}: </strong>}
 				{result.homeTeam} {result.homeScore} – {result.awayScore} {result.awayTeam}
 				{result.hasDate && <p>{result.date}</p>}

@@ -8,7 +8,7 @@ Last updated: 2026-08-29
 | --------------------------------------- | -------------- |
 | Planning — skills, schema, design brief | ✅ Done        |
 | Phase 1 — Foundation                    | ✅ Done        |
-| Phase 2 — HG Connection                 | 🟡 In progress |
+| Phase 2 — HG Connection                 | ✅ Done        |
 | Phase 3 — Global                        | ⬜ Not started |
 | Phase 4 — UI Build                      | ⬜ Not started |
 | Phase 5 — Quality                       | ⬜ Not started |
@@ -47,10 +47,40 @@ Last updated: 2026-08-29
 - [x] Hygraph permissions locked down (PAT Read/Published-only, public Content API disabled) — verified by live probing
 - [x] Schema re-reconciled against live Hygraph + real content (major drift — see COMPLETED TASKS); `fallback-reference.md` + `CLAUDE.md` updated
 - [x] Interim types / fallback / dummy / mappers realigned to the reconciled shape (pre-codegen)
-- [ ] graphql-codegen wired up, generating RD types from live schema
-- [ ] Swap dummy data for real HG responses, model by model
+- [x] graphql-codegen wired up, generating RD types from live schema
+- [x] Swapped to real HG responses, model by model (Hero, NewsCard, Sponsor, TeamPage, Fixture, Training, Result)
 
 `PlayerModel` is out of scope for v1 (future roster feature) — no query, mapper, or dummy data.
+
+### How codegen is set up
+
+- `codegen.ts` at repo root; `pnpm codegen` = `node --env-file=.env …` (schema pulled from
+  the live endpoint with the PAT). Output: `src/gql/generated.ts`, **committed** (54 lines,
+  deterministic) so Vercel builds don't need a Hygraph round-trip. Rerun `pnpm codegen`
+  after any Hygraph schema change, before touching mappers.
+- **Plugin: `typescript-operations` only.** The planned `typescript` + `typescript-operations`
+  pairing emitted duplicate identifiers for every selection-set enum (`IsActive`,
+  `SponsorTier`, `TrainingType`) in this codegen v6 — not fixable via `preResolveTypes` /
+  `onlyOperationTypes`. `typescript-operations` alone is self-contained (its own `Exact`
+  helper + the enums it uses + the `[Name]Query` result types), which is all the RD types
+  need. `enumsAsTypes`, `skipTypename`, `avoidOptionals: { field: true }`, scalar map applied.
+- **RD types** in each `types.ts` derive from `[Name]Query` (e.g.
+  `HeroRD = Omit<HeroContentQuery["heroModels"][number], "coverImage"> & { coverImage: RawImage }`).
+  Only image fields are widened — `RawImage` (`src/lib/resolveImage.ts`) adds the local-import
+  arm so `fallback.ts` keeps build-optimised images; a live response supplies `{ url, width, height }`.
+- **`[Name]ResponseRD`** = the query-result wrapper (`{ heroModels: HeroRD[] }`); that's the
+  `T` in `fetchWithFallback<T>` / `fetchOrFail<T>`, so fallback data flows through the mapper
+  identically to a real response.
+- **Images**: `resolveImage` / `resolveImageOrNull` narrow the RD image union to
+  `ImageMetadata | string`; `src/components/ResolvedImage.astro` is the single place that
+  branches local-vs-remote for `<Image>`. `astro.config.mjs` has
+  `image.domains: ["eu-west-2.graphassets.com"]` so remote Hygraph assets optimise at build.
+- **`fetchOrFail` models**: `dummy.ts` deleted for Fixture / Training / Result. Fixture &
+  Training mappers return a discriminated `{ ok: true; … } | { ok: false; contact }`
+  (contact from `src/constants/contact.ts` — phone is a TODO placeholder); Result returns
+  `[]` on failure (cosmetic banner, render nothing). The full message-block UI is Phase 4/5.
+- **`/news/[slug].astro`** still uses the hardcoded `"placeholder"` slug — the article detail
+  route is Phase 4.
 
 ## Phase 3 — Global
 
@@ -60,7 +90,14 @@ Last updated: 2026-08-29
 - [ ] 404 page
 - [ ] Astro hybrid mode config (static + SSR for `/contact`)
 - [ ] HG → Vercel rebuild webhook
-- [ ] `src/constants/contact.ts`
+- [x] `src/constants/contact.ts` — created in Phase 2 for the fetchOrFail message block (phone number still a TODO placeholder)
+
+**Throwaway scaffolding Phase 3/4 replaces** (safe to delete, not patterns to preserve):
+`src/pages/index.astro`'s inline `<nav>` + the 5 component test-renders; each page stub's
+own `<html>`/`<head>` (superseded by `Base.astro`); the per-component `index.astro` test
+templates (Phase 4 builds real branded UI). Permanent: all `mappers.ts` / `types.ts` /
+`fallback.ts`, `src/gql/`, `src/lib/*` (incl. `resolveImage.ts`, `teamLabel.ts`),
+`src/components/ResolvedImage.astro`, `src/constants/*`.
 
 ## Phase 4 — UI Build
 
@@ -111,6 +148,7 @@ Last updated: 2026-08-29
 
 - use this section to write a brief review of completed tasks. This section will act as a review for the developer to keep track of progress. Mark each task completed with a date, review (anything else you feel is usefull). Keep the review short but concise.
 
+- **2026-08-29 — Phase 2 complete: graphql-codegen + live Hygraph swap.** `codegen.ts` + `pnpm codegen` (`node --env-file=.env`) generate `src/gql/generated.ts` (committed, 54 lines, deterministic) from the live schema. Plugin is **`typescript-operations` only** — pairing it with the `typescript` plugin (the planned approach) emitted duplicate identifiers for every selection-set enum in codegen v6 and no config flag fixed it; `typescript-operations` alone is self-contained and gives exactly the `[Name]Query` result types the RD types need. Each `types.ts` now derives `[Name]RD` from `[Name]Query` (image fields widened via `RawImage` in `src/lib/resolveImage.ts` so `fallback.ts` keeps local build-optimised imports; live responses supply `{ url, width, height }`), plus a `[Name]ResponseRD` wrapper used as the `fetchWithFallback`/`fetchOrFail` `T`. All 7 mappers (Hero, NewsCard, Sponsor, TeamPage, Fixture, Training, Result) now call the real client with an inline `gql` query; `fallback.ts` reshaped to the response wrapper; `dummy.ts` deleted for the three `fetchOrFail` models. Fixture/Training mappers return `{ ok } | { ok:false; contact }` (new `src/constants/contact.ts`, phone TODO); Result returns `[]` on failure. `src/components/ResolvedImage.astro` is the single local-vs-remote `<Image>` branch; `astro.config.mjs` gains `image.domains` for the Hygraph CDN. `astro check` (0 errors, 45 files) + `astro build` (8 pages) green **against live Hygraph** — verified in `dist/`: real headings, `publishedDate_DESC` news order, 6 sponsors, affiliation via `teamModel`, remote assets optimised to `_astro/*.webp`, `teamLabel` derivation. Not done here (Phase 4): the message-block UI, `/news/[slug]` detail route, tiered sponsor grid.
 - **2026-08-29 — Phase 2: Hygraph permissions + schema re-reconciliation + interim realignment.**
   - **Permissions.** Live-probed the Hygraph endpoint. Fixed the Permanent Auth Token to `Read · all models · Published stage` only (all mutations + DRAFT reads now 403), and disabled the unauthenticated public Content API entirely (was exposing `users` and `clubMemberModels.email` with no token). Known residual: the PAT's `All models` grant still covers the `User` system model — low severity, build-token only; deferred. See the `project_hygraph-permissions-posture` memory.
   - **Schema drift.** The live schema had diverged significantly from the reconciled reference: `isActive` is now the `IsActive` enum (`active|inactive`), not a boolean, and Hero/NewsCard/TeamPage have no such field; the `team` relation is `teamModel` everywhere and nullable; the two shared components are gone — affiliation moved to three inline fields on `TeamModel`, club member became the standalone `ClubMemberModel` (news author + training coaches, coaches now a 0-to-many list); NewsCard `body` is a `RichText` object; +Intersport sponsor. `fallback-reference.md` fully rewritten against live schema + record-level content; `CLAUDE.md` schema section corrected (9→10 models, no components, enum isActive).

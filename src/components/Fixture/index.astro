@@ -1,27 +1,35 @@
 ---
 // Simple test render — not brand UI, see /data-mapping skill for the real build in Phase 4.
-import { Image } from "astro:assets";
+import ResolvedImage from "../ResolvedImage.astro";
 import { getFixtureVMs } from "./mappers";
 
-const fixtures = await getFixtureVMs();
+const result = await getFixtureVMs();
 ---
 
 <section>
 	<h2>Fixtures</h2>
-	<ul>
-		{fixtures.map((fixture) => (
-			<li>
-				{fixture.hasCoverImage && (
-					<Image src={fixture.coverImage!} alt="" width={200} height={120} />
-				)}
-				<strong>{fixture.heading}</strong>
-				{fixture.hasTeam && <span> ({fixture.teamLabel})</span>}
-				<p>{fixture.date} {fixture.startTime}–{fixture.endTime} · {fixture.location}</p>
-				<p>{fixture.homeTeam} vs {fixture.awayTeam}</p>
-				{fixture.hasAffiliation && (
-					<p><a href={fixture.affiliationUrl}>{fixture.affiliationName}</a></p>
-				)}
-			</li>
-		))}
-	</ul>
+	{!result.ok && (
+		<p>
+			Vi upplever tekniska problem. För matchinformation, kontakta oss på{" "}
+			<a href={`mailto:${result.contact.email}`}>{result.contact.email}</a>.
+		</p>
+	)}
+	{result.ok && (
+		<ul>
+			{result.fixtures.map((fixture) => (
+				<li>
+					{fixture.hasCoverImage && (
+						<ResolvedImage src={fixture.coverImage!} alt="" width={200} height={120} />
+					)}
+					<strong>{fixture.heading}</strong>
+					{fixture.hasTeam && <span> ({fixture.teamLabel})</span>}
+					<p>{fixture.date} {fixture.startTime}–{fixture.endTime} · {fixture.location}</p>
+					<p>{fixture.homeTeam} vs {fixture.awayTeam}</p>
+					{fixture.hasAffiliation && (
+						<p><a href={fixture.affiliationUrl}>{fixture.affiliationName}</a></p>
+					)}
+				</li>
+			))}
+		</ul>
+	)}
 </section>

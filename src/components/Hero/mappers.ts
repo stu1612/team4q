@@ -1,14 +1,30 @@
-// Phase 2 will swap heroFallback for a real fetchWithFallback(query, heroFallback) call
-// via src/lib/hygraphClient.ts. For now the fallback data stands in directly as the RD.
-
+import { gql } from "graphql-request";
+import { fetchWithFallback } from "../../lib/hygraphClient";
+import { resolveImage } from "../../lib/resolveImage";
 import { heroFallback } from "./fallback";
-import type { HeroRD, HeroVM } from "./types";
+import type { HeroRD, HeroResponseRD, HeroVM } from "./types";
+
+const HERO_QUERY = gql`
+  query HeroContent {
+    heroModels(first: 1) {
+      heading
+      subheading
+      ctaLabel
+      ctaUrl
+      coverImage {
+        url
+        width
+        height
+      }
+    }
+  }
+`;
 
 function toVM(rd: HeroRD): HeroVM {
   const hasCTA = Boolean(rd.ctaLabel && rd.ctaUrl);
   return {
     heading: rd.heading,
-    coverImage: rd.coverImage as ImageMetadata,
+    coverImage: resolveImage(rd.coverImage),
     subheading: rd.subheading ?? "",
     hasCTA,
     ctaLabel: hasCTA ? (rd.ctaLabel as string) : "",
@@ -17,5 +33,8 @@ function toVM(rd: HeroRD): HeroVM {
 }
 
 export async function getHeroVM(): Promise<HeroVM> {
-  return toVM(heroFallback);
+  const data = await fetchWithFallback<HeroResponseRD>(HERO_QUERY, heroFallback);
+  // No isActive field on HeroModel — take the single row; empty collection → fallback row.
+  const rd = data.heroModels[0] ?? heroFallback.heroModels[0];
+  return toVM(rd);
 }

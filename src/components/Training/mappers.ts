@@ -1,23 +1,57 @@
-// The codegen task will swap trainingDummy for a real fetchOrFail(query) call via
-// src/lib/hygraphClient.ts, checking result.ok before mapping (full message block on
-// failure, per /graphql skill — this model gets no fallback.ts). For now the dummy data
-// stands in directly as the RD. Not yet wired to a page — built in Phase 4.
+// Wired to fetchOrFail. Not rendered until Phase 4.
 
+import { gql } from "graphql-request";
+import { CLUB_CONTACT } from "../../constants/contact";
+import { fetchOrFail } from "../../lib/hygraphClient";
+import { resolveImageOrNull } from "../../lib/resolveImage";
 import { teamLabel } from "../../lib/teamLabel";
-import { trainingDummy } from "./dummy";
-import type { CoachRD, CoachVM, TrainingRD, TrainingVM } from "./types";
+import type {
+  CoachRD,
+  CoachVM,
+  TrainingListVM,
+  TrainingRD,
+  TrainingResponseRD,
+  TrainingVM,
+} from "./types";
 
 const TRAINING_TYPE_LABELS: Record<string, string> = {
   team: "Lagträning",
   individual: "Individuell träning",
 };
 
+const TRAINING_QUERY = gql`
+  query TrainingList {
+    trainingModels(orderBy: date_ASC) {
+      venue
+      date
+      startTime
+      endTime
+      trainingType
+      isActive
+      information
+      teamModel {
+        name
+        slug
+      }
+      clubMemberModels {
+        name
+        role
+        profileImage {
+          url
+          width
+          height
+        }
+      }
+    }
+  }
+`;
+
 function coachToVM(rd: CoachRD): CoachVM {
   return {
     name: rd.name ?? "",
     role: rd.role ?? "",
     hasCoachPhoto: Boolean(rd.profileImage),
-    photo: (rd.profileImage ?? null) as ImageMetadata | null,
+    photo: resolveImageOrNull(rd.profileImage),
   };
 }
 
@@ -37,6 +71,11 @@ function toVM(rd: TrainingRD): TrainingVM {
   };
 }
 
-export async function getTrainingVMs(): Promise<TrainingVM[]> {
-  return trainingDummy.filter((rd) => rd.isActive === "active").map(toVM);
+export async function getTrainingVMs(): Promise<TrainingListVM> {
+  const res = await fetchOrFail<TrainingResponseRD>(TRAINING_QUERY);
+  if (!res.ok) return { ok: false, contact: CLUB_CONTACT };
+  const sessions = res.data.trainingModels
+    .filter((rd) => rd.isActive === "active")
+    .map(toVM);
+  return { ok: true, sessions };
 }

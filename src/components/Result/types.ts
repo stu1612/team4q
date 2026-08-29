@@ -1,30 +1,17 @@
-// interim — replace RD with graphql-codegen output in the codegen task (see /graphql skill)
+// RD types derive from graphql-codegen output (src/gql/generated.ts). backgroundImage
+// widened (RawImage).
 
-// Hygraph Asset selection shape. Interim union with ImageMetadata — see Hero/types.ts.
-export interface AssetRD {
-  url: string;
-  width: number | null;
-  height: number | null;
+import type { ResultListQuery } from "../../gql/generated";
+import type { RawImage } from "../../lib/resolveImage";
+
+type ResultRow = ResultListQuery["resultModels"][number];
+
+export interface ResultRD extends Omit<ResultRow, "backgroundImage"> {
+  backgroundImage: RawImage;
 }
 
-export interface ResultTeamRD {
-  name: string;
-  slug: string;
-}
-
-export type IsActive = "active" | "inactive";
-
-export interface ResultRD {
-  homeTeam: string;
-  homeScore: number;
-  awayTeam: string;
-  awayScore: number;
-  teamModel: ResultTeamRD | null;
-  backgroundImage: AssetRD | ImageMetadata;
-  isActive: IsActive;
-  date: string | null;
-  // Hygraph system field. Nullable DateTime; a null value counts as not-stale.
-  publishedAt: string | null;
+export interface ResultResponseRD {
+  resultModels: ResultRD[];
 }
 
 export interface ResultVM {
@@ -34,8 +21,7 @@ export interface ResultVM {
   awayScore: number;
   hasTeam: boolean;
   teamLabel: string;
-  // Narrowed to ImageMetadata for the interim — see Hero/types.ts.
-  backgroundImage: ImageMetadata;
+  backgroundImage: ImageMetadata | string;
   hasDate: boolean;
   date: string | null;
 }

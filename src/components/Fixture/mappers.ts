@@ -1,10 +1,45 @@
-// The codegen task will swap fixtureDummy for a real fetchOrFail(query) call via
-// src/lib/hygraphClient.ts, checking result.ok before mapping (message block on failure,
-// per /graphql skill). For now the dummy data stands in directly as the RD.
-
+import { gql } from "graphql-request";
+import { CLUB_CONTACT } from "../../constants/contact";
+import { fetchOrFail } from "../../lib/hygraphClient";
+import { resolveImageOrNull } from "../../lib/resolveImage";
 import { teamLabel } from "../../lib/teamLabel";
-import { fixtureDummy } from "./dummy";
-import type { FixtureRD, FixtureVM } from "./types";
+import type {
+  FixtureListVM,
+  FixtureRD,
+  FixtureResponseRD,
+  FixtureVM,
+} from "./types";
+
+const FIXTURE_QUERY = gql`
+  query FixtureList {
+    fixtureModels(orderBy: date_ASC) {
+      heading
+      date
+      startTime
+      endTime
+      location
+      homeTeam
+      awayTeam
+      isActive
+      coverImage {
+        url
+        width
+        height
+      }
+      teamModel {
+        name
+        slug
+        teamAffiliation
+        affiliationUrl
+        affiliationLogo {
+          url
+          width
+          height
+        }
+      }
+    }
+  }
+`;
 
 function toVM(rd: FixtureRD): FixtureVM {
   const team = rd.teamModel;
@@ -22,16 +57,24 @@ function toVM(rd: FixtureRD): FixtureVM {
     hasTeam: Boolean(team),
     teamLabel: team ? teamLabel(team.slug) : "",
     hasCoverImage: Boolean(rd.coverImage),
-    coverImage: (rd.coverImage ?? null) as ImageMetadata | null,
+    coverImage: resolveImageOrNull(rd.coverImage),
     hasAffiliation,
     affiliationName: hasAffiliation ? (team!.teamAffiliation as string) : "",
     affiliationUrl: hasAffiliation ? (team!.affiliationUrl as string) : "",
-    affiliationLogo: hasAffiliation ? (team!.affiliationLogo as ImageMetadata) : null,
+    affiliationLogo: hasAffiliation ? resolveImageOrNull(team!.affiliationLogo) : null,
   };
 }
 
-export async function getFixtureVMs(): Promise<FixtureVM[]> {
-  // isActive === "active" is the visibility gate; an inactive fixture never reaches a
-  // consumer. The past/upcoming split is a separate Phase 4 concern.
-  return fixtureDummy.filter((rd) => rd.isActive === "active").map(toVM);
+export async function getFixtureVMs(): Promise<FixtureListVM> {
+  const res = await fetchOrFail<FixtureResponseRD>(FIXTURE_QUERY);
+  if (!res.ok) {
+    // Time-sensitive content: no fake data. UI shows a full message block with contact
+    // details (Phase 4). isActive === "active" is the visibility gate; the past/upcoming
+    // split is a separate Phase 4 concern.
+    return { ok: false, contact: CLUB_CONTACT };
+  }
+  const fixtures = res.data.fixtureModels
+    .filter((rd) => rd.isActive === "active")
+    .map(toVM);
+  return { ok: true, fixtures };
 }
