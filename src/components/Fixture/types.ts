@@ -1,14 +1,23 @@
-// interim — replace with graphql-codegen output in Phase 2 (see /graphql skill)
+// interim — replace RD with graphql-codegen output in the codegen task (see /graphql skill)
 
-// TODO: verify AffiliationComponent fields against Hygraph — not yet reconciled
-export interface AffiliationRD {
-  label: string;
+// Hygraph Asset selection shape. Interim union with ImageMetadata — see Hero/types.ts.
+export interface AssetRD {
+  url: string;
+  width: number | null;
+  height: number | null;
 }
 
+// FixtureModel.teamModel — affiliation now lives on TeamModel (three inline fields),
+// no longer a repeatable component on the fixture itself.
 export interface FixtureTeamRD {
   name: string;
   slug: string;
+  teamAffiliation: string | null;
+  affiliationUrl: string | null;
+  affiliationLogo: AssetRD | ImageMetadata | null;
 }
+
+export type IsActive = "active" | "inactive";
 
 export interface FixtureRD {
   heading: string;
@@ -18,9 +27,9 @@ export interface FixtureRD {
   location: string;
   homeTeam: string;
   awayTeam: string;
-  team: FixtureTeamRD;
-  coverImage: ImageMetadata | string | null;
-  affiliations: AffiliationRD[];
+  isActive: IsActive;
+  teamModel: FixtureTeamRD | null;
+  coverImage: AssetRD | ImageMetadata | null;
 }
 
 export interface FixtureVM {
@@ -31,11 +40,13 @@ export interface FixtureVM {
   location: string;
   homeTeam: string;
   awayTeam: string;
-  teamName: string;
+  hasTeam: boolean;
+  teamLabel: string;
   hasCoverImage: boolean;
-  // Narrower than FixtureRD's coverImage — only local imports occur before Phase 2.
-  // Revisit once live Hygraph asset URLs need distinct <Image> handling (remote
-  // width/height).
+  // Narrowed to ImageMetadata for the interim — see Hero/types.ts.
   coverImage: ImageMetadata | null;
-  affiliationLabels: string[];
+  hasAffiliation: boolean;
+  affiliationName: string;
+  affiliationUrl: string;
+  affiliationLogo: ImageMetadata | null;
 }

@@ -14,10 +14,13 @@ const fixtures = await getFixtureVMs();
 				{fixture.hasCoverImage && (
 					<Image src={fixture.coverImage!} alt="" width={200} height={120} />
 				)}
-				<strong>{fixture.heading}</strong> ({fixture.teamName})
+				<strong>{fixture.heading}</strong>
+				{fixture.hasTeam && <span> ({fixture.teamLabel})</span>}
 				<p>{fixture.date} {fixture.startTime}–{fixture.endTime} · {fixture.location}</p>
 				<p>{fixture.homeTeam} vs {fixture.awayTeam}</p>
-				{fixture.affiliationLabels.length > 0 && <p>{fixture.affiliationLabels.join(", ")}</p>}
+				{fixture.hasAffiliation && (
+					<p><a href={fixture.affiliationUrl}>{fixture.affiliationName}</a></p>
+				)}
 			</li>
 		))}
 	</ul>

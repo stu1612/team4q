@@ -13,7 +13,8 @@ const results = await getResultVMs();
 		{results.map((result) => (
 			<li>
 				<Image src={result.backgroundImage} alt="" width={200} height={120} />
-				<strong>{result.teamName}</strong>: {result.homeTeam} {result.homeScore} – {result.awayScore} {result.awayTeam}
+				{result.hasTeam && <strong>{result.teamLabel}: </strong>}
+				{result.homeTeam} {result.homeScore} – {result.awayScore} {result.awayTeam}
 				{result.hasDate && <p>{result.date}</p>}
 			</li>
 		))}

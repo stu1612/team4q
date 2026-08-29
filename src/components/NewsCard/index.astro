@@ -14,11 +14,13 @@ const newsCards = await getNewsCardVMs();
 				<Image src={card.coverImage} alt="" width={200} height={120} />
 				<strong>{card.heading}</strong> — {card.publishedDate}
 				<p>{card.excerpt}</p>
-				<p>
-					By {card.authorName}
-					{card.hasAuthorPhoto && <Image src={card.authorPhoto!} alt="" width={40} height={40} />}
-					{card.hasTeamTag && <span> · {card.teamName}</span>}
-				</p>
+				{card.hasAuthor && (
+					<p>
+						By {card.authorName}
+						{card.hasAuthorPhoto && <Image src={card.authorPhoto!} alt="" width={40} height={40} />}
+						{card.hasTeam && <span> · {card.teamLabel}</span>}
+					</p>
+				)}
 			</li>
 		))}
 	</ul>

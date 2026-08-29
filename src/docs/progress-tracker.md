@@ -1,6 +1,6 @@
 # T4Q Progress Tracker
 
-Last updated: 2026-08-25
+Last updated: 2026-08-29
 
 ## Status at a glance
 
@@ -8,7 +8,7 @@ Last updated: 2026-08-25
 | --------------------------------------- | -------------- |
 | Planning — skills, schema, design brief | ✅ Done        |
 | Phase 1 — Foundation                    | ✅ Done        |
-| Phase 2 — HG Connection                 | ⬜ Not started |
+| Phase 2 — HG Connection                 | 🟡 In progress |
 | Phase 3 — Global                        | ⬜ Not started |
 | Phase 4 — UI Build                      | ⬜ Not started |
 | Phase 5 — Quality                       | ⬜ Not started |
@@ -19,12 +19,12 @@ Last updated: 2026-08-25
 ## Planning ✅
 
 - [x] Stack locked (Astro 7, Hygraph, Tailwind 4, graphql-request/codegen, Vercel, Resend, pnpm)
-- [x] Hygraph schema built and reconciled field-by-field against actual config (9 models: Team, NewsCard, Fixture, Player, Training, TeamPage, Sponsor, Hero, Result)
+- [x] Hygraph schema built and reconciled field-by-field against actual config — re-reconciled 2026-08-29 against live schema + content (10 models: Team, NewsCard, Fixture, Player, Training, TeamPage, Sponsor, Hero, Result, ClubMember; no shared components)
 - [x] `/accessibility` skill — locked
 - [x] `/data-mapping` skill — locked
 - [x] `/graphql` skill — locked
 - [x] `/seo` skill — locked
-- [x] `fallback-reference.md` — locked, matches reconciled schema
+- [x] `fallback-reference.md` — matches live schema (re-reconciled 2026-08-29)
 - [x] Design brief + 8 reference screenshots — ready for Claude Code proposal
 
 **Open before Phase 1 starts:**
@@ -43,9 +43,14 @@ Last updated: 2026-08-25
 
 ## Phase 2 — HG Connection
 
-- [ ] `hygraphClient.ts` built — query validation + HTTP client, exposes `fetchWithFallback` / `fetchOrFail`
+- [x] `hygraphClient.ts` built — query validation + HTTP client, exposes `fetchWithFallback` / `fetchOrFail`
+- [x] Hygraph permissions locked down (PAT Read/Published-only, public Content API disabled) — verified by live probing
+- [x] Schema re-reconciled against live Hygraph + real content (major drift — see COMPLETED TASKS); `fallback-reference.md` + `CLAUDE.md` updated
+- [x] Interim types / fallback / dummy / mappers realigned to the reconciled shape (pre-codegen)
 - [ ] graphql-codegen wired up, generating RD types from live schema
 - [ ] Swap dummy data for real HG responses, model by model
+
+`PlayerModel` is out of scope for v1 (future roster feature) — no query, mapper, or dummy data.
 
 ## Phase 3 — Global
 
@@ -105,6 +110,13 @@ Last updated: 2026-08-25
 ## COMPLETED TASKS
 
 - use this section to write a brief review of completed tasks. This section will act as a review for the developer to keep track of progress. Mark each task completed with a date, review (anything else you feel is usefull). Keep the review short but concise.
+
+- **2026-08-29 — Phase 2: Hygraph permissions + schema re-reconciliation + interim realignment.**
+  - **Permissions.** Live-probed the Hygraph endpoint. Fixed the Permanent Auth Token to `Read · all models · Published stage` only (all mutations + DRAFT reads now 403), and disabled the unauthenticated public Content API entirely (was exposing `users` and `clubMemberModels.email` with no token). Known residual: the PAT's `All models` grant still covers the `User` system model — low severity, build-token only; deferred. See the `project_hygraph-permissions-posture` memory.
+  - **Schema drift.** The live schema had diverged significantly from the reconciled reference: `isActive` is now the `IsActive` enum (`active|inactive`), not a boolean, and Hero/NewsCard/TeamPage have no such field; the `team` relation is `teamModel` everywhere and nullable; the two shared components are gone — affiliation moved to three inline fields on `TeamModel`, club member became the standalone `ClubMemberModel` (news author + training coaches, coaches now a 0-to-many list); NewsCard `body` is a `RichText` object; +Intersport sponsor. `fallback-reference.md` fully rewritten against live schema + record-level content; `CLAUDE.md` schema section corrected (9→10 models, no components, enum isActive).
+  - **Interim realignment (pre-codegen).** All non-deferred `types.ts` reshaped so RD mirrors the live shape (image fields are an interim `AssetRD | ImageMetadata` union — codegen finalises URL-only). `fallback.ts` (Hero/NewsCard/Sponsor/TeamPage) and `dummy.ts` (Fixture/Training/Result) repopulated with real HG-derived content and shape; `Player/dummy.ts` deleted (deferred). All 8 active mappers updated for `teamModel`, enum visibility (`isActive === "active"` filter), `teamLabel` derivation (new `src/lib/teamLabel.ts` — `herrlaget`→"Herrlaget"), RichText `body.html`, coaches list, affiliation via nested team. TeamPage + Training mappers implemented (were stubs); throwaway homepage templates updated to the new VM field names. `astro check` (0 errors, 43 files) + `astro build` (8 pages) clean; built HTML verified — teamLabel derivation, inactive-fixture filter, Result compound visibility (stale + inactive hidden), partial-vs-full affiliation all behave correctly.
+
+- **2026-08-27 — Phase 2 Task 1: `hygraphClient.ts` built.** The single Hygraph gateway now exists at `src/lib/hygraphClient.ts`, structured per the `/graphql` skill: two internal layers (query validation via `graphql`'s `parse()` before any network call; HTTP layer with one module-level `GraphQLClient`, `Bearer` auth, 10s `AbortSignal.timeout`, failure categorisation) and exactly two exported functions — `fetchWithFallback<T>(query, fallbackData, variables?)` and `fetchOrFail<T>(query, variables?)`. Exports `Result<T>` and `HGError` (`kind: network | timeout | http | graphql`, log-facing only). No component imports, no visitor-facing strings, no per-model logic. Env moved to `astro:env` — `astro.config.mjs` registers `HYGRAPH_API_URL` + `HYGRAPH_TOKEN` as `context: server, access: secret` with `validateSecrets: true`; `.env` unchanged, no new deps. **One deliberate deviation from plan:** signatures take `variables?: Variables` (graphql-request's structural `object`), not a `TypedDocumentNode<T, V>` generic — v7's conditional `variables` type can't resolve against an unbound generic and rejects the call. Callers pass `<T>` explicitly for now; typed-document inference can return via overloads in Task 3 with codegen. Verified with a throwaway `probe.astro` against live Hygraph: `{ __typename }` returns `{ ok: true, data }` / live value; a bad host yields `{ ok: false, error: { kind: "network" } }` + fallback + structured `console.error`; a malformed query throws `hygraphClient: malformed GraphQL query — …` before any request; token and endpoint confirmed absent from `dist/`. `astro check` (0 errors, 43 files) and `astro build` (8 pages) clean, probe removed.
 
 - **2026-08-27 — Homepage dev/test wiring (not Phase 4 UI); Phase 1 complete.** At the developer's request, added a plain-text nav + wired up Hero, NewsCard, Fixture, Result, and Sponsor on `/` so the pipeline can be checked visually in a browser. Explicitly throwaway: no styling, marked with comments to be removed once `Base.astro` (Phase 3) and real branded markup (Phase 4) land. Player and Training were left out — they belong to the team-page pattern, not the homepage. This implemented real `mappers.ts` + VM types for all 5 components (RD → mapper → VM → UI, reading from each component's `fallback.ts`/`dummy.ts` in place of a live Hygraph call, which doesn't exist until Phase 2) — legitimate, permanent mapper logic, not part of the throwaway UI. Result's mapper implements the documented `isStale`/`isVisible` compound-flag derivation from `publishedAt`, filtering internally so no consumer ever needs to check the flag itself; verified against the build output that an active-but-stale dummy result is correctly hidden while two active-and-fresh ones render.
   - **Follow-up round, same day:** developer review caught two violations of the `/data-mapping` skill's "mapper resolves, UI only renders" rule — plain `<img>` instead of `astro:assets`' `<Image />`, and `typeof x === "string" ? x.src : x` type-narrowing ternaries sitting in the templates. Fixed across all 5 components: every image-carrying VM field is now resolved to a plain `ImageMetadata` in the mapper (RD's `ImageMetadata | string` union narrowed down, since only local imports occur before Phase 2's live Hygraph URLs — flagged in comments for revisiting then), and templates call `<Image>` directly with no branching. Result's visibility filter also moved fully into the mapper (was a page-level `.filter()`). Surfaced a real missing dependency in the process: Astro's `<Image />` needs `sharp` for build-time optimization, which wasn't installed — added it (`sharp` now a dependency); rebuild confirms real optimization (e.g. hero cover 367kB → 25kB WebP) where the plain `<img>` version had none. This fully exercises the RD → mapper → VM → UI pattern end-to-end across 5 components, so Phase 1's last item is now checked off — **Phase 1: Foundation is complete.**

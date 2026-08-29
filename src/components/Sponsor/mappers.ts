@@ -1,5 +1,6 @@
-// Phase 2 will swap sponsorFallback for a real fetchWithFallback(query, sponsorFallback)
-// call via src/lib/hygraphClient.ts. For now the fallback data stands in directly as the RD.
+// The codegen task will swap sponsorFallback for a real fetchWithFallback(query,
+// sponsorFallback) call via src/lib/hygraphClient.ts. For now the fallback data stands
+// in directly as the RD.
 
 import { sponsorFallback } from "./fallback";
 import type { SponsorRD, SponsorVM } from "./types";
@@ -15,5 +16,6 @@ function toVM(rd: SponsorRD): SponsorVM {
 }
 
 export async function getSponsorVMs(): Promise<SponsorVM[]> {
-  return sponsorFallback.map(toVM);
+  // isActive === "active" gates visibility; an inactive sponsor never reaches a consumer.
+  return sponsorFallback.filter((rd) => rd.isActive === "active").map(toVM);
 }

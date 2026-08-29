@@ -47,7 +47,7 @@ A companion reference doc, `fallback-reference.md`, holds the model-by-model Req
 
 ## Current Hygraph schema
 
-Nine models, schema fully reconciled field-by-field against the live Hygraph config (not assumed): `TeamModel`, `NewsCardModel`, `FixtureModel`, `PlayerModel`, `TrainingModel`, `TeamPageModel`, `SponsorModel`, `HeroModel`, `ResultModel`. Two shared components: `AffiliationComponent`, `ClubMemberComponent`. All content models use a developer-controlled `isActive` boolean, distinct from Hygraph's own publish/unpublish state.
+Ten models, reconciled field-by-field against the live Hygraph config on 2026-08-29 (introspection + record-level verification): `TeamModel`, `NewsCardModel`, `FixtureModel`, `PlayerModel`, `TrainingModel`, `TeamPageModel`, `SponsorModel`, `HeroModel`, `ResultModel`, `ClubMemberModel`. No shared components — team affiliation is three inline fields on `TeamModel` (`teamAffiliation`, `affiliationUrl`, `affiliationLogo`); club members (news authors, training coaches) are the standalone `ClubMemberModel`. `FixtureModel`, `TrainingModel`, `SponsorModel`, and `ResultModel` carry a developer-controlled `isActive` **enum** (`IsActive`: `active | inactive`), distinct from Hygraph's own publish/unpublish state; `HeroModel`, `NewsCardModel`, and `TeamPageModel` have no such field. `PlayerModel` is out of scope for v1 (future roster feature). The team relation is named `teamModel` on every model and is nullable. Full field-level treatment lives in `.claude/skills/data-mapping/fallback-reference.md`.
 
 ## Where things stand
 

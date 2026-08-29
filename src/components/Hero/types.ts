@@ -1,8 +1,17 @@
-// interim — replace with graphql-codegen output in Phase 2 (see /graphql skill)
+// interim — replace RD with graphql-codegen output in the codegen task (see /graphql skill)
+
+// Hygraph Asset selection shape ({ url width height }). Interim: fallback data still
+// supplies local ImageMetadata, so image fields are a union; the codegen task drops
+// ImageMetadata and finalises URL-only handling. See fallback-reference.md § Asset.
+export interface AssetRD {
+  url: string;
+  width: number | null;
+  height: number | null;
+}
 
 export interface HeroRD {
   heading: string;
-  coverImage: ImageMetadata | string;
+  coverImage: AssetRD | ImageMetadata;
   subheading: string | null;
   ctaLabel: string | null;
   ctaUrl: string | null;
@@ -10,9 +19,8 @@ export interface HeroRD {
 
 export interface HeroVM {
   heading: string;
-  // Narrower than HeroRD's coverImage — only local imports occur before Phase 2.
-  // Revisit once live Hygraph asset URLs need distinct <Image> handling (remote
-  // width/height).
+  // Narrowed to ImageMetadata for the interim — only local imports occur before the
+  // codegen task swaps in live Hygraph asset URLs.
   coverImage: ImageMetadata;
   subheading: string;
   hasCTA: boolean;
