@@ -1,9 +1,10 @@
 ---
 import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero/index.astro";
 import { SEO_STATIC } from "../constants/seo";
-// Placeholder shell — Phase 4 builds the real homepage (Hero, News, Fixtures, Sponsors).
+// Homepage — built section by section. Hero done; News / Fixtures / Sponsors to follow.
 ---
 
 <Base seo={SEO_STATIC.home}>
-  <h1>Team Fourth Quarter</h1>
+  <Hero />
 </Base>
