@@ -26,6 +26,7 @@ function toVM(rd: HeroRD): HeroVM {
     heading: rd.heading,
     coverImage: resolveImage(rd.coverImage),
     subheading: rd.subheading ?? "",
+    hasSubheading: Boolean(rd.subheading),
     hasCTA,
     ctaLabel: hasCTA ? (rd.ctaLabel as string) : "",
     ctaUrl: hasCTA ? (rd.ctaUrl as string) : "",

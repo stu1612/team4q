@@ -21,6 +21,7 @@ export interface HeroVM {
   // ImageMetadata for a local fallback import, URL string for a live Hygraph asset.
   coverImage: ImageMetadata | string;
   subheading: string;
+  hasSubheading: boolean;
   hasCTA: boolean;
   ctaLabel: string;
   ctaUrl: string;
