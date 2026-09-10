@@ -1,0 +1,13 @@
+---
+import Base from "../layouts/Base.astro";
+import { SEO_STATIC } from "../constants/seo";
+
+// The one on-demand route on an otherwise static site: opting this page out of
+// prerendering makes it (and only it) a serverless function via the Vercel adapter.
+// Phase 4 adds the real contact form + Resend handler.
+export const prerender = false;
+---
+
+<Base seo={SEO_STATIC.contact}>
+  <h1>Kontakt</h1>
+</Base>

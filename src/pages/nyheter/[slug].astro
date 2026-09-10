@@ -1,0 +1,25 @@
+---
+import Base from "../../layouts/Base.astro";
+import type { SeoEntry } from "../../constants/seo";
+
+export function getStaticPaths() {
+  // Phase 4: replace the placeholder with real slugs pulled from NewsCardModel.
+  return [{ params: { slug: "placeholder" } }];
+}
+
+const { slug } = Astro.params;
+
+// Phase 4: derive this from the article's NewsCard VM — title from the heading,
+// description from the excerpt, ogImage from the resolved cover image, and a NewsArticle
+// JSON-LD block (see /seo skill). Placeholder until the detail route is built.
+const seo: SeoEntry = {
+  title: `${slug} | Team Fourth Quarter`,
+  description: "Nyhet från Team Fourth Quarter.",
+  ogImage: new URL("/og-default.jpg", Astro.site ?? "https://team4q.se").href,
+  jsonLd: null,
+};
+---
+
+<Base seo={seo}>
+  <h1>{slug}</h1>
+</Base>

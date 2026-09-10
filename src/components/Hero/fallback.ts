@@ -12,7 +12,7 @@ export const heroFallback: HeroResponseRD = {
       subheading:
         "Herr, dam och ungdom – en klubb, tre lag, samma passion för basket i Helsingborg.",
       ctaLabel: "Kontakta oss",
-      ctaUrl: "/contact",
+      ctaUrl: "/kontakt",
       coverImage: heroCover,
     },
   ],

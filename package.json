@@ -13,6 +13,8 @@
     "codegen": "node --env-file=.env node_modules/@graphql-codegen/cli/esm/bin.js"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "@astrojs/vercel": "^11.0.8",
     "@fontsource-variable/oswald": "^5.3.0",
     "@fontsource-variable/source-sans-3": "^5.3.0",
     "@tailwindcss/vite": "^4.3.3",

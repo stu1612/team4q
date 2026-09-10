@@ -1,0 +1,45 @@
+---
+// Pure renderer for meta tags + JSON-LD. It never fetches, derives, or falls back — it
+// renders exactly what it is given, whether the props came from a static constant
+// (src/constants/seo.ts) or, for /nyheter/[slug] in Phase 4, from an article's VM.
+// Mounted once, in <head>, by src/layouts/Base.astro.
+
+interface Props {
+  title: string;
+  description: string;
+  /** Absolute URL. */
+  ogImage: string;
+  /** Absolute URL for this exact page. */
+  canonical: string;
+  /** schema.org object, or null to emit no structured data (see /seo JSON-LD suppression). */
+  jsonLd?: object | null;
+}
+
+const { title, description, ogImage, canonical, jsonLd = null } = Astro.props;
+
+const SITE_NAME = "T4Q Helsingborg";
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta name="robots" content="index, follow" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={SITE_NAME} />
+<meta property="og:locale" content="sv_SE" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+{
+  jsonLd && (
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+  )
+}

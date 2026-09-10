@@ -1,0 +1,317 @@
+---
+import "../styles/global.css";
+import { Image } from "astro:assets";
+import SEO from "../components/SEO/index.astro";
+import type { SeoEntry } from "../constants/seo";
+import { CLUB_CONTACT } from "../constants/contact";
+import logo from "../images/logos/t4q-logo.png";
+
+interface Props {
+  seo: SeoEntry;
+}
+
+const { seo } = Astro.props;
+
+// Global defaults — set once, never page to page (see /seo skill).
+const SITE_NAME = "T4Q Helsingborg";
+const DEFAULT_DESCRIPTION =
+  "Team Fourth Quarter (T4Q) är en basketklubb i Helsingborg med herr-, dam- och ungdomslag.";
+const SITE_ORIGIN = Astro.site?.href ?? "https://team4q.se";
+
+const canonical = new URL(Astro.url.pathname, SITE_ORIGIN).href;
+const description = seo.description || DEFAULT_DESCRIPTION;
+
+const NAV_LINKS = [
+  { href: "/", label: "Hem" },
+  { href: "/herrlaget", label: "Herrlaget" },
+  { href: "/damlaget", label: "Damlaget" },
+  { href: "/ungdomslaget", label: "Ungdomslaget" },
+  { href: "/nyheter", label: "Nyheter" },
+  { href: "/sponsorer", label: "Sponsorer" },
+  { href: "/kontakt", label: "Kontakt" },
+] as const;
+
+const currentPath = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const isActive = (href: string): boolean => {
+  const clean = href.replace(/\/+$/, "") || "/";
+  return clean === "/" ? currentPath === "/" : currentPath === clean || currentPath.startsWith(`${clean}/`);
+};
+
+const SOCIAL_LINKS = [
+  { label: "Instagram", href: CLUB_CONTACT.social.instagram },
+  { label: "Facebook", href: CLUB_CONTACT.social.facebook },
+].filter((s): s is { label: string; href: string } => s.href.length > 0);
+
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <SEO
+      title={seo.title}
+      description={description}
+      ogImage={seo.ogImage}
+      canonical={canonical}
+      jsonLd={seo.jsonLd}
+    />
+  </head>
+
+  <body class="flex min-h-screen flex-col">
+    <a href="#main-content" class="skip-link">Hoppa till innehåll</a>
+
+    <header class="bg-black text-white">
+      <nav aria-label="Huvudmeny" class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
+        <a href="/" class="nav-brand flex items-center gap-3" aria-label="Team Fourth Quarter — hem">
+          <Image src={logo} alt="" width={45} height={44} loading="eager" />
+          <span class="font-display text-h4 uppercase tracking-wide">Team Fourth Quarter</span>
+        </a>
+
+        <button
+          id="nav-toggle"
+          type="button"
+          class="nav-toggle md:hidden"
+          aria-expanded="false"
+          aria-controls="primary-nav"
+          aria-label="Öppna meny"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+
+        <ul id="primary-nav" data-open="false" class="nav-list md:flex md:items-center md:gap-1">
+          {
+            NAV_LINKS.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="nav-link font-display text-small uppercase tracking-wide"
+                  aria-current={isActive(link.href) ? "page" : undefined}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </header>
+
+    <main id="main-content" class="flex-1">
+      <slot />
+    </main>
+
+    <footer class="footer bg-black text-white">
+      <div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="flex flex-col gap-3">
+          <Image src={logo} alt="" width={65} height={64} loading="lazy" />
+          <p class="text-small text-white/80">Basketklubb i Helsingborg.</p>
+        </div>
+
+        <nav aria-label="Sidfot">
+          <h2 class="footer-heading">Sidan</h2>
+          <ul class="flex flex-col gap-2">
+            {
+              NAV_LINKS.map((link) => (
+                <li>
+                  <a href={link.href} class="footer-link text-small">
+                    {link.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+
+        <div>
+          <h2 class="footer-heading">Kontakt</h2>
+          <ul class="flex flex-col gap-2 text-small">
+            <li>
+              <a href={`mailto:${CLUB_CONTACT.email}`} class="footer-link">{CLUB_CONTACT.email}</a>
+            </li>
+            {
+              CLUB_CONTACT.phone && (
+                <li>
+                  <a href={`tel:${CLUB_CONTACT.phone.replace(/\s+/g, "")}`} class="footer-link">
+                    {CLUB_CONTACT.phone}
+                  </a>
+                </li>
+              )
+            }
+          </ul>
+        </div>
+
+        {
+          SOCIAL_LINKS.length > 0 && (
+            <div>
+              <h2 class="footer-heading">Följ oss</h2>
+              <ul class="flex gap-3">
+                {SOCIAL_LINKS.map((s) => (
+                  <li>
+                    <a href={s.href} class="social-link" aria-label={s.label} rel="me noopener" target="_blank">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        {s.label === "Instagram" ? (
+                          <path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.72 3.72 0 0 1-1.38-.9 3.72 3.72 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16Zm0 1.62c-3.15 0-3.5.01-4.74.07-.98.04-1.51.21-1.87.35-.47.18-.8.4-1.15.75-.35.35-.57.68-.75 1.15-.14.36-.31.89-.35 1.87-.06 1.24-.07 1.59-.07 4.74s.01 3.5.07 4.74c.04.98.21 1.51.35 1.87.18.47.4.8.75 1.15.35.35.68.57 1.15.75.36.14.89.31 1.87.35 1.24.06 1.59.07 4.74.07s3.5-.01 4.74-.07c.98-.04 1.51-.21 1.87-.35.47-.18.8-.4 1.15-.75.35-.35.57-.68.75-1.15.14-.36.31-.89.35-1.87.06-1.24.07-1.59.07-4.74s-.01-3.5-.07-4.74c-.04-.98-.21-1.51-.35-1.87a3.1 3.1 0 0 0-.75-1.15 3.1 3.1 0 0 0-1.15-.75c-.36-.14-.89-.31-1.87-.35-1.24-.06-1.59-.07-4.74-.07Zm0 2.76a5.3 5.3 0 1 1 0 10.6 5.3 5.3 0 0 1 0-10.6Zm0 1.62a3.68 3.68 0 1 0 0 7.36 3.68 3.68 0 0 0 0-7.36Zm5.48-2.9a1.24 1.24 0 1 1 0 2.48 1.24 1.24 0 0 1 0-2.48Z" />
+                        ) : (
+                          <path d="M13.5 21v-8.2h2.75l.41-3.2H13.5V7.55c0-.93.26-1.56 1.59-1.56h1.7V3.13c-.3-.04-1.3-.13-2.47-.13-2.45 0-4.13 1.5-4.13 4.24v2.36H7.4v3.2h2.78V21h3.32Z" />
+                        )}
+                      </svg>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </div>
+
+      <div class="border-t border-white/15">
+        <p class="mx-auto max-w-6xl px-4 py-4 text-small text-white/70">
+          © {year} Team Fourth Quarter · {SITE_NAME}
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      const toggle = document.getElementById("nav-toggle");
+      const list = document.getElementById("primary-nav");
+      if (toggle && list) {
+        const setOpen = (open: boolean) => {
+          toggle.setAttribute("aria-expanded", String(open));
+          toggle.setAttribute("aria-label", open ? "Stäng meny" : "Öppna meny");
+          list.dataset.open = String(open);
+        };
+        toggle.addEventListener("click", () => {
+          setOpen(toggle.getAttribute("aria-expanded") !== "true");
+        });
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
+            setOpen(false);
+            toggle.focus();
+          }
+        });
+      }
+    </script>
+
+    <style>
+      /* Skip link — first focusable element, off-screen until focused. */
+      .skip-link {
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 50;
+        transform: translateY(-110%);
+        background: var(--color-black);
+        color: var(--color-white);
+        padding: 0.75rem 1rem;
+        font-weight: 600;
+        transition: transform 0.15s ease;
+      }
+      .skip-link:focus-visible {
+        transform: translateY(0);
+      }
+
+      .nav-brand span {
+        color: var(--color-white);
+      }
+      .nav-brand:focus-visible,
+      .nav-toggle:focus-visible,
+      .skip-link:focus-visible {
+        outline: 2px solid var(--color-white);
+        outline-offset: 2px;
+      }
+
+      .nav-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.375rem;
+        color: var(--color-white);
+        background: transparent;
+        border: 0;
+        cursor: pointer;
+      }
+
+      .nav-link {
+        display: block;
+        padding: 0.5rem 0.75rem;
+        color: var(--color-white);
+        border-bottom: 3px solid transparent;
+      }
+      .nav-link:hover {
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+      .nav-link:focus-visible {
+        outline: 2px solid var(--color-white);
+        outline-offset: 2px;
+      }
+      /* Active state uses a red rule — a non-text accent, so the brand-red /
+         black-background AA restriction does not apply. */
+      .nav-link[aria-current="page"] {
+        border-bottom-color: var(--color-brand-red);
+      }
+
+      /* Disclosure nav: hidden on mobile until toggled, always shown from md up. */
+      .nav-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      @media (max-width: 767px) {
+        .nav-list {
+          display: none;
+          width: 100%;
+          flex-direction: column;
+          padding-top: 0.5rem;
+        }
+        .nav-list[data-open="true"] {
+          display: flex;
+        }
+        nav[aria-label="Huvudmeny"] {
+          flex-wrap: wrap;
+        }
+      }
+
+      .footer-heading {
+        font-family: var(--font-display);
+        font-size: var(--text-label);
+        letter-spacing: var(--text-label--letter-spacing);
+        font-weight: var(--text-label--font-weight);
+        text-transform: uppercase;
+        color: var(--color-white);
+        margin-bottom: 0.75rem;
+      }
+      .footer-link {
+        color: rgb(255 255 255 / 0.8);
+      }
+      .footer-link:hover {
+        color: var(--color-white);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .footer-link:focus-visible,
+      .social-link:focus-visible {
+        outline: 2px solid var(--color-white);
+        outline-offset: 2px;
+        color: var(--color-white);
+      }
+      .social-link {
+        display: inline-flex;
+        padding: 0.375rem;
+        color: rgb(255 255 255 / 0.8);
+      }
+      .social-link:hover {
+        color: var(--color-white);
+      }
+    </style>
+  </body>
+</html>

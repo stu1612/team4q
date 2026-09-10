@@ -34,7 +34,7 @@ Four skills govern this build, all located under the project's skills directory:
 
 - **`/data-mapping`** — the RD → mapper → VM → UI pattern every component follows. Three-file structure (`index.astro`, `mappers.ts`, `types.ts`, plus optional `fallback.ts`), naming conventions, mapper responsibilities, field-level fallback treatment (Required / Flag / Default / Default-with-derived-placeholder).
 - **`/graphql`** — all Hygraph communication goes through one centralized client, `hygraphClient.ts`, exposing exactly two functions (`fetchWithFallback`, `fetchOrFail`). Every model is assigned an explicit failure strategy — no model is left for Claude Code to guess about.
-- **`/seo`** — no SEO fields in Hygraph, ever. Static pages (everything except `/news/[slug]`) get hand-written SEO/JSON-LD from code constants, because the client will never manage this content. Only news articles derive SEO dynamically from live content.
+- **`/seo`** — no SEO fields in Hygraph, ever. Static pages (everything except `/nyheter/[slug]`) get hand-written SEO/JSON-LD from code constants, because the client will never manage this content. Only news articles derive SEO dynamically from live content.
 - **`/accessibility`** — WCAG 2.1 AA as a baseline, not a target. Includes the specific brand-red contrast resolution rule and a Definition of Done checklist.
 
 A companion reference doc, `fallback-reference.md`, holds the model-by-model Required/Flag/Default table — this is data the skills point to, not a skill itself, since it encodes no judgment, just the reconciled schema facts.
