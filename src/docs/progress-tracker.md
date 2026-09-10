@@ -1,6 +1,6 @@
 # T4Q Progress Tracker
 
-Last updated: 2026-08-29
+Last updated: 2026-09-10
 
 ## Status at a glance
 
@@ -9,7 +9,7 @@ Last updated: 2026-08-29
 | Planning — skills, schema, design brief | ✅ Done        |
 | Phase 1 — Foundation                    | ✅ Done        |
 | Phase 2 — HG Connection                 | ✅ Done        |
-| Phase 3 — Global                        | ⬜ Not started |
+| Phase 3 — Global                        | 🟨 Code done · webhook pending |
 | Phase 4 — UI Build                      | ⬜ Not started |
 | Phase 5 — Quality                       | ⬜ Not started |
 | Phase 6 — Launch                        | ⬜ Not started |
@@ -37,7 +37,7 @@ Last updated: 2026-08-29
 ## Phase 1 — Foundation
 
 - [x] Folder structure (`src/components/[name]/{index.astro,mappers.ts,types.ts,fallback.ts?}`)
-- [x] Page routes scaffolded (`/`, `/mens`, `/womens`, `/juniors`, `/news`, `/news/[slug]`, `/sponsors`, `/contact`)
+- [x] Page routes scaffolded (`/`, `/mens`, `/womens`, `/juniors`, `/news`, `/news/[slug]`, `/sponsors`, `/contact`) — renamed to Swedish slugs in Phase 3 (`/herrlaget`, `/damlaget`, `/ungdomslaget`, `/nyheter`, `/nyheter/[slug]`, `/sponsorer`, `/kontakt`)
 - [x] Dummy data matching reconciled HG field shapes (not the original pre-reconciliation guesses)
 - [x] Data mapping pattern validated end-to-end (RD → mapper → VM → UI) on at least one component
 
@@ -84,30 +84,30 @@ Last updated: 2026-08-29
 
 ## Phase 3 — Global
 
-- [ ] `Base.astro` layout (nav, footer)
-- [ ] SEO component + `src/constants/seo.ts` (static SEO data) + dynamic derivation for `/news/[slug]`
+- [x] `Base.astro` layout (nav, footer)
+- [x] SEO component + `src/constants/seo.ts` (static SEO data) — dynamic derivation for `/nyheter/[slug]` deferred to Phase 4
 - [x] `@theme` design tokens — done ahead of phase, see COMPLETED TASKS
-- [ ] 404 page
-- [ ] Astro hybrid mode config (static + SSR for `/contact`)
-- [ ] HG → Vercel rebuild webhook
+- [x] 404 page
+- [x] Astro on-demand config — `@astrojs/vercel` adapter; `output` stays `static`, only `/kontakt` sets `prerender = false`
+- [ ] HG → Vercel rebuild webhook — **developer task** (Hygraph + Vercel dashboards), not code
 - [x] `src/constants/contact.ts` — created in Phase 2 for the fetchOrFail message block (phone number still a TODO placeholder)
 
 **Throwaway scaffolding Phase 3/4 replaces** (safe to delete, not patterns to preserve):
-`src/pages/index.astro`'s inline `<nav>` + the 5 component test-renders; each page stub's
-own `<html>`/`<head>` (superseded by `Base.astro`); the per-component `index.astro` test
-templates (Phase 4 builds real branded UI). Permanent: all `mappers.ts` / `types.ts` /
+~~`src/pages/index.astro`'s inline `<nav>` + the 5 component test-renders~~ (removed in Phase 3);
+~~each page stub's own `<html>`/`<head>`~~ (removed in Phase 3 — every page now wraps `Base.astro`);
+the per-component `index.astro` test templates (Phase 4 builds real branded UI). Permanent: all `mappers.ts` / `types.ts` /
 `fallback.ts`, `src/gql/`, `src/lib/*` (incl. `resolveImage.ts`, `teamLabel.ts`),
 `src/components/ResolvedImage.astro`, `src/constants/*`.
 
 ## Phase 4 — UI Build
 
 - [ ] Homepage
-- [ ] `/mens` (establishes team page pattern — includes fixture card past/upcoming decision)
-- [ ] `/womens`
-- [ ] `/juniors`
-- [ ] `/news` + `/news/[slug]`
-- [ ] `/sponsors` (tiered grid)
-- [ ] `/contact` + Resend
+- [ ] `/herrlaget` (establishes team page pattern — includes fixture card past/upcoming decision)
+- [ ] `/damlaget`
+- [ ] `/ungdomslaget`
+- [ ] `/nyheter` + `/nyheter/[slug]`
+- [ ] `/sponsorer` (tiered grid)
+- [ ] `/kontakt` + Resend
 
 ## Phase 5 — Quality
 
@@ -148,6 +148,7 @@ templates (Phase 4 builds real branded UI). Permanent: all `mappers.ts` / `types
 
 - use this section to write a brief review of completed tasks. This section will act as a review for the developer to keep track of progress. Mark each task completed with a date, review (anything else you feel is usefull). Keep the review short but concise.
 
+- **2026-09-10 — Phase 3 complete (Global): layout, SEO, routing, on-demand rendering.** `src/layouts/Base.astro` is the single layout every page now wraps — black header with the club logo + disclosure nav (mobile toggle with `aria-expanded`/Escape, `aria-current` active state as a red bottom-rule — a non-text accent, so the brand-red-on-black AA restriction does not apply), skip link, and a four-column footer (logo, sitemap nav, contact from `CLUB_CONTACT`, social icons) where each block self-omits when its data is empty. `src/components/SEO/index.astro` is a pure renderer (title/description/canonical/OG/Twitter + optional JSON-LD `<script>`) — it never fetches or falls back. `src/constants/seo.ts` holds hand-written `SEO_STATIC` for every static page (home `Organization`, `/kontakt` `LocalBusiness`, per-team `SportsTeam` via a `teamEntry` helper; news/sponsors carry no JSON-LD); `Base` derives the canonical URL and applies the global description default. `/nyheter/[slug]` gets an inline placeholder `SeoEntry` — real per-article derivation is Phase 4. Added `src/pages/404.astro`, `public/robots.txt`, `public/og-default.jpg`, `public/logo.png`. **All routes renamed to Swedish slugs:** `/herrlaget /damlaget /ungdomslaget /nyheter /nyheter/[slug] /sponsorer /kontakt` (Hero fallback `ctaUrl` and TeamPage mapper/type comments updated to match). **On-demand rendering:** `astro.config.mjs` gains `site: 'https://team4q.se'`, the `@astrojs/vercel` adapter, and `@astrojs/sitemap`; `output` stays `'static'` and only `/kontakt` opts out with `export const prerender = false`, so it alone builds as a serverless function. `astro check` (0 errors, 49 files) + `astro build` green — 8 static routes prerendered, `/kontakt` as a function, `sitemap-index.xml` emitted. **Open Phase 3 item:** the Hygraph → Vercel rebuild webhook is a dashboard config task for the developer (needs both accounts), not code. **Developer TODO carried forward:** `src/constants/contact.ts` still has placeholder phone/socials/address — empty strings self-omit everywhere so nothing breaks, but they need real values before launch.
 - **2026-08-29 — Phase 2 complete: graphql-codegen + live Hygraph swap.** `codegen.ts` + `pnpm codegen` (`node --env-file=.env`) generate `src/gql/generated.ts` (committed, 54 lines, deterministic) from the live schema. Plugin is **`typescript-operations` only** — pairing it with the `typescript` plugin (the planned approach) emitted duplicate identifiers for every selection-set enum in codegen v6 and no config flag fixed it; `typescript-operations` alone is self-contained and gives exactly the `[Name]Query` result types the RD types need. Each `types.ts` now derives `[Name]RD` from `[Name]Query` (image fields widened via `RawImage` in `src/lib/resolveImage.ts` so `fallback.ts` keeps local build-optimised imports; live responses supply `{ url, width, height }`), plus a `[Name]ResponseRD` wrapper used as the `fetchWithFallback`/`fetchOrFail` `T`. All 7 mappers (Hero, NewsCard, Sponsor, TeamPage, Fixture, Training, Result) now call the real client with an inline `gql` query; `fallback.ts` reshaped to the response wrapper; `dummy.ts` deleted for the three `fetchOrFail` models. Fixture/Training mappers return `{ ok } | { ok:false; contact }` (new `src/constants/contact.ts`, phone TODO); Result returns `[]` on failure. `src/components/ResolvedImage.astro` is the single local-vs-remote `<Image>` branch; `astro.config.mjs` gains `image.domains` for the Hygraph CDN. `astro check` (0 errors, 45 files) + `astro build` (8 pages) green **against live Hygraph** — verified in `dist/`: real headings, `publishedDate_DESC` news order, 6 sponsors, affiliation via `teamModel`, remote assets optimised to `_astro/*.webp`, `teamLabel` derivation. Not done here (Phase 4): the message-block UI, `/news/[slug]` detail route, tiered sponsor grid.
 - **2026-08-29 — Phase 2: Hygraph permissions + schema re-reconciliation + interim realignment.**
   - **Permissions.** Live-probed the Hygraph endpoint. Fixed the Permanent Auth Token to `Read · all models · Published stage` only (all mutations + DRAFT reads now 403), and disabled the unauthenticated public Content API entirely (was exposing `users` and `clubMemberModels.email` with no token). Known residual: the PAT's `All models` grant still covers the `User` system model — low severity, build-token only; deferred. See the `project_hygraph-permissions-posture` memory.

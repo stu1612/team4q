@@ -1,5 +1,5 @@
-// Wired to fetchWithFallback, keyed by team slug. Not rendered until the /mens /womens
-// /juniors routes are built in Phase 4.
+// Wired to fetchWithFallback, keyed by team slug. Not rendered until the /herrlaget
+// /damlaget /ungdomslaget routes are built in Phase 4.
 
 import { gql } from "graphql-request";
 import { fetchWithFallback } from "../../lib/hygraphClient";
