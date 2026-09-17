@@ -1,6 +1,42 @@
 @import "tailwindcss";
-@import "@fontsource-variable/oswald";
-@import "@fontsource-variable/source-sans-3";
+
+/*
+  Self-hosted variable fonts — hand-written, Latin-only, in place of the packages'
+  generated stylesheets. Two reasons:
+
+  1. The packages' index.css ships 5 (Oswald) / 14 (Source Sans 3) @font-face blocks —
+     Cyrillic, Greek, Vietnamese, italics — none of which this all-Swedish-content site
+     ever renders. Swedish's å/ä/ö (U+00E5/E4/F6) fall inside the plain Latin
+     U+0000-00FF range, so a single normal-weight Latin file per family is enough.
+  2. Both packages hardcode font-display: swap, which was causing a visible flash of
+     fallback-font text that re-flows to the branded font once it downloads (FOUT) on
+     every load/navigation. font-display: optional removes the swap entirely — the
+     fallback font is used for that page view with no later reflow if the font isn't
+     already available; paired with the <link rel="preload"> in Base.astro's <head>, the
+     branded font wins almost every time in practice.
+*/
+@font-face {
+  font-family: "Oswald Variable";
+  font-style: normal;
+  font-display: optional;
+  font-weight: 200 700;
+  src: url("@fontsource-variable/oswald/files/oswald-latin-wght-normal.woff2") format("woff2-variations");
+  /* Exact Latin unicode-range copied from the package's own index.css. */
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Source Sans 3 Variable";
+  font-style: normal;
+  font-display: optional;
+  font-weight: 200 900;
+  src: url("@fontsource-variable/source-sans-3/files/source-sans-3-latin-wght-normal.woff2")
+    format("woff2-variations");
+  /* Exact Latin unicode-range copied from the package's own index.css. */
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
 /*
   T4Q design tokens. Brand colours (black/white/red) — do not introduce
@@ -54,6 +90,12 @@
   --text-label--line-height: 1.2;
   --text-label--letter-spacing: 0.05em;
   --text-label--font-weight: 700;
+
+  /* Page content width. Overrides Tailwind's default --container-6xl (72rem/1152px) —
+     every max-w-6xl usage (Base.astro's header/footer, and any future section container)
+     picks this up automatically, so there is one source of truth for the site's max
+     content width rather than a value repeated per component. */
+  --container-6xl: 87.5rem; /* 1400px */
 }
 
 /*

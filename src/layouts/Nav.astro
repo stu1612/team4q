@@ -1,0 +1,87 @@
+---
+// Header + primary nav — extracted from Base.astro so nav and footer can be iterated on
+// independently. Mobile disclosure toggle (aria-expanded + Escape-to-close) and
+// aria-current active-state per the /accessibility skill. Styled entirely with Tailwind
+// utilities (incl. the aria-*/data-* attribute variants) — no separate <style> block.
+import { Image } from "astro:assets";
+import logo from "../images/logos/t4q-logo.png";
+import { NAV_LINKS } from "../constants/nav";
+
+const currentPath = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const isActive = (href: string): boolean => {
+  const clean = href.replace(/\/+$/, "") || "/";
+  return clean === "/" ? currentPath === "/" : currentPath === clean || currentPath.startsWith(`${clean}/`);
+};
+---
+
+<header class="bg-black text-white">
+  <nav
+    aria-label="Huvudmeny"
+    class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-3 md:flex-nowrap"
+  >
+    <a
+      href="/"
+      class="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+      aria-label="Team Fourth Quarter — hem"
+    >
+      <Image src={logo} alt="" width={45} height={44} loading="eager" />
+      <span class="font-display text-h4 uppercase tracking-wide text-white">Team Fourth Quarter</span>
+    </a>
+
+    <button
+      id="nav-toggle"
+      type="button"
+      class="inline-flex cursor-pointer items-center justify-center border-0 bg-transparent p-1.5 text-white md:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+      aria-expanded="false"
+      aria-controls="primary-nav"
+      aria-label="Öppna meny"
+    >
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <line x1="3" y1="6" x2="21" y2="6" />
+        <line x1="3" y1="12" x2="21" y2="12" />
+        <line x1="3" y1="18" x2="21" y2="18" />
+      </svg>
+    </button>
+
+    <ul
+      id="primary-nav"
+      data-open="false"
+      class="hidden w-full flex-col pt-2 data-[open=true]:flex lg:flex lg:w-auto lg:flex-row lg:items-center lg:gap-1 lg:pt-0"
+    >
+      {
+        NAV_LINKS.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="block border-b-3 border-b-transparent px-3 py-2 font-display text-small uppercase tracking-wide text-white hover:underline hover:underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white aria-[current=page]:border-b-brand-red"
+              aria-current={isActive(link.href) ? "page" : undefined}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.getElementById("nav-toggle");
+  const list = document.getElementById("primary-nav");
+  if (toggle && list) {
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Stäng meny" : "Öppna meny");
+      list.dataset.open = String(open);
+    };
+    toggle.addEventListener("click", () => {
+      setOpen(toggle.getAttribute("aria-expanded") !== "true");
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+  }
+</script>
