@@ -16,3 +16,16 @@ const TEAM_LABELS: Record<string, string> = {
 export function teamLabel(slug: string): string {
   return TEAM_LABELS[slug] ?? slug.charAt(0).toUpperCase() + slug.slice(1);
 }
+
+// Short uppercase form for the news-card category tag — design-brief.md: "the tag shows
+// the TeamTag value — HERR / DAM / UNGDOM".
+const TEAM_TAGS_SHORT: Record<string, string> = {
+  herrlaget: "HERR",
+  damlaget: "DAM",
+  ungdomslaget: "UNGDOM",
+};
+
+/** Resolve a team's short news-tag label from its slug. Falls back to the upper-cased slug. */
+export function teamTagShort(slug: string): string {
+  return TEAM_TAGS_SHORT[slug] ?? slug.toUpperCase();
+}
