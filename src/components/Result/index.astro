@@ -1,22 +1,44 @@
 ---
-// Simple test render — not brand UI, see /data-mapping skill for the real build in Phase 4.
+// Homepage "Senaste resultat" section — the latest result as a single full-width branded
+// banner. ResultModel is a cosmetic banner: no result, a stale one, or a failed fetch all
+// resolve to null here, and the whole section (heading included) renders nothing. Independent
+// of the fixtures section — see Fixture/index.astro.
 import ResolvedImage from "../ResolvedImage.astro";
-import { getResultVMs } from "./mappers";
+import { getLatestResultVM } from "./mappers";
 
-const results = await getResultVMs();
+const result = await getLatestResultVM();
 ---
 
-<section>
-	<h2>Results</h2>
-	{results.length === 0 && <p>No visible results.</p>}
-	<ul>
-		{results.map((result) => (
-			<li>
-				<ResolvedImage src={result.backgroundImage} alt="" width={200} height={120} />
-				{result.hasTeam && <strong>{result.teamLabel}: </strong>}
-				{result.homeTeam} {result.homeScore} – {result.awayScore} {result.awayTeam}
-				{result.hasDate && <p>{result.date}</p>}
-			</li>
-		))}
-	</ul>
-</section>
+{
+  result && (
+    <section aria-labelledby="resultat-heading" class="mx-auto max-w-6xl px-4 py-12">
+      <h2 id="resultat-heading" class="m-0 mb-6 font-display text-h2 uppercase text-black">
+        Senaste resultat
+      </h2>
+
+      <div class="relative isolate flex min-h-64 items-end overflow-hidden bg-black md:min-h-72">
+        {/* Decorative branded backdrop — the score and teams are the text alternative. */}
+        <ResolvedImage
+          src={result.backgroundImage}
+          alt=""
+          width={1600}
+          height={640}
+          loading="lazy"
+          class="absolute inset-0 h-full w-full object-cover"
+        />
+        <div class="absolute inset-0 bg-[linear-gradient(to_top,rgb(0_0_0/0.8)_0%,rgb(0_0_0/0.45)_50%,rgb(0_0_0/0.2)_100%)]" />
+        <div class="z-10 flex w-full flex-col items-start gap-3 p-4 md:p-8">
+          {result.hasTeam && (
+            <span class="bg-brand-red px-2 py-0.5 font-display text-label uppercase text-white">
+              {result.tagLabel}
+            </span>
+          )}
+          <p class="m-0 font-display text-h2 uppercase text-white md:text-h1">
+            {result.homeTeam} {result.homeScore} – {result.awayScore} {result.awayTeam}
+          </p>
+          {result.hasDate && <p class="m-0 text-small text-white/85">{result.dateLabel}</p>}
+        </div>
+      </div>
+    </section>
+  )
+}

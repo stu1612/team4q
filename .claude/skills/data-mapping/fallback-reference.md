@@ -51,8 +51,8 @@ holds the pattern.
 - `date` (Date), `startTime`, `endTime`, `location`, `homeTeam`, `awayTeam`, `heading` —
   **Required** (`location` is `.trim()`ed by the mapper — one current record has a leading
   tab / the typo "Idrottshalen")
-- `isActive` (`IsActive` enum) — **Required**; `isVisible = isActive === "active"`
-  (past/upcoming split deferred to Phase 4 — see Compound Visibility)
+- `isActive` (`IsActive` enum) — **Required**; `isVisible = isActive === "active"`. The
+  past/upcoming split is a separate derived `isUpcoming` on the VM — see Compound Visibility
 - `coverImage` (Asset) — **Flag** (`hasCoverImage`)
 - `teamModel` — **Flag** (`hasTeam`) — schema permits null; always present in practice, but
   the mapper guards rather than assuming
@@ -161,8 +161,11 @@ reason to stop rendering (28-day staleness from `publishedAt`). The mapper combi
 into one derived flag (`isVisible`) — the UI checks only that. `isActive` may suppress
 content early; it may never override the second condition back into visibility.
 
-`FixtureModel` will gain an analogous compound flag in Phase 4 for the past/upcoming split;
-for now its `isVisible` is just `isActive === "active"`.
+`FixtureModel` has an analogous derived flag, `isUpcoming` (implemented with the homepage
+Matcher section): `!hasPassedStockholm(date, endTime)` — a match stays upcoming until its
+`endTime` passes, judged in Europe/Stockholm time (`src/lib/formatDate.ts`). `getFixtureVMs()`
+returns every `isActive` fixture with the flag set; a consumer chooses what to do with past
+ones. `getUpcomingFixtureVMs(limit)` is the homepage's filtered/sorted/limited view.
 
 ---
 

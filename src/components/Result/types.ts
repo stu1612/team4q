@@ -21,7 +21,11 @@ export interface ResultVM {
   awayScore: number;
   hasTeam: boolean;
   teamLabel: string;
+  /** HERR / DAM / UNGDOM — the short tag; "" when the result has no team. */
+  tagLabel: string;
   backgroundImage: ImageMetadata | string;
   hasDate: boolean;
   date: string | null;
+  /** Swedish display date; "" when `hasDate` is false. */
+  dateLabel: string;
 }
