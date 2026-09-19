@@ -1,8 +1,9 @@
 import { gql } from "graphql-request";
 import placeholderCoverImage from "../../images/fallback/news/result-news.jpg";
+import { formatDateSv } from "../../lib/formatDate";
 import { fetchWithFallback } from "../../lib/hygraphClient";
 import { resolveImage, resolveImageOrNull } from "../../lib/resolveImage";
-import { teamLabel } from "../../lib/teamLabel";
+import { teamLabel, teamTagShort } from "../../lib/teamLabel";
 import { newsCardFallback } from "./fallback";
 import type { NewsCardRD, NewsCardResponseRD, NewsCardVM } from "./types";
 
@@ -42,6 +43,7 @@ const NEWS_QUERY = gql`
 function toVM(rd: NewsCardRD): NewsCardVM {
   const author = rd.clubMemberModel;
   const hasAuthor = Boolean(author && author.name);
+  const hasTeam = Boolean(rd.teamModel);
   return {
     heading: rd.heading,
     slug: rd.slug,
@@ -53,10 +55,13 @@ function toVM(rd: NewsCardRD): NewsCardVM {
     authorRole: author?.role ?? "",
     hasAuthorPhoto: Boolean(author?.profileImage),
     authorPhoto: resolveImageOrNull(author?.profileImage),
-    hasTeam: Boolean(rd.teamModel),
-    teamLabel: rd.teamModel ? teamLabel(rd.teamModel.slug) : "",
+    hasTeam,
+    teamLabel: hasTeam ? teamLabel(rd.teamModel!.slug) : "",
+    tagLabel: hasTeam ? teamTagShort(rd.teamModel!.slug) : "",
     // Default-with-derived-placeholder: always resolve to something renderable.
     coverImage: rd.coverImage ? resolveImage(rd.coverImage) : placeholderCoverImage,
+    dateLabel: formatDateSv(rd.publishedDate),
+    href: `/nyheter/${rd.slug}`,
   };
 }
 

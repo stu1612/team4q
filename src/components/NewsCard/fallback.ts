@@ -2,6 +2,10 @@
 // NewsCardList query result: `teamModel` relation, `clubMemberModel` author, `body` as a
 // RichText { html, text }. Cover images stay local imports; author photo is left null to
 // exercise the hasAuthorPhoto=false path.
+//
+// Ordered newest-first (matches the live query's publishedDate_DESC) since the homepage's
+// 5-card mosaic assigns cards positionally — a Hygraph outage should still render the full
+// mosaic, not a hole in it, so this needs exactly 5 entries, not 4.
 
 import teamNews from "../../images/fallback/news/team-news.jpeg";
 import womenNews from "../../images/fallback/news/women-news.jpg";
@@ -19,6 +23,48 @@ const p = (text: string) => ({ html: `<p>${text}</p>`, text });
 
 export const newsCardFallback: NewsCardResponseRD = {
   newsCardModels: [
+    {
+      heading: "Ny sponsor ansluter till Team Fourth Quarter",
+      slug: "ny-sponsor-ansluter-till-team-fourth-quarter",
+      publishedDate: "2026-08-25",
+      excerpt:
+        "Klubben välkomnar en ny sponsor inför den kommande säsongen – ett viktigt steg för verksamheten.",
+      body: p(
+        "Team Fourth Quarter kan meddela en ny sponsor inför säsongen. Samarbetet stärker klubbens ekonomi och ger bättre förutsättningar för samtliga lag.",
+      ),
+      // Reuses an existing fallback asset (no dedicated 5th image yet) — same "preset
+      // branded asset" convention fallback-reference.md documents for ResultModel.
+      coverImage: teamNews,
+      // General club news — no team tag, exercises the hasTeam=false path.
+      teamModel: null,
+      clubMemberModel: author,
+    },
+    {
+      heading: "Se höjdpunkterna från senaste helgens matcher",
+      slug: "se-hoejdpunkterna-fran-senaste-helgens-matcher",
+      publishedDate: "2026-08-18",
+      excerpt:
+        "En händelserik helg med matcher för samtliga lag – här är en sammanfattning.",
+      body: p(
+        "Helgen bjöd på matcher för klubbens lag, med bra insatser genom hela truppen. Håll utkik efter kommande matcher i kalendern och kom gärna och heja fram laget på plats.",
+      ),
+      coverImage: resultNews,
+      teamModel: null,
+      clubMemberModel: author,
+    },
+    {
+      heading: "Ungdomslaget fortsätter klubbens satsning på unga spelare",
+      slug: "ungdomslaget-fortsaetter-klubbens-satsning-pa-unga-spelare",
+      publishedDate: "2026-08-10",
+      excerpt:
+        "Klubbens ungdomssatsning fortsätter att växa, med fler unga spelare som får chansen att utvecklas.",
+      body: p(
+        "T4Q:s ungdomslag fortsätter att vara en viktig del av klubbens långsiktiga arbete. Genom regelbunden träning och matchning får unga spelare möjlighet att utvecklas i sin egen takt.",
+      ),
+      coverImage: juniorNews,
+      teamModel: { name: "Ungdom", slug: "ungdomslaget" },
+      clubMemberModel: author,
+    },
     {
       heading: "Herrlaget kör igång försäsongen med full trupp",
       slug: "herrlaget-koer-igang-foersaesongen-med-full-trupp",
@@ -43,33 +89,6 @@ export const newsCardFallback: NewsCardResponseRD = {
       ),
       coverImage: womenNews,
       teamModel: { name: "Dam", slug: "damlaget" },
-      clubMemberModel: author,
-    },
-    {
-      heading: "Ungdomslaget fortsätter klubbens satsning på unga spelare",
-      slug: "ungdomslaget-fortsaetter-klubbens-satsning-pa-unga-spelare",
-      publishedDate: "2026-08-10",
-      excerpt:
-        "Klubbens ungdomssatsning fortsätter att växa, med fler unga spelare som får chansen att utvecklas.",
-      body: p(
-        "T4Q:s ungdomslag fortsätter att vara en viktig del av klubbens långsiktiga arbete. Genom regelbunden träning och matchning får unga spelare möjlighet att utvecklas i sin egen takt.",
-      ),
-      coverImage: juniorNews,
-      teamModel: { name: "Ungdom", slug: "ungdomslaget" },
-      clubMemberModel: author,
-    },
-    {
-      heading: "Se höjdpunkterna från senaste helgens matcher",
-      slug: "se-hoejdpunkterna-fran-senaste-helgens-matcher",
-      publishedDate: "2026-08-18",
-      excerpt:
-        "En händelserik helg med matcher för samtliga lag – här är en sammanfattning.",
-      body: p(
-        "Helgen bjöd på matcher för klubbens lag, med bra insatser genom hela truppen. Håll utkik efter kommande matcher i kalendern och kom gärna och heja fram laget på plats.",
-      ),
-      coverImage: resultNews,
-      // No team tag — general club news is a valid state (exercises the hasTeam=false path).
-      teamModel: null,
       clubMemberModel: author,
     },
   ],

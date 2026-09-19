@@ -34,5 +34,11 @@ export interface NewsCardVM {
   authorPhoto: ImageMetadata | string | null;
   hasTeam: boolean;
   teamLabel: string;
+  /** Short category-tag form ("HERR"/"DAM"/"UNGDOM"), "" when !hasTeam. */
+  tagLabel: string;
   coverImage: ImageMetadata | string;
+  /** Swedish-formatted display date, derived from publishedDate. */
+  dateLabel: string;
+  /** Link to the article's detail route. */
+  href: string;
 }

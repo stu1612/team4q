@@ -1,29 +1,140 @@
 ---
-// Simple test render — not brand UI, see /data-mapping skill for the real build in Phase 4.
+// Homepage "Nyheter" section — a fixed 5-card mosaic (not a general list; that's the
+// /nyheter listing page's own, separate build later). Built directly for this one
+// concrete use per the standing "no shared components yet" instruction.
+//
+// Mobile-first, all cards square:
+//
+//   base   1 col     every card full-bleed (image + scrim, text bottom-left)
+//   md     2 cols    card1 card2 / card3 card4 / card5 spanning both columns — still all
+//                    full-bleed
+//   lg     3 cols    card1 card2 card3 / card4 card5 (card5 spans col2+col3). card1 and
+//                    card5 stay full-bleed; 2/3/4 switch to half image / half white
+//                    text panel.
+//
+// Achieved via plain DOM order + a single col-span-2 on card5 (from md up) — CSS Grid
+// auto-placement does the rest. The "split" cards (2/3/4) are one DOM tree whose classes
+// flip between the full-bleed and half/half treatments at lg, rather than two duplicated
+// trees shown/hidden per breakpoint.
 import ResolvedImage from "../ResolvedImage.astro";
 import { getNewsCardVMs } from "./mappers";
+import type { NewsCardVM } from "./types";
 
-const newsCards = await getNewsCardVMs();
+const HOMEPAGE_NEWS_COUNT = 5;
+const cards = (await getNewsCardVMs()).slice(0, HOMEPAGE_NEWS_COUNT);
+const [card1, card2, card3, card4, card5] = cards;
+
+type Slot = {
+  card: NewsCardVM;
+  /** "bleed" = full-bleed at every breakpoint; "split" = full-bleed below lg, half image /
+   *  half white panel from lg up. */
+  variant: "bleed" | "split";
+  wrapClass: string;
+  imgWidth: number;
+  imgHeight: number;
+};
+
+const slots: Slot[] = [
+  { card: card1, variant: "bleed", wrapClass: "", imgWidth: 800, imgHeight: 800 },
+  { card: card2, variant: "split", wrapClass: "", imgWidth: 800, imgHeight: 600 },
+  { card: card3, variant: "split", wrapClass: "", imgWidth: 800, imgHeight: 600 },
+  { card: card4, variant: "split", wrapClass: "", imgWidth: 800, imgHeight: 600 },
+  {
+    card: card5,
+    variant: "bleed",
+    // md: alone in row 3, spanning both columns as a 2:1 banner (about one square cell
+    // tall). lg: sits beside card4 in row 2 — cancel the fixed ratio and stretch to fill
+    // the row height set by card4's aspect-square instead.
+    wrapClass: "md:col-span-2 md:aspect-2/1 lg:aspect-auto lg:h-full",
+    imgWidth: 1600,
+    imgHeight: 1000,
+  },
+];
 ---
 
-<section>
-	<h2>News</h2>
-	<ul>
-		{newsCards.map((card) => (
-			<li>
-				<ResolvedImage src={card.coverImage} alt="" width={200} height={120} />
-				<strong>{card.heading}</strong> — {card.publishedDate}
-				<p>{card.excerpt}</p>
-				{card.hasAuthor && (
-					<p>
-						By {card.authorName}
-						{card.hasAuthorPhoto && (
-							<ResolvedImage src={card.authorPhoto!} alt="" width={40} height={40} />
-						)}
-						{card.hasTeam && <span> · {card.teamLabel}</span>}
-					</p>
-				)}
-			</li>
-		))}
-	</ul>
+<section aria-labelledby="nyheter-heading" class="mx-auto max-w-6xl px-4 py-12">
+  <div class="mb-6 flex flex-wrap items-baseline justify-between gap-2">
+    <h2 id="nyheter-heading" class="m-0 font-display text-h2 uppercase text-black">Nyheter</h2>
+    <a
+      href="/nyheter"
+      class="font-display text-small uppercase text-black hover:underline hover:underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+    >
+      Se alla →
+    </a>
+  </div>
+
+  {
+    // Guards against a short data set (fewer than 5 items) rather than rendering a broken
+    // mosaic with holes in it — render nothing until there are enough to fill it.
+    cards.length === HOMEPAGE_NEWS_COUNT && (
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {slots.map(({ card, variant, wrapClass, imgWidth, imgHeight }) =>
+          variant === "bleed" ? (
+            <article class={`relative isolate flex aspect-square items-end overflow-hidden bg-black ${wrapClass}`}>
+              <ResolvedImage
+                src={card.coverImage}
+                alt={card.heading}
+                width={imgWidth}
+                height={imgHeight}
+                loading="lazy"
+                class="absolute inset-0 h-full w-full object-cover"
+              />
+              <div class="absolute inset-0 bg-[linear-gradient(to_top,rgb(0_0_0/0.75)_0%,rgb(0_0_0/0.25)_45%,rgb(0_0_0/0)_75%)]" />
+              {/* z-10 (not `relative`) lifts the text above the image/scrim while keeping the
+                  <article> as the containing block for the heading link's stretched ::after,
+                  so the whole card is clickable, not just the text block. */}
+              <div class="z-10 flex flex-col items-start gap-2 p-4">
+                {card.hasTeam && (
+                  <span class="bg-brand-red px-2 py-0.5 font-display text-label uppercase text-white">
+                    {card.tagLabel}
+                  </span>
+                )}
+                <h3 class="m-0 font-display text-h4 text-white">
+                  <a href={card.href} class="after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+                    {card.heading}
+                  </a>
+                </h3>
+                <p class="m-0 line-clamp-2 text-small text-white/85">{card.excerpt}</p>
+                <p class="m-0 text-small text-white/70">{card.dateLabel}</p>
+                {/* Visual cue only — the heading link's stretched ::after already makes the card
+                    clickable, so this is aria-hidden rather than a second link to the same URL. */}
+                <span aria-hidden="true" class="text-small text-white underline underline-offset-4 md:hidden">Läs mer</span>
+              </div>
+            </article>
+          ) : (
+            <article class="relative isolate flex aspect-square flex-col justify-end overflow-hidden bg-black lg:bg-white">
+              {/* Below lg: absolute full-card image. From lg: an in-flow top half. */}
+              <div class="absolute inset-0 lg:relative lg:inset-auto lg:flex-1">
+                <ResolvedImage
+                  src={card.coverImage}
+                  alt={card.heading}
+                  width={imgWidth}
+                  height={imgHeight}
+                  loading="lazy"
+                  class="absolute inset-0 h-full w-full object-cover"
+                />
+              </div>
+              {/* Scrim only exists while the text sits over the photo (below lg). */}
+              <div class="absolute inset-0 bg-[linear-gradient(to_top,rgb(0_0_0/0.75)_0%,rgb(0_0_0/0.25)_45%,rgb(0_0_0/0)_75%)] lg:hidden" />
+              <div class="z-10 flex flex-col items-start gap-2 p-4 lg:flex-1 lg:justify-end lg:bg-white">
+                {card.hasTeam && (
+                  <span class="bg-brand-red px-2 py-0.5 font-display text-label uppercase text-white">
+                    {card.tagLabel}
+                  </span>
+                )}
+                <h3 class="m-0 font-display text-h4 text-white lg:text-black">
+                  <a href={card.href} class="after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:focus-visible:outline-black">
+                    {card.heading}
+                  </a>
+                </h3>
+                <p class="m-0 line-clamp-2 text-small text-white/85 lg:text-black/70">{card.excerpt}</p>
+                <p class="m-0 text-small text-white/70 lg:text-black/50">{card.dateLabel}</p>
+                <span aria-hidden="true" class="text-small text-white underline underline-offset-4 md:hidden">Läs mer</span>
+              </div>
+            </article>
+          ),
+        )}
+      </div>
+    )
+  }
 </section>
