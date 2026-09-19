@@ -1,7 +1,8 @@
 import { gql } from "graphql-request";
 import { fetchOrFail } from "../../lib/hygraphClient";
 import { resolveImage } from "../../lib/resolveImage";
-import { teamLabel } from "../../lib/teamLabel";
+import { formatDateSv } from "../../lib/formatDate";
+import { teamLabel, teamTagShort } from "../../lib/teamLabel";
 import type { ResultRD, ResultResponseRD, ResultVM } from "./types";
 
 const STALE_AFTER_DAYS = 28;
@@ -48,9 +49,11 @@ function toVM(rd: ResultRD): ResultVM {
     awayScore: rd.awayScore,
     hasTeam: Boolean(rd.teamModel),
     teamLabel: rd.teamModel ? teamLabel(rd.teamModel.slug) : "",
+    tagLabel: rd.teamModel ? teamTagShort(rd.teamModel.slug) : "",
     backgroundImage: resolveImage(rd.backgroundImage),
     hasDate: Boolean(rd.date),
     date: rd.date,
+    dateLabel: rd.date ? formatDateSv(rd.date) : "",
   };
 }
 
@@ -59,4 +62,10 @@ export async function getResultVMs(): Promise<ResultVM[]> {
   // ResultModel is a cosmetic banner — on failure render nothing, no message (per /graphql).
   if (!res.ok) return [];
   return res.data.resultModels.filter(isVisible).map(toVM);
+}
+
+/** The most recently published visible result (query is publishedAt_DESC), or null. */
+export async function getLatestResultVM(): Promise<ResultVM | null> {
+  const [latest] = await getResultVMs();
+  return latest ?? null;
 }

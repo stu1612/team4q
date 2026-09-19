@@ -32,8 +32,17 @@ export default defineConfig({
     plugins: [tailwindcss()]
   },
 
-  // On-demand rendering. `output` stays the default 'static'; only /kontakt opts out via
-  // `export const prerender = false`, so it alone becomes a serverless function.
-  adapter: vercel(),
+  // On-demand rendering. `output` stays the default 'static'; only `/` and /kontakt opt out
+  // via `export const prerender = false`, so they alone become serverless functions.
+  // ISR caches the on-demand `/` for an hour after each render, so time-dependent content
+  // (upcoming fixtures, 28-day result expiry) stays correct without a Hygraph publish.
+  // The setting is adapter-wide, so the /kontakt form route is excluded — it must never be
+  // cached.
+  adapter: vercel({
+    isr: {
+      expiration: 60 * 60,
+      exclude: ['/kontakt']
+    }
+  }),
   integrations: [sitemap()]
 });

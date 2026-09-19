@@ -32,6 +32,14 @@ export interface FixtureVM {
   awayTeam: string;
   hasTeam: boolean;
   teamLabel: string;
+  /** HERR / DAM / UNGDOM — the short card tag; "" when the fixture has no team. */
+  tagLabel: string;
+  /** Compound visibility: still to be played (its endTime hasn't passed, Stockholm time). */
+  isUpcoming: boolean;
+  dateLabel: string;
+  timeLabel: string;
+  /** Local start as "YYYY-MM-DDTHH:mm" for <time datetime>. */
+  isoDateTime: string;
   hasCoverImage: boolean;
   coverImage: ImageMetadata | string | null;
   hasAffiliation: boolean;

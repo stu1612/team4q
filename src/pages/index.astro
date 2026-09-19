@@ -2,12 +2,21 @@
 import Base from "../layouts/Base.astro";
 import Hero from "../components/Hero/index.astro";
 import NewsCard from "../components/NewsCard/index.astro";
+import Fixture from "../components/Fixture/index.astro";
+import Result from "../components/Result/index.astro";
 import { SEO_STATIC } from "../constants/seo";
-// Homepage — built section by section. Hero + Nyheter done; Fixtures/Results + Sponsors
+// Homepage — built section by section. Hero + Nyheter + Matcher & resultat done; Sponsors
 // to follow.
+//
+// On-demand (not prerendered) so the ISR setting in astro.config.mjs revalidates it hourly:
+// "upcoming" fixtures and the 28-day result expiry depend on the current time, which a
+// build-time render would freeze until the next Hygraph publish.
+export const prerender = false;
 ---
 
 <Base seo={SEO_STATIC.home}>
   <Hero />
   <NewsCard />
+  <Result />
+  <Fixture />
 </Base>

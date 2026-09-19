@@ -1,35 +1,94 @@
 ---
-// Simple test render — not brand UI, see /data-mapping skill for the real build in Phase 4.
-import ResolvedImage from "../ResolvedImage.astro";
-import { getFixtureVMs } from "./mappers";
+// Homepage "Kommande matcher" section — the next upcoming fixtures as cards. Independent of
+// the result banner — see Result/index.astro. Built directly for this one use per the
+// standing "no shared components yet" instruction.
+//
+// Cards are the locked "upcoming" treatment (outlined box, no fill). They are not links —
+// no fixtures route or per-match URL exists yet — so there is no focus state to style.
+import { getUpcomingFixtureVMs } from "./mappers";
 
-const result = await getFixtureVMs();
+const HOMEPAGE_FIXTURE_COUNT = 3;
+const result = await getUpcomingFixtureVMs(HOMEPAGE_FIXTURE_COUNT);
 ---
 
-<section>
-	<h2>Fixtures</h2>
-	{!result.ok && (
-		<p>
-			Vi upplever tekniska problem. För matchinformation, kontakta oss på{" "}
-			<a href={`mailto:${result.contact.email}`}>{result.contact.email}</a>.
-		</p>
-	)}
-	{result.ok && (
-		<ul>
-			{result.fixtures.map((fixture) => (
-				<li>
-					{fixture.hasCoverImage && (
-						<ResolvedImage src={fixture.coverImage!} alt="" width={200} height={120} />
-					)}
-					<strong>{fixture.heading}</strong>
-					{fixture.hasTeam && <span> ({fixture.teamLabel})</span>}
-					<p>{fixture.date} {fixture.startTime}–{fixture.endTime} · {fixture.location}</p>
-					<p>{fixture.homeTeam} vs {fixture.awayTeam}</p>
-					{fixture.hasAffiliation && (
-						<p><a href={fixture.affiliationUrl}>{fixture.affiliationName}</a></p>
-					)}
-				</li>
-			))}
-		</ul>
-	)}
+<section aria-labelledby="matcher-heading" class="mx-auto max-w-6xl px-4 py-12">
+  <h2 id="matcher-heading" class="m-0 mb-6 font-display text-h2 uppercase text-black">Kommande matcher</h2>
+
+  {
+    // fetchOrFail failure: a full message block, the same visual weight as the card row it
+    // replaces (per /graphql) — never stale or fake schedule data.
+    !result.ok && (
+      <div class="border-2 border-black bg-white p-6 md:p-8">
+        <p class="m-0 max-w-[60ch] text-h4 text-black">
+          Vi upplever tekniska problem. För matchinformation, kontakta oss på{" "}
+          <a
+            href={`mailto:${result.contact.email}`}
+            class="underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+          >
+            {result.contact.email}
+          </a>
+          {result.contact.phone && (
+            <>
+              {" "}
+              eller{" "}
+              <a
+                href={`tel:${result.contact.phone.replace(/\s+/g, "")}`}
+                class="underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+              >
+                {result.contact.phone}
+              </a>
+            </>
+          )}
+          .
+        </p>
+      </div>
+    )
+  }
+
+  {result.ok && result.fixtures.length === 0 && <p class="m-0 text-body text-black">Inga kommande matcher just nu.</p>}
+
+  {
+    result.ok && result.fixtures.length > 0 && (
+      <ul class="m-0 grid list-none grid-cols-1 gap-4 p-0 md:grid-cols-2 lg:grid-cols-3">
+        {result.fixtures.map((fixture) => (
+          <li>
+            <article class="flex h-full flex-col gap-4 border-2 border-black bg-white p-4">
+              <div class="flex items-center justify-between gap-2">
+                {fixture.hasTeam ? (
+                  <span class="bg-brand-red px-2 py-0.5 font-display text-label uppercase text-white">
+                    {fixture.tagLabel}
+                  </span>
+                ) : (
+                  <span />
+                )}
+                <time datetime={fixture.date} class="font-display text-small uppercase text-black">
+                  {fixture.dateLabel}
+                </time>
+              </div>
+
+              <h3 class="m-0 flex flex-col items-center gap-1 text-center font-display text-h3 uppercase text-black">
+                <span>{fixture.homeTeam}</span>
+                <span aria-hidden="true" class="text-small text-black/60">
+                  vs
+                </span>
+                <span class="sr-only">mot</span>
+                <span>{fixture.awayTeam}</span>
+              </h3>
+
+              <p class="m-0 self-center border-2 border-black px-4 py-1 font-display text-h3 text-black">
+                <time datetime={fixture.isoDateTime}>{fixture.timeLabel}</time>
+              </p>
+
+              <div class="mt-auto flex flex-col items-center gap-1 text-center">
+                {fixture.hasAffiliation && (
+                  <p class="m-0 font-display text-small uppercase text-black">{fixture.affiliationName}</p>
+                )}
+                <p class="m-0 text-small text-black/70">{fixture.location}</p>
+              </div>
+            </article>
+          </li>
+        ))}
+      </ul>
+    )
+  }
 </section>

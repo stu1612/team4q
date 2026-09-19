@@ -2,7 +2,8 @@ import { gql } from "graphql-request";
 import { CLUB_CONTACT } from "../../constants/contact";
 import { fetchOrFail } from "../../lib/hygraphClient";
 import { resolveImageOrNull } from "../../lib/resolveImage";
-import { teamLabel } from "../../lib/teamLabel";
+import { formatDateWeekdaySv, hasPassedStockholm } from "../../lib/formatDate";
+import { teamLabel, teamTagShort } from "../../lib/teamLabel";
 import type {
   FixtureListVM,
   FixtureRD,
@@ -56,6 +57,12 @@ function toVM(rd: FixtureRD): FixtureVM {
     awayTeam: rd.awayTeam,
     hasTeam: Boolean(team),
     teamLabel: team ? teamLabel(team.slug) : "",
+    tagLabel: team ? teamTagShort(team.slug) : "",
+    // A match counts as upcoming until its end time passes, so one in progress stays visible.
+    isUpcoming: !hasPassedStockholm(rd.date, rd.endTime),
+    dateLabel: formatDateWeekdaySv(rd.date),
+    timeLabel: rd.startTime,
+    isoDateTime: `${rd.date}T${rd.startTime}`,
     hasCoverImage: Boolean(rd.coverImage),
     coverImage: resolveImageOrNull(rd.coverImage),
     hasAffiliation,
@@ -69,12 +76,24 @@ export async function getFixtureVMs(): Promise<FixtureListVM> {
   const res = await fetchOrFail<FixtureResponseRD>(FIXTURE_QUERY);
   if (!res.ok) {
     // Time-sensitive content: no fake data. UI shows a full message block with contact
-    // details (Phase 4). isActive === "active" is the visibility gate; the past/upcoming
-    // split is a separate Phase 4 concern.
+    // details. isActive === "active" is the visibility gate; each VM carries its own
+    // `isUpcoming` so a consumer decides what to do with past fixtures (team pages, later).
     return { ok: false, contact: CLUB_CONTACT };
   }
   const fixtures = res.data.fixtureModels
     .filter((rd) => rd.isActive === "active")
     .map(toVM);
+  return { ok: true, fixtures };
+}
+
+/** The next `limit` fixtures still to be played, soonest first (query is date_ASC; the
+ *  time sort breaks same-day ties). */
+export async function getUpcomingFixtureVMs(limit: number): Promise<FixtureListVM> {
+  const list = await getFixtureVMs();
+  if (!list.ok) return list;
+  const fixtures = list.fixtures
+    .filter((fixture) => fixture.isUpcoming)
+    .sort((a, b) => a.isoDateTime.localeCompare(b.isoDateTime))
+    .slice(0, limit);
   return { ok: true, fixtures };
 }
