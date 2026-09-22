@@ -41,5 +41,5 @@ export interface TrainingVM {
 }
 
 export type TrainingListVM =
-  | { ok: true; sessions: TrainingVM[] }
+  | { ok: true; sessions: TrainingVM[]; coaches: CoachVM[] }
   | { ok: false; contact: ClubContact };

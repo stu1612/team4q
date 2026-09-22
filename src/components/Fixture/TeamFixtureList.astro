@@ -1,0 +1,130 @@
+---
+// Team-page "Matcher" section — every fixture for one team, past and upcoming together in
+// one list, each card styled by its own `isUpcoming` flag: upcoming keeps the outlined
+// white-box treatment (see the homepage's Kommande matcher, Fixture/index.astro); past
+// reuses the filled-black treatment already established for ResultModel, with the
+// kickoff-time box replaced by a plain "Spelad" label since FixtureModel has no score.
+// Independent of the team page's separate Resultat section (Result/TeamResultsList.astro),
+// which is the only place scores actually come from.
+import { getFixtureVMsByTeam } from "./mappers";
+
+interface Props {
+  teamSlug: string;
+}
+
+const { teamSlug } = Astro.props;
+const result = await getFixtureVMsByTeam(teamSlug);
+
+const upcoming = result.ok
+  ? result.fixtures.filter((fixture) => fixture.isUpcoming).sort((a, b) => a.isoDateTime.localeCompare(b.isoDateTime))
+  : [];
+const past = result.ok
+  ? result.fixtures.filter((fixture) => !fixture.isUpcoming).sort((a, b) => b.isoDateTime.localeCompare(a.isoDateTime))
+  : [];
+const ordered = [...upcoming, ...past];
+---
+
+<section aria-labelledby="matcher-heading" class="mx-auto max-w-6xl px-4 py-12">
+  <h2 id="matcher-heading" class="m-0 mb-6 font-display text-h2 uppercase text-black">Matcher</h2>
+
+  {
+    !result.ok && (
+      <div class="border-2 border-black bg-white p-6 md:p-8">
+        <p class="m-0 max-w-[60ch] text-h4 text-black">
+          Vi upplever tekniska problem. För matchinformation, kontakta oss på{" "}
+          <a
+            href={`mailto:${result.contact.email}`}
+            class="underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+          >
+            {result.contact.email}
+          </a>
+          {result.contact.phone && (
+            <>
+              {" "}
+              eller{" "}
+              <a
+                href={`tel:${result.contact.phone.replace(/\s+/g, "")}`}
+                class="underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+              >
+                {result.contact.phone}
+              </a>
+            </>
+          )}
+          .
+        </p>
+      </div>
+    )
+  }
+
+  {result.ok && ordered.length === 0 && <p class="m-0 text-body text-black">Inga matcher just nu.</p>}
+
+  {
+    result.ok && ordered.length > 0 && (
+      <ul class="m-0 grid list-none grid-cols-1 gap-4 p-0 md:grid-cols-2 lg:grid-cols-3">
+        {ordered.map((fixture) => (
+          <li>
+            <article
+              class={
+                fixture.isUpcoming
+                  ? "flex h-full flex-col gap-4 border-2 border-black bg-white p-4"
+                  : "flex h-full flex-col gap-4 bg-black p-4"
+              }
+            >
+              <div class="flex items-center justify-between gap-2">
+                {fixture.hasTeam ? (
+                  <span class="bg-brand-red px-2 py-0.5 font-display text-label uppercase text-white">
+                    {fixture.tagLabel}
+                  </span>
+                ) : (
+                  <span />
+                )}
+                <time
+                  datetime={fixture.date}
+                  class={
+                    fixture.isUpcoming
+                      ? "font-display text-small uppercase text-black"
+                      : "font-display text-small uppercase text-white/70"
+                  }
+                >
+                  {fixture.dateLabel}
+                </time>
+              </div>
+
+              <h3
+                class={
+                  fixture.isUpcoming
+                    ? "m-0 flex flex-col items-center gap-1 text-center font-display text-h3 uppercase text-black"
+                    : "m-0 flex flex-col items-center gap-1 text-center font-display text-h3 uppercase text-white"
+                }
+              >
+                <span>{fixture.homeTeam}</span>
+                <span aria-hidden="true" class={fixture.isUpcoming ? "text-small text-black/60" : "text-small text-white/60"}>
+                  vs
+                </span>
+                <span class="sr-only">mot</span>
+                <span>{fixture.awayTeam}</span>
+              </h3>
+
+              {fixture.isUpcoming ? (
+                <p class="m-0 self-center border-2 border-black px-4 py-1 font-display text-h3 text-black">
+                  <time datetime={fixture.isoDateTime}>{fixture.timeLabel}</time>
+                </p>
+              ) : (
+                <p class="m-0 self-center px-4 py-1 font-display text-h4 uppercase text-white/70">Spelad</p>
+              )}
+
+              <div class="mt-auto flex flex-col items-center gap-1 text-center">
+                {fixture.hasAffiliation && (
+                  <p class={fixture.isUpcoming ? "m-0 font-display text-small uppercase text-black" : "m-0 font-display text-small uppercase text-white/70"}>
+                    {fixture.affiliationName}
+                  </p>
+                )}
+                <p class={fixture.isUpcoming ? "m-0 text-small text-black/70" : "m-0 text-small text-white/70"}>{fixture.location}</p>
+              </div>
+            </article>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</section>

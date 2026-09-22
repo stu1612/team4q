@@ -1,0 +1,42 @@
+---
+// Team-page "Resultat" section — a compact grid of the team's visible results, reusing the
+// filled-black treatment established by the homepage banner (Result/index.astro), but as
+// repeating cards rather than one full-bleed hero band. No per-card photo — a grid of
+// background images would be visually heavy and the brief favours restraint over density.
+// Renders nothing when the team has no visible result (same "cosmetic banner, quietly
+// disappears" convention as the homepage — no message block, per /graphql).
+import { getResultVMsByTeam } from "./mappers";
+
+interface Props {
+  teamSlug: string;
+}
+
+const { teamSlug } = Astro.props;
+const results = await getResultVMsByTeam(teamSlug);
+---
+
+{
+  results.length > 0 && (
+    <section aria-labelledby="resultat-heading" class="mx-auto max-w-6xl px-4 py-12">
+      <h2 id="resultat-heading" class="m-0 mb-6 font-display text-h2 uppercase text-black">
+        Resultat
+      </h2>
+
+      <ul class="m-0 grid list-none grid-cols-1 gap-4 p-0 md:grid-cols-2 lg:grid-cols-3">
+        {results.map((result) => (
+          <li>
+            <article class="flex h-full flex-col items-center gap-3 bg-black p-4 text-center">
+              {result.hasTeam && (
+                <span class="bg-brand-red px-2 py-0.5 font-display text-label uppercase text-white">{result.tagLabel}</span>
+              )}
+              <p class="m-0 font-display text-h3 uppercase text-white">
+                {result.homeTeam} {result.homeScore} – {result.awayScore} {result.awayTeam}
+              </p>
+              {result.hasDate && <p class="m-0 text-small text-white/70">{result.dateLabel}</p>}
+            </article>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}

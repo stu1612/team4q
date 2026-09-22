@@ -59,6 +59,12 @@ holds the pattern.
 - Affiliation — **removed from Fixture.** Reached through `teamModel.teamAffiliation` /
   `affiliationUrl` / `affiliationLogo` (see TeamModel); `hasAffiliation` derived from those
   nested fields.
+- **Team-scoped query** (2026-09-22, team pages): `getFixtureVMsByTeam(slug)` — a second
+  named query, `where: { teamModel: { slug: $slug } }`, alongside the unfiltered
+  `getFixtureVMs()`; both share the same field selection and `toVM`. Returns every active
+  fixture for that team, past and upcoming together — each VM's own `isUpcoming` lets the
+  team page style/group them differently. No new "past fixture" query — `isActive` is still
+  the only visibility gate.
 
 ## PlayerModel
 
@@ -80,6 +86,12 @@ holds the pattern.
   (was a single required Coach). Mapper resolves `coaches: CoachVM[]` + `hasCoaches`.
   - per coach: `.name` — **Flag**; `.role` — **Default** `""` ("Tränare" in current
     content); `.profileImage` — **Flag** (`hasCoachPhoto`)
+- **Team-scoped query** (2026-09-22, team pages): `getTrainingVMsByTeam(slug)`, same
+  `where: { teamModel: { slug: $slug } }` pattern as Fixture. No date filtering — every
+  `isActive` session for the team, same as the unfiltered query. `TrainingListVM`'s `ok`
+  branch also carries `coaches: CoachVM[]`, de-duplicated by name across every returned
+  session's `clubMemberModels` — a coach appearing on multiple sessions gets one card, not
+  one per session. Computed by both `getTrainingVMs()` and `getTrainingVMsByTeam()`.
 
 ## TeamPageModel
 
@@ -134,6 +146,12 @@ Deliberately decoupled from FixtureModel — no reference between them. A Result
 archival entry made after a game; referencing a Fixture would add admin friction for a
 sync-safety benefit that doesn't apply here. Background Image is one of three pre-set
 branded assets (mens/womens/juniors), selected per result — not a fresh upload each time.
+
+**Team-scoped query** (2026-09-22, team pages): `getResultVMsByTeam(slug)` — same
+`where: { teamModel: { slug: $slug } }` pattern, same `isVisible`/`toVM`, still ordered
+`publishedAt_DESC`. Returns an array (not a single latest), rendered as its own "Resultat"
+section on the team page — separate from and independent of that page's Fixture list, since
+Fixture has no score field. Renders nothing when empty, same as the homepage banner.
 
 ## ClubMemberModel  *(new — was the `ClubMemberComponent` shared component)*
 
