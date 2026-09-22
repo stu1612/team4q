@@ -11,33 +11,47 @@ import type {
   FixtureVM,
 } from "./types";
 
+const FIXTURE_FIELDS = `
+  heading
+  date
+  startTime
+  endTime
+  location
+  homeTeam
+  awayTeam
+  isActive
+  coverImage {
+    url
+    width
+    height
+  }
+  teamModel {
+    name
+    slug
+    teamAffiliation
+    affiliationUrl
+    affiliationLogo {
+      url
+      width
+      height
+    }
+  }
+`;
+
 const FIXTURE_QUERY = gql`
   query FixtureList {
     fixtureModels(orderBy: date_ASC) {
-      heading
-      date
-      startTime
-      endTime
-      location
-      homeTeam
-      awayTeam
-      isActive
-      coverImage {
-        url
-        width
-        height
-      }
-      teamModel {
-        name
-        slug
-        teamAffiliation
-        affiliationUrl
-        affiliationLogo {
-          url
-          width
-          height
-        }
-      }
+      ${FIXTURE_FIELDS}
+    }
+  }
+`;
+
+// Team-scoped variant for team pages — same fields, filtered server-side. Mirrors the
+// where: { teamModel: { slug: $slug } } precedent from TeamPage/mappers.ts.
+const FIXTURE_BY_TEAM_QUERY = gql`
+  query FixtureListByTeam($slug: String!) {
+    fixtureModels(where: { teamModel: { slug: $slug } }, orderBy: date_ASC) {
+      ${FIXTURE_FIELDS}
     }
   }
 `;
@@ -72,18 +86,18 @@ function toVM(rd: FixtureRD): FixtureVM {
   };
 }
 
+// isActive === "active" is the visibility gate; each VM carries its own `isUpcoming` so a
+// consumer decides what to do with past fixtures (team pages).
+function mapActiveFixtures(rows: FixtureRD[]): FixtureVM[] {
+  return rows.filter((rd) => rd.isActive === "active").map(toVM);
+}
+
 export async function getFixtureVMs(): Promise<FixtureListVM> {
   const res = await fetchOrFail<FixtureResponseRD>(FIXTURE_QUERY);
-  if (!res.ok) {
-    // Time-sensitive content: no fake data. UI shows a full message block with contact
-    // details. isActive === "active" is the visibility gate; each VM carries its own
-    // `isUpcoming` so a consumer decides what to do with past fixtures (team pages, later).
-    return { ok: false, contact: CLUB_CONTACT };
-  }
-  const fixtures = res.data.fixtureModels
-    .filter((rd) => rd.isActive === "active")
-    .map(toVM);
-  return { ok: true, fixtures };
+  // Time-sensitive content: no fake data on failure. UI shows a full message block with
+  // contact details.
+  if (!res.ok) return { ok: false, contact: CLUB_CONTACT };
+  return { ok: true, fixtures: mapActiveFixtures(res.data.fixtureModels) };
 }
 
 /** The next `limit` fixtures still to be played, soonest first (query is date_ASC; the
@@ -96,4 +110,12 @@ export async function getUpcomingFixtureVMs(limit: number): Promise<FixtureListV
     .sort((a, b) => a.isoDateTime.localeCompare(b.isoDateTime))
     .slice(0, limit);
   return { ok: true, fixtures };
+}
+
+/** Every active fixture for one team — both past and upcoming; each VM's own `isUpcoming`
+ *  flag lets the caller group/style them (used by the team-page fixture list). */
+export async function getFixtureVMsByTeam(slug: string): Promise<FixtureListVM> {
+  const res = await fetchOrFail<FixtureResponseRD>(FIXTURE_BY_TEAM_QUERY, { slug });
+  if (!res.ok) return { ok: false, contact: CLUB_CONTACT };
+  return { ok: true, fixtures: mapActiveFixtures(res.data.fixtureModels) };
 }

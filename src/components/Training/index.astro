@@ -1,5 +1,100 @@
 ---
-// TODO: implement in Phase 4 UI Build (see /data-mapping skill)
+// Team-page "Träningstider" section — every active training session for one team, no date
+// filtering (isActive is the sole visibility gate, same as the model already works
+// elsewhere), plus a de-duplicated "Tränare" sub-section for the sessions' coaches.
+import ResolvedImage from "../ResolvedImage.astro";
+import { formatDateWeekdaySv } from "../../lib/formatDate";
+import { getTrainingVMsByTeam } from "./mappers";
+
+interface Props {
+  teamSlug: string;
+}
+
+const { teamSlug } = Astro.props;
+const result = await getTrainingVMsByTeam(teamSlug);
 ---
 
-<!-- Training UI not implemented yet -->
+<section aria-labelledby="traning-heading" class="mx-auto max-w-6xl px-4 py-12">
+  <h2 id="traning-heading" class="m-0 mb-6 font-display text-h2 uppercase text-black">Träningstider</h2>
+
+  {
+    !result.ok && (
+      <div class="border-2 border-black bg-white p-6 md:p-8">
+        <p class="m-0 max-w-[60ch] text-h4 text-black">
+          Vi upplever tekniska problem. För träningsinformation, kontakta oss på{" "}
+          <a
+            href={`mailto:${result.contact.email}`}
+            class="underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+          >
+            {result.contact.email}
+          </a>
+          {result.contact.phone && (
+            <>
+              {" "}
+              eller{" "}
+              <a
+                href={`tel:${result.contact.phone.replace(/\s+/g, "")}`}
+                class="underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+              >
+                {result.contact.phone}
+              </a>
+            </>
+          )}
+          .
+        </p>
+      </div>
+    )
+  }
+
+  {result.ok && result.sessions.length === 0 && <p class="m-0 text-body text-black">Inga träningstider just nu.</p>}
+
+  {
+    result.ok && result.sessions.length > 0 && (
+      <ul class="m-0 grid list-none grid-cols-1 gap-4 p-0 md:grid-cols-2 lg:grid-cols-3">
+        {result.sessions.map((session) => (
+          <li>
+            <article class="flex h-full flex-col gap-2 border-2 border-black bg-white p-4">
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-display text-small uppercase text-black">{session.trainingTypeLabel}</span>
+                <time datetime={session.date} class="font-display text-small uppercase text-black">
+                  {formatDateWeekdaySv(session.date)}
+                </time>
+              </div>
+              <p class="m-0 font-display text-h4 uppercase text-black">{session.venue}</p>
+              <p class="m-0 text-small text-black/70">
+                <time datetime={`${session.date}T${session.startTime}`}>{session.startTime}</time>–<time datetime={`${session.date}T${session.endTime}`}>{session.endTime}</time>
+              </p>
+              {session.information && <p class="m-0 text-small text-black/70">{session.information}</p>}
+            </article>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  {
+    result.ok && result.coaches.length > 0 && (
+      <div class="mt-10">
+        <h3 class="m-0 mb-4 font-display text-h3 uppercase text-black">Tränare</h3>
+        <ul class="m-0 flex list-none flex-wrap gap-8 p-0">
+          {result.coaches.map((coach) => (
+            <li class="flex flex-col items-center gap-2 text-center">
+              {coach.hasCoachPhoto && (
+                <ResolvedImage
+                  src={coach.photo!}
+                  alt={coach.name}
+                  width={200}
+                  height={200}
+                  loading="lazy"
+                  class="h-24 w-24 rounded-full object-cover"
+                />
+              )}
+              <p class="m-0 font-display text-h4 uppercase text-black">{coach.name}</p>
+              {coach.role && <p class="m-0 text-small text-black/70">{coach.role}</p>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+</section>

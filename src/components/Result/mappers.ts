@@ -8,25 +8,38 @@ import type { ResultRD, ResultResponseRD, ResultVM } from "./types";
 const STALE_AFTER_DAYS = 28;
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
+const RESULT_FIELDS = `
+  homeTeam
+  homeScore
+  awayTeam
+  awayScore
+  date
+  isActive
+  publishedAt
+  teamModel {
+    name
+    slug
+  }
+  backgroundImage {
+    url
+    width
+    height
+  }
+`;
+
 const RESULT_QUERY = gql`
   query ResultList {
     resultModels(orderBy: publishedAt_DESC) {
-      homeTeam
-      homeScore
-      awayTeam
-      awayScore
-      date
-      isActive
-      publishedAt
-      teamModel {
-        name
-        slug
-      }
-      backgroundImage {
-        url
-        width
-        height
-      }
+      ${RESULT_FIELDS}
+    }
+  }
+`;
+
+// Team-scoped variant for team pages — same fields, filtered server-side.
+const RESULT_BY_TEAM_QUERY = gql`
+  query ResultListByTeam($slug: String!) {
+    resultModels(where: { teamModel: { slug: $slug } }, orderBy: publishedAt_DESC) {
+      ${RESULT_FIELDS}
     }
   }
 `;
@@ -68,4 +81,12 @@ export async function getResultVMs(): Promise<ResultVM[]> {
 export async function getLatestResultVM(): Promise<ResultVM | null> {
   const [latest] = await getResultVMs();
   return latest ?? null;
+}
+
+/** Every currently-visible result for one team, most recent first (used by the team-page
+ *  results section). The 28-day staleness window already bounds the list length. */
+export async function getResultVMsByTeam(slug: string): Promise<ResultVM[]> {
+  const res = await fetchOrFail<ResultResponseRD>(RESULT_BY_TEAM_QUERY, { slug });
+  if (!res.ok) return [];
+  return res.data.resultModels.filter(isVisible).map(toVM);
 }

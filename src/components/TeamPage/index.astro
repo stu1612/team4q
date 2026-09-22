@@ -1,5 +1,31 @@
 ---
-// TODO: implement in Phase 4 UI Build (see /data-mapping skill)
+// Team-page header band — same full-bleed cover-image + scrim conventions as Hero
+// (Hero/index.astro), shorter since it's a page header rather than the homepage's hero.
+// This section's heading is the page's only h1.
+import ResolvedImage from "../ResolvedImage.astro";
+import { getTeamPageVM } from "./mappers";
+
+interface Props {
+  teamSlug: string;
+}
+
+const { teamSlug } = Astro.props;
+const team = await getTeamPageVM(teamSlug);
 ---
 
-<!-- TeamPage UI not implemented yet -->
+<section class="relative flex min-h-[clamp(20rem,50vh,32rem)] w-full items-end overflow-hidden bg-black">
+  <ResolvedImage
+    src={team.coverImage}
+    alt={team.heading}
+    width={2400}
+    height={1200}
+    loading="eager"
+    class="absolute inset-0 h-full w-full object-cover"
+  />
+  <div class="absolute inset-0 bg-[linear-gradient(to_top,rgb(0_0_0/0.78)_0%,rgb(0_0_0/0.35)_38%,rgb(0_0_0/0)_70%)]"></div>
+
+  <div class="relative mx-auto flex w-full max-w-6xl flex-col items-start gap-3 px-4 pb-[clamp(2rem,6vw,4rem)]">
+    <h1 class="m-0 font-display text-display uppercase text-white">{team.heading}</h1>
+    {team.subheading && <p class="m-0 max-w-[46ch] text-h4 text-white/92">{team.subheading}</p>}
+  </div>
+</section>
