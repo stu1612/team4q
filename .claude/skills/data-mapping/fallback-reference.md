@@ -95,6 +95,12 @@ holds the pattern.
   **Required**
 - `isActive` (`IsActive` enum) — **Required**; `isVisible = isActive === "active"`
 - `tagline` — **Default** `""` (null for every current sponsor)
+- `hasCommercialSlot` (Boolean) — **Required**; `commercialImage` (Asset) — **Flag**, gated
+  by `hasCommercialSlot`. Schema-explicit, not mapper-derived — unlike other Flag fields,
+  Hygraph already provides the boolean directly (`hasCommercialSlot`), so the mapper passes
+  it straight through rather than deriving it from `commercialImage`'s presence. Added
+  2026-09-22, reserved for a future commercial-slot feature — no consumer reads it yet. Every
+  live sponsor currently has `hasCommercialSlot: false` / `commercialImage: null`.
 
 ## HeroModel
 

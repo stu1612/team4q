@@ -1,19 +1,74 @@
 ---
-// Simple test render — not brand UI, see /data-mapping skill for the real build in Phase 4.
+// Homepage "Våra partners" section — two independent rows grouped by the existing `tier`
+// field (no new CMS field needed): main-tier sponsors larger on top, partner + community
+// sponsors smaller below. Each row wraps independently so it scales past the current 6
+// sponsors without the rows competing for space. Does not link to /sponsorer — that route
+// is still an unbuilt placeholder shell. Built directly for this one use per the standing
+// "no shared components yet" instruction.
 import ResolvedImage from "../ResolvedImage.astro";
-import { getSponsorVMs } from "./mappers";
+import { getSponsorGroups } from "./mappers";
 
-const sponsors = await getSponsorVMs();
+const { main, featured } = await getSponsorGroups();
 ---
 
-<section>
-	<h2>Sponsors</h2>
-	<ul>
-		{sponsors.map((sponsor) => (
-			<li>
-				<ResolvedImage src={sponsor.logo} alt="" width={80} height={80} />
-				<a href={sponsor.url}>{sponsor.name}</a> ({sponsor.tier})
-			</li>
-		))}
-	</ul>
-</section>
+{
+  (main.length > 0 || featured.length > 0) && (
+    <section aria-labelledby="partners-heading" class="mx-auto max-w-6xl px-4 py-12">
+      <h2 id="partners-heading" class="m-0 mb-6 font-display text-h2 uppercase text-black">
+        Våra partners
+      </h2>
+
+      <div class="flex flex-col gap-8">
+        {main.length > 0 && (
+          <ul class="m-0 flex list-none flex-wrap items-center justify-center gap-x-12 gap-y-8 p-0">
+            {main.map((sponsor) => (
+              <li class="flex h-20 w-40 items-center justify-center sm:h-24 sm:w-52">
+                <a
+                  href={sponsor.url}
+                  target="_blank"
+                  rel="noopener"
+                  class="flex h-full w-full items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                >
+                  <ResolvedImage
+                    src={sponsor.logo}
+                    alt={sponsor.name}
+                    width={480}
+                    height={240}
+                    fit="contain"
+                    loading="lazy"
+                    class="h-full w-full object-contain"
+                  />
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {featured.length > 0 && (
+          <ul class="m-0 flex list-none flex-wrap items-center justify-center gap-x-10 gap-y-6 p-0">
+            {featured.map((sponsor) => (
+              <li class="flex h-14 w-28 items-center justify-center sm:h-16 sm:w-32">
+                <a
+                  href={sponsor.url}
+                  target="_blank"
+                  rel="noopener"
+                  class="flex h-full w-full items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                >
+                  <ResolvedImage
+                    src={sponsor.logo}
+                    alt={sponsor.name}
+                    width={240}
+                    height={120}
+                    fit="contain"
+                    loading="lazy"
+                    class="h-full w-full object-contain"
+                  />
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </section>
+  )
+}

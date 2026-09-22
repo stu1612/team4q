@@ -39,7 +39,7 @@ export type ResultListQuery = { resultModels: Array<{ homeTeam: string, homeScor
 export type SponsorListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SponsorListQuery = { sponsorModels: Array<{ name: string, url: string, tagline: string | null, tier: SponsorTier, isActive: IsActive, logo: { url: string, width: number | null, height: number | null } }> };
+export type SponsorListQuery = { sponsorModels: Array<{ name: string, url: string, tagline: string | null, tier: SponsorTier, isActive: IsActive, hasCommercialSlot: boolean, logo: { url: string, width: number | null, height: number | null }, commercialImage: { url: string, width: number | null, height: number | null } | null }> };
 
 export type TeamPageBySlugQueryVariables = Exact<{
   slug: string;
