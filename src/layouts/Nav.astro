@@ -1,11 +1,15 @@
 ---
 // Header + primary nav — extracted from Base.astro so nav and footer can be iterated on
-// independently. Mobile disclosure toggle (aria-expanded + Escape-to-close) and
-// aria-current active-state per the /accessibility skill. Styled entirely with Tailwind
-// utilities (incl. the aria-*/data-* attribute variants) — no separate <style> block.
+// independently. From lg: an inline link row. Below lg: a right-hand drawer built on a
+// native modal <dialog> (showModal), so the browser supplies focus containment,
+// Escape-to-close, an inert page behind it and focus return to the toggle — none of it
+// hand-rolled. aria-current active state per the /accessibility skill. Styled entirely with
+// Tailwind utilities (incl. aria-*/open/starting variants) — no separate <style> block.
 import { Image } from "astro:assets";
 import logo from "../images/logos/t4q-logo.png";
 import { NAV_LINKS } from "../constants/nav";
+import { CLUB_CONTACT, SOCIAL_LINKS } from "../constants/contact";
+import SocialIcon from "../components/SocialIcon.astro";
 
 const currentPath = Astro.url.pathname.replace(/\/+$/, "") || "/";
 const isActive = (href: string): boolean => {
@@ -24,16 +28,17 @@ const isActive = (href: string): boolean => {
       class="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
       aria-label="Team Fourth Quarter — hem"
     >
-      <Image src={logo} alt="" width={45} height={44} loading="eager" />
-      <span class="font-display text-h4 uppercase tracking-wide text-white">Team Fourth Quarter</span>
+      <Image src={logo} alt="" width={55} height={54} loading="eager" />
+      <span class="hidden md:flex font-display text-h4 uppercase tracking-wide text-white">Team Fourth Quarter</span>
     </a>
 
     <button
       id="nav-toggle"
       type="button"
-      class="inline-flex cursor-pointer items-center justify-center border-0 bg-transparent p-1.5 text-white lg:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+      class="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center border-0 bg-transparent p-1.5 text-white lg:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
       aria-expanded="false"
-      aria-controls="primary-nav"
+      aria-controls="mobile-nav"
+      aria-haspopup="dialog"
       aria-label="Öppna meny"
     >
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -43,11 +48,7 @@ const isActive = (href: string): boolean => {
       </svg>
     </button>
 
-    <ul
-      id="primary-nav"
-      data-open="false"
-      class="hidden w-full flex-col pt-2 data-[open=true]:flex lg:flex lg:w-auto lg:flex-row lg:items-center lg:gap-1 lg:pt-0"
-    >
+    <ul class="hidden lg:flex lg:flex-row lg:items-center lg:gap-1">
       {
         NAV_LINKS.map((link) => (
           <li>
@@ -61,27 +62,143 @@ const isActive = (href: string): boolean => {
           </li>
         ))
       }
+      {
+        // End of the row, set apart from the page links by a divider.
+        SOCIAL_LINKS.length > 0 && (
+          <li class="ml-2 border-l border-white/15 pl-2">
+            <ul aria-label="Sociala medier" class="flex items-center gap-1">
+              {SOCIAL_LINKS.map((s) => (
+                <li>
+                  <a
+                    href={s.href}
+                    class="inline-flex p-2 text-brand-red hover:text-white focus-visible:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    aria-label={s.label}
+                    rel="me noopener"
+                    target="_blank"
+                  >
+                    <SocialIcon network={s.network} size={20} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </li>
+        )
+      }
     </ul>
   </nav>
+
+  {/* Below lg only (the toggle is lg:hidden). Slides in from the right, full height, and
+      stops just past the header logo (px-4 + 55px logo ≈ 71px → 5rem), so the logo stays
+      visible beside it and every phone width gets the most room. The ::backdrop is
+      transparent but still closes the drawer on tap. `starting:` gives the entry
+      animation, transition-discrete the exit; both off under reduced motion. */}
+  <dialog
+    id="mobile-nav"
+    aria-label="Meny"
+    class="group m-0 ml-auto h-dvh max-h-none w-[calc(100vw-5rem)] max-w-none translate-x-full border-0 border-l border-white/15 bg-black p-0 shadow-[-8px_0_24px_rgb(0_0_0/0.4)] text-white transition-[translate,display,overlay] transition-discrete duration-300 ease-out open:translate-x-0 starting:open:translate-x-full backdrop:bg-transparent motion-reduce:transition-none"
+  >
+    <div class="flex h-full flex-col gap-8 px-4 pt-3 pb-8">
+      {/* Same height and padding as the header row, so ✕ lands where the hamburger was. */}
+      <div class="flex h-[54px] items-center justify-end">
+        <button
+          id="nav-close"
+          type="button"
+          class="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center border-0 bg-transparent p-1.5 text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          aria-label="Stäng meny"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="5" y1="5" x2="19" y2="19" />
+            <line x1="19" y1="5" x2="5" y2="19" />
+          </svg>
+        </button>
+      </div>
+
+      <nav aria-label="Huvudmeny, mobil">
+        <ul class="m-0 flex list-none flex-col gap-1 p-0">
+          {
+            NAV_LINKS.map((link, i) => (
+              <li
+                class="transition-[opacity,translate] duration-300 ease-out starting:group-open:translate-x-6 starting:group-open:opacity-0 motion-reduce:transition-none"
+                style={`transition-delay: ${80 + i * 40}ms`}
+              >
+                <a
+                  href={link.href}
+                  class="block border-l-4 border-l-transparent py-2 pl-4 font-display text-2xl font-bold uppercase tracking-wide text-white hover:text-white/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white aria-[current=page]:border-l-brand-red"
+                  aria-current={isActive(link.href) ? "page" : undefined}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="mt-auto flex flex-col gap-4 border-t border-white/15 pt-6">
+        <p class="m-0 font-display text-h3 font-bold uppercase text-white">Mer än basket.</p>
+        <a
+          href={`mailto:${CLUB_CONTACT.email}`}
+          class="text-small text-white/80 hover:text-white hover:underline hover:underline-offset-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        >
+          {CLUB_CONTACT.email}
+        </a>
+        {
+          SOCIAL_LINKS.length > 0 && (
+            <ul aria-label="Sociala medier" class="m-0 flex list-none gap-3 p-0">
+              {SOCIAL_LINKS.map((s) => (
+                <li>
+                  <a
+                    href={s.href}
+                    class="inline-flex h-11 w-11 items-center justify-center border border-white/40 text-white hover:border-white hover:bg-white hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    aria-label={s.label}
+                    rel="me noopener"
+                    target="_blank"
+                  >
+                    <SocialIcon network={s.network} size={20} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+    </div>
+  </dialog>
 </header>
 
 <script>
   const toggle = document.getElementById("nav-toggle");
-  const list = document.getElementById("primary-nav");
-  if (toggle && list) {
-    const setOpen = (open: boolean) => {
-      toggle.setAttribute("aria-expanded", String(open));
-      toggle.setAttribute("aria-label", open ? "Stäng meny" : "Öppna meny");
-      list.dataset.open = String(open);
-    };
+  const drawer = document.getElementById("mobile-nav");
+  const close = document.getElementById("nav-close");
+
+  if (toggle && close && drawer instanceof HTMLDialogElement) {
     toggle.addEventListener("click", () => {
-      setOpen(toggle.getAttribute("aria-expanded") !== "true");
+      drawer.showModal();
+      toggle.setAttribute("aria-expanded", "true");
+      // A modal dialog doesn't stop the page behind it scrolling — lock it while open.
+      document.documentElement.classList.add("overflow-hidden");
     });
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
-        setOpen(false);
-        toggle.focus();
-      }
+
+    // Fires for every way the drawer closes: ✕, Escape, backdrop tap, link tap, resize.
+    drawer.addEventListener("close", () => {
+      toggle.setAttribute("aria-expanded", "false");
+      document.documentElement.classList.remove("overflow-hidden");
+    });
+
+    close.addEventListener("click", () => drawer.close());
+
+    drawer.addEventListener("click", (event) => {
+      // The content wrapper fills the dialog box, so a click whose target is the dialog
+      // itself landed on the ::backdrop.
+      if (event.target === drawer) drawer.close();
+      // Close before following a link — same-page anchors (/#partners) don't reload.
+      else if (event.target instanceof Element && event.target.closest("a")) drawer.close();
+    });
+
+    // The toggle disappears from lg up — don't leave an open drawer stranded there.
+    const desktop = window.matchMedia("(min-width: 64rem)");
+    desktop.addEventListener("change", (event) => {
+      if (event.matches && drawer.open) drawer.close();
     });
   }
 </script>

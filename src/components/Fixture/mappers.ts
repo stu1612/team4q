@@ -2,7 +2,7 @@ import { gql } from "graphql-request";
 import { CLUB_CONTACT } from "../../constants/contact";
 import { fetchOrFail } from "../../lib/hygraphClient";
 import { resolveImageOrNull } from "../../lib/resolveImage";
-import { formatDateWeekdaySv, hasPassedStockholm } from "../../lib/formatDate";
+import { formatDatePartsSv, formatDateWeekdaySv, hasPassedStockholm } from "../../lib/formatDate";
 import { teamLabel, teamTagShort } from "../../lib/teamLabel";
 import type {
   FixtureListVM,
@@ -61,6 +61,7 @@ function toVM(rd: FixtureRD): FixtureVM {
   const hasAffiliation = Boolean(
     team?.teamAffiliation && team?.affiliationUrl && team?.affiliationLogo,
   );
+  const dateParts = formatDatePartsSv(rd.date);
   return {
     heading: rd.heading,
     date: rd.date,
@@ -75,6 +76,9 @@ function toVM(rd: FixtureRD): FixtureVM {
     // A match counts as upcoming until its end time passes, so one in progress stays visible.
     isUpcoming: !hasPassedStockholm(rd.date, rd.endTime),
     dateLabel: formatDateWeekdaySv(rd.date),
+    weekdayShort: dateParts.weekday,
+    dayNumber: dateParts.day,
+    monthShort: dateParts.month,
     timeLabel: rd.startTime,
     isoDateTime: `${rd.date}T${rd.startTime}`,
     hasCoverImage: Boolean(rd.coverImage),

@@ -1,19 +1,21 @@
 ---
 // Site footer — extracted from Base.astro so nav and footer can be iterated on
-// independently. Each block (logo, "Sidan" nav, contact, socials) self-omits when its
-// backing data is empty. Styled entirely with Tailwind utilities — no separate <style>
-// block.
+// independently. Two parts: an image band (tagline + prominent social links) and the
+// link grid (club, page links, contact + venues). The social links and phone number
+// self-omit when their data is empty. Content stays inside the shared max-w-6xl container;
+// only the band's backdrop bleeds full width. Centred below md, left-aligned from md up.
+// Styled entirely with Tailwind utilities — no separate <style> block.
 import { Image } from "astro:assets";
 import logo from "../images/logos/t4q-logo.png";
-import { CLUB_CONTACT } from "../constants/contact";
+import bandImage from "../images/fallback/teams/junior-cover.jpg";
+import { CLUB_CONTACT, SOCIAL_LINKS } from "../constants/contact";
 import { NAV_LINKS } from "../constants/nav";
+import SocialIcon from "../components/SocialIcon.astro";
 
 const SITE_NAME = "T4Q Helsingborg";
 
-const SOCIAL_LINKS = [
-  { label: "Instagram", href: CLUB_CONTACT.social.instagram },
-  { label: "Facebook", href: CLUB_CONTACT.social.facebook },
-].filter((s): s is { label: string; href: string } => s.href.length > 0);
+// Training venues, as named in the Om oss copy (Mission/index.astro).
+const VENUES = ["GA Hallen", "Rydebäck", "Harlyckehallen"];
 
 const year = new Date().getFullYear();
 
@@ -22,15 +24,67 @@ const FOOTER_LINK_CLASS =
 ---
 
 <footer class="bg-black text-white">
-  <div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
-    <div class="flex flex-col gap-3">
-      <Image src={logo} alt="" width={65} height={64} loading="lazy" />
-      <p class="text-small text-white/80">Basketklubb i Helsingborg.</p>
+  <div class="relative isolate overflow-hidden">
+    {/* Decorative backdrop — the tagline carries the meaning. 70% scrim keeps white text
+        well above 4.5:1 over any pixel. */}
+    <Image
+      src={bandImage}
+      alt=""
+      width={1600}
+      height={600}
+      loading="lazy"
+      class="absolute inset-0 -z-10 h-full w-full object-cover"
+    />
+    <div class="absolute inset-0 -z-10 bg-black/70"></div>
+
+    <div
+      class="mx-auto flex max-w-6xl flex-col items-center gap-8 px-4 py-10 text-center md:flex-row md:items-end md:justify-between md:py-16 md:text-left"
+    >
+      <div class="flex flex-col items-center gap-3 md:items-start">
+        <p class="m-0 font-display text-4xl font-extrabold uppercase text-white md:text-6xl">Mer än basket.</p>
+        <p class="m-0 max-w-[46ch] text-body text-white/85 md:text-lg">
+          En gemenskap i Helsingborg sedan 2016 — för barn, ungdomar och seniorer.
+        </p>
+      </div>
+
+      {
+        SOCIAL_LINKS.length > 0 && (
+          <div class="flex flex-col items-center gap-3 md:items-start">
+            <h2 class="m-0 font-display text-label uppercase text-white">Följ oss @team4q</h2>
+            <ul class="m-0 flex list-none gap-3 p-0">
+              {SOCIAL_LINKS.map((s) => (
+                <li>
+                  <a
+                    href={s.href}
+                    class="inline-flex h-12 w-12 items-center justify-center border border-white/40 text-white transition-colors hover:border-white hover:bg-white hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:transition-none"
+                    aria-label={s.label}
+                    rel="me noopener"
+                    target="_blank"
+                  >
+                    <SocialIcon network={s.network} size={22} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div>
+  </div>
+
+  <div class="mx-auto grid max-w-6xl justify-items-center gap-10 px-4 py-10 text-center md:grid-cols-2 md:justify-items-stretch md:text-left md:py-14 lg:grid-cols-[2fr_1fr_1fr]">
+    <div class="flex flex-col items-center gap-4 md:items-start">
+      <div class="flex items-center gap-3">
+        <Image src={logo} alt="" width={65} height={64} loading="lazy" />
+        <p class="m-0 hidden font-display text-h4 uppercase tracking-wide text-white md:block">Team Fourth Quarter</p>
+      </div>
+      <p class="m-0 max-w-[40ch] text-small text-white/80">
+        Basketklubb i Helsingborg med herrlag, damlag och ungdomsverksamhet.
+      </p>
     </div>
 
     <nav aria-label="Sidfot">
-      <h2 class="mb-3 font-display text-label uppercase text-white">Sidan</h2>
-      <ul class="flex flex-col gap-2">
+      <ul class="m-0 grid list-none grid-cols-2 gap-x-6 gap-y-2 p-0">
         {
           NAV_LINKS.map((link) => (
             <li>
@@ -44,8 +98,7 @@ const FOOTER_LINK_CLASS =
     </nav>
 
     <div>
-      <h2 class="mb-3 font-display text-label uppercase text-white">Kontakt</h2>
-      <ul class="flex flex-col gap-2 text-small">
+      <ul class="m-0 flex list-none flex-col gap-2 p-0 text-small">
         <li>
           <a href={`mailto:${CLUB_CONTACT.email}`} class={FOOTER_LINK_CLASS}>{CLUB_CONTACT.email}</a>
         </li>
@@ -59,41 +112,14 @@ const FOOTER_LINK_CLASS =
           )
         }
       </ul>
+      <p class="m-0 mt-6 mb-2 font-display text-label uppercase text-white">Hallar</p>
+      <p class="m-0 text-small text-white/80">{VENUES.join(" · ")}</p>
     </div>
-
-    {
-      SOCIAL_LINKS.length > 0 && (
-        <div>
-          <h2 class="mb-3 font-display text-label uppercase text-white">Följ oss</h2>
-          <ul class="flex gap-3">
-            {SOCIAL_LINKS.map((s) => (
-              <li>
-                <a
-                  href={s.href}
-                  class="inline-flex p-1.5 text-white/80 hover:text-white focus-visible:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                  aria-label={s.label}
-                  rel="me noopener"
-                  target="_blank"
-                >
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    {s.label === "Instagram" ? (
-                      <path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.72 3.72 0 0 1-1.38-.9 3.72 3.72 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16Zm0 1.62c-3.15 0-3.5.01-4.74.07-.98.04-1.51.21-1.87.35-.47.18-.8.4-1.15.75-.35.35-.57.68-.75 1.15-.14.36-.31.89-.35 1.87-.06 1.24-.07 1.59-.07 4.74s.01 3.5.07 4.74c.04.98.21 1.51.35 1.87.18.47.4.8.75 1.15.35.35.68.57 1.15.75.36.14.89.31 1.87.35 1.24.06 1.59.07 4.74.07s3.5-.01 4.74-.07c.98-.04 1.51-.21 1.87-.35.47-.18.8-.4 1.15-.75.35-.35.57-.68.75-1.15.14-.36.31-.89.35-1.87.06-1.24.07-1.59.07-4.74s-.01-3.5-.07-4.74c-.04-.98-.21-1.51-.35-1.87a3.1 3.1 0 0 0-.75-1.15 3.1 3.1 0 0 0-1.15-.75c-.36-.14-.89-.31-1.87-.35-1.24-.06-1.59-.07-4.74-.07Zm0 2.76a5.3 5.3 0 1 1 0 10.6 5.3 5.3 0 0 1 0-10.6Zm0 1.62a3.68 3.68 0 1 0 0 7.36 3.68 3.68 0 0 0 0-7.36Zm5.48-2.9a1.24 1.24 0 1 1 0 2.48 1.24 1.24 0 0 1 0-2.48Z" />
-                    ) : (
-                      <path d="M13.5 21v-8.2h2.75l.41-3.2H13.5V7.55c0-.93.26-1.56 1.59-1.56h1.7V3.13c-.3-.04-1.3-.13-2.47-.13-2.45 0-4.13 1.5-4.13 4.24v2.36H7.4v3.2h2.78V21h3.32Z" />
-                    )}
-                  </svg>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )
-    }
   </div>
 
   <div class="border-t border-white/15">
-    <p class="mx-auto max-w-6xl px-4 py-4 text-small text-white/70">
-      © {year} Team Fourth Quarter · {SITE_NAME}
-    </p>
+    <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-2 px-4 py-4">
+      <p class="m-0 text-small text-white/70">© {year} Team Fourth Quarter · {SITE_NAME}</p>
+    </div>
   </div>
 </footer>

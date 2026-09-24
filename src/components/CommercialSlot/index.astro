@@ -14,11 +14,11 @@ const slot = await getCommercialSlotVM();
 
 {
   slot && (
-    <section class="mx-auto max-w-6xl px-4 py-18">
+    <section class="mx-auto max-w-6xl px-4 py-10 md:py-18">
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
         <a
           href={slot.sponsorUrl}
-          class="group relative isolate flex min-h-64 flex-col items-start justify-end gap-4 overflow-hidden bg-black p-8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+          class="group relative isolate flex min-h-64 flex-col items-start justify-end gap-4 overflow-hidden bg-black p-5 md:p-8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
         >
           {/* Decorative backdrop — the logo's alt and the tagline carry the meaning. */}
           <ResolvedImage
@@ -48,7 +48,7 @@ const slot = await getCommercialSlotVM();
 
         <a
           href={`mailto:${CONTACT_EMAIL}`}
-          class="group relative isolate flex min-h-64 flex-col items-start justify-end gap-4 overflow-hidden bg-black p-8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+          class="group relative isolate flex min-h-64 flex-col items-start justify-end gap-4 overflow-hidden bg-black p-5 md:p-8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
         >
           {/* Decorative backdrop — the copy carries the meaning. */}
           <Image
@@ -60,7 +60,7 @@ const slot = await getCommercialSlotVM();
             class="absolute inset-0 -z-10 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           />
           <div class="absolute inset-0 -z-10 bg-black/60" />
-          <p class="m-0 font-display text-h2 uppercase text-white">Bli en del av T4Q</p>
+          <p class="m-0 font-display text-2xl font-extrabold uppercase text-white md:text-h2">Bli en del av T4Q</p>
           <p class="m-0 text-body text-white">
             Vill du spela, engagera dig som ledare eller synas som sponsor? Hör av dig så berättar vi mer.
           </p>

@@ -1,6 +1,6 @@
 # T4Q Progress Tracker
 
-Last updated: 2026-09-24 (Phase 4 — Matcher & resultat section, sticky nav, /sponsorer removed)
+Last updated: 2026-09-24 (Phase 4 — homepage mobile pass, mobile nav drawer, footer redesign, social links, fixture + result redesign)
 
 ## Status at a glance
 
@@ -109,6 +109,9 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
   - [x] Om oss (Mission) + commercial-slot / contact CTA grid — layout and styling done; commercial-slot no-slot fallback and a real `/kontakt` CTA target still open
   - [x] Homepage design-polish pass (section headers, hover effects, tag labels)
   - [x] Matcher & resultat — Kommande matcher + Senaste resultat combined under one heading (`FixtureResultBanner`)
+  - [x] Homepage mobile pass (tighter spacing, left-aligned, stronger image scrims)
+  - [x] Fixture cards redesigned ("match ticket") + result banner as a centred scoreboard
+- [x] Global: mobile nav drawer (native `<dialog>`), footer redesign, Instagram/Facebook links in nav + footer
 - [x] `/herrlaget` (establishes team page pattern — includes fixture card past/upcoming decision)
 - [x] `/damlaget`
 - [ ] `/ungdomslaget`
@@ -162,6 +165,41 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
 ## COMPLETED TASKS
 
 - use this section to write a brief review of completed tasks. This section will act as a review for the developer to keep track of progress. Mark each task completed with a date, review (anything else you feel is usefull). Keep the review short but concise.
+
+- **2026-09-24 (later) — Phase 4: homepage mobile pass, mobile nav drawer, footer redesign, social links, fixture + result redesign.**
+  - **Homepage mobile** (below md; desktop unchanged via `md:` restores):
+    - Sections use `py-10 md:py-18` and heading rows `mb-4 md:mb-6`.
+    - Headings and text are left-aligned: the Mission/Sponsor two-rule headers drop the left rule, and Mission copy, fixture cards and the result banner are left-aligned.
+    - The result score stacks on three lines, in a shorter band (`min-h-72`).
+    - Stronger mobile scrims on the Hero and news cards (0.8 → 0.5 → 0.2), so wrapped text never sits on bare photo.
+    - The Mission images sit in one 3-up row. CommercialSlot uses `p-5` and a `text-2xl` title.
+    - Sponsor logos use a centred 2-col grid for both tiers (`last:odd:col-span-2` centres a lone logo).
+  - **Social links:**
+    - The confirmed Instagram/Facebook URLs are in `CLUB_CONTACT`, which also feeds Organization `sameAs`.
+    - New shared `SOCIAL_LINKS` (contact.ts) and `SocialIcon.astro`, used by the nav and footer, so the SVG paths live in one place.
+    - The desktop nav icons are at the end of the row, in full `text-brand-red` (3.56:1). They were `/80`, which is about 2.6:1 and fails WCAG 1.4.11 non-text contrast.
+  - **Mobile nav drawer (below lg):**
+    - A native modal `<dialog>` (`showModal`), so focus containment, Escape, an inert page behind it and focus return are handled by the browser, not hand-rolled.
+    - Slides in from the right at `h-dvh` × `calc(100vw-5rem)`, stopping just past the header logo, which stays visible. The `::backdrop` is transparent (it still closes on tap), and the drawer has no logo of its own. Large Oswald links with a red left bar for `aria-current`, links fading in one after another via `starting:`, and a tagline, email and socials pinned to the bottom.
+    - Closes on ✕, Escape, a backdrop tap, a link tap (needed for `/#partners`) and a resize to lg. Page scroll is locked while it's open, and all motion is off under reduced motion.
+  - **Footer** (developer-refined):
+    - An image band (junior-cover, 70% scrim) with the "Mer än basket." tagline and 48px square social buttons.
+    - A `2fr 1fr 1fr` grid: club, page links in 2 columns, contact + training venues.
+    - Centred below md, left-aligned from md up. The club name is hidden on mobile, matching the nav.
+    - Same `max-w-6xl` content width as every section.
+  - **Fixture cards ("match ticket", homepage only):**
+    - A black date panel (weekday / huge day number / month) beside a `zinc-100` body with a 4px red top bar. The body has the team chip plus kickoff time, the stacked team names with a visible "mot", a divider, then venue and competition.
+    - Left-aligned at every width, and deliberately image-free.
+    - New `formatDatePartsSv` (formatDate.ts) formats in UTC, since a date-only ISO string is UTC midnight, so the day is always right whatever the server time zone. It also removes the trailing dot from Swedish month abbreviations.
+    - `FixtureVM` gains `weekdayShort` / `dayNumber` / `monthShort`. `TeamFixtureList` is unchanged and can adopt the design in the team-page pass.
+  - **Result banner:**
+    - A scoreboard grid (`[1fr auto auto auto 1fr]` from md), so the score sits dead centre whatever the name lengths. It uses two "team ··· score" rows on mobile, with DOM order kept as the reading order.
+    - The losing side is dimmed to `white/70`, which still meets 3:1 for large text over the scrim, based on new mapper flags `homeWon` / `awayWon`.
+    - A red top bar and a "chip · SLUTRESULTAT" label line.
+    - The gap between fixtures and result is now `gap-8 md:gap-12`.
+  - `scroll-padding-top` raised to 5.5rem for the ~79px header (54px logo).
+  - `astro check` (0 errors, 0 hints) + `astro build` pass.
+  - **Not checked in a browser:** drawer animations and width, the result row at 768px with a long away name, the mobile fixture top row, the 1024px nav row with the icons, and the footer band crop.
 
 - **2026-09-24 — Phase 4: Matcher & resultat section, mobile type consistency, sticky nav, `/sponsorer` removed.**
   - **Matcher & resultat:** the new `FixtureResultBanner` wraps the upcoming fixture cards and the latest-result banner under one visible h2. `Fixture` and `Result` now render `<div>`s with sr-only h3s. That fixes Result's `aria-labelledby` pointing at a heading that no longer existed, and two nested sections sharing one label. Spacing moved to the wrapper.

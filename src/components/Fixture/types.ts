@@ -37,6 +37,10 @@ export interface FixtureVM {
   /** Compound visibility: still to be played (its endTime hasn't passed, Stockholm time). */
   isUpcoming: boolean;
   dateLabel: string;
+  /** Date split for the homepage card's date panel: "lör" / "3" / "okt". */
+  weekdayShort: string;
+  dayNumber: string;
+  monthShort: string;
   timeLabel: string;
   /** Local start as "YYYY-MM-DDTHH:mm" for <time datetime>. */
   isoDateTime: string;

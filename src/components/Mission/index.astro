@@ -5,13 +5,13 @@ import missionMen from "../../images/fallback/mission/team4q_mission_men.jpg";
 import missionWomen from "../../images/fallback/mission/team4q_mission_women.jpg";
 ---
 
-<section aria-labelledby="om-oss-heading" class="bg-zinc-200 px-4 py-18">
+<section aria-labelledby="om-oss-heading" class="bg-zinc-200 px-4 py-10 md:py-18">
   <div class="mx-auto max-w-6xl">
-    <div class="mb-6 flex flex-wrap items-center gap-4 before:flex-1 before:border-b before:border-black/20 after:flex-1 after:border-b after:border-black/20">
+    <div class="mb-4 flex flex-wrap md:mb-6 items-center gap-4 before:hidden before:flex-1 md:before:block before:border-b before:border-black/20 after:flex-1 after:border-b after:border-black/20">
       <h2 id="om-oss-heading" class="m-0 font-display text-3xl font-extrabold uppercase text-black md:text-5xl">Om oss</h2>
     </div>
 
-    <div class="mb-6 flex flex-col gap-4 text-center text-body text-black md:text-lg">
+    <div class="mb-6 flex flex-col gap-4 text-left text-body text-black md:text-center md:text-lg">
       <p class="m-0">
         Sedan 2016 har Team4Q byggt en basketförening i Helsingborg där barn, ungdomar och seniorer
         tränar, tävlar och utvecklas tillsammans.
@@ -27,7 +27,7 @@ import missionWomen from "../../images/fallback/mission/team4q_mission_women.jpg
       </p>
     </div>
 
-    <div class="grid grid-cols-1 items-center gap-4 py-9 md:grid-cols-[1fr_1.6fr_1fr]">
+    <div class="grid grid-cols-3 items-center gap-2 py-6 md:grid-cols-[1fr_1.6fr_1fr] md:gap-4 md:py-9">
       <Image src={missionWomen} alt="Damlaget" class="h-auto w-full aspect-square object-cover" width={300} height={300} />
       <Image src={missionJunior} alt="Ungdomslaget" class="h-auto w-full aspect-square object-cover" width={300} height={300} />
       <Image src={missionMen} alt="Herrlaget" class="h-auto w-full aspect-square object-cover" width={300} height={300} />
