@@ -7,7 +7,7 @@
 // 5-card mosaic assigns cards positionally — a Hygraph outage should still render the full
 // mosaic, not a hole in it, so this needs exactly 5 entries, not 4.
 
-import teamNews from "../../images/fallback/news/team-news.jpeg";
+import teamNews from "../../images/fallback/news/team-news.jpg";
 import womenNews from "../../images/fallback/news/women-news.jpg";
 import juniorNews from "../../images/fallback/news/junior-news.jpg";
 import resultNews from "../../images/fallback/news/result-news.jpg";

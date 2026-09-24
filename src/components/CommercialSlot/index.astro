@@ -1,0 +1,74 @@
+---
+// Homepage commercial-slot section — a 1×2 grid: the sponsor's commercial image beside a
+// contact CTA card (mailto for now — the /kontakt form isn't built yet). The no-slot
+// fallback is still to be decided.
+import { Image } from "astro:assets";
+import ResolvedImage from "../ResolvedImage.astro";
+import ctaImage from "../../images/fallback/news/team-news.jpg";
+import { getCommercialSlotVM } from "./mappers";
+
+const CONTACT_EMAIL = "info@team4q.se";
+
+const slot = await getCommercialSlotVM();
+---
+
+{
+  slot && (
+    <section class="mx-auto max-w-6xl px-4 py-18">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <a
+          href={slot.sponsorUrl}
+          class="group relative isolate flex min-h-64 flex-col items-start justify-end gap-4 overflow-hidden bg-black p-8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+        >
+          {/* Decorative backdrop — the logo's alt and the tagline carry the meaning. */}
+          <ResolvedImage
+            src={slot.image}
+            alt=""
+            width={1200}
+            height={800}
+            loading="lazy"
+            class="absolute inset-0 -z-10 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+          />
+          {/* Flat 60% scrim: keeps white text above 4.5:1 even over a pure-white pixel. */}
+          <div class="absolute inset-0 -z-10 bg-black/60" />
+          {/* White chip so logos of any colour stay legible on the dark scrim. */}
+          <span class="bg-white p-3">
+            <ResolvedImage
+              src={slot.logo}
+              alt={slot.sponsorName}
+              width={240}
+              height={80}
+              fit="contain"
+              loading="lazy"
+              class="h-10 w-auto"
+            />
+          </span>
+          {slot.tagline && <p class="m-0 text-body text-white">{slot.tagline}</p>}
+        </a>
+
+        <a
+          href={`mailto:${CONTACT_EMAIL}`}
+          class="group relative isolate flex min-h-64 flex-col items-start justify-end gap-4 overflow-hidden bg-black p-8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+        >
+          {/* Decorative backdrop — the copy carries the meaning. */}
+          <Image
+            src={ctaImage}
+            alt=""
+            width={1200}
+            height={800}
+            loading="lazy"
+            class="absolute inset-0 -z-10 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+          />
+          <div class="absolute inset-0 -z-10 bg-black/60" />
+          <p class="m-0 font-display text-h2 uppercase text-white">Bli en del av T4Q</p>
+          <p class="m-0 text-body text-white">
+            Vill du spela, engagera dig som ledare eller synas som sponsor? Hör av dig så berättar vi mer.
+          </p>
+          <span class="font-display text-small uppercase text-white underline underline-offset-4">
+            Kontakta oss →
+          </span>
+        </a>
+      </div>
+    </section>
+  )
+}

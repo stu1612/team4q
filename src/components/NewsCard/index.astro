@@ -52,9 +52,10 @@ const slots: Slot[] = [
 ];
 ---
 
-<section aria-labelledby="nyheter-heading" class="mx-auto max-w-6xl px-4 py-12">
-  <div class="mb-6 flex flex-wrap items-baseline justify-between gap-2">
-    <h2 id="nyheter-heading" class="m-0 font-display text-h2 uppercase text-black">Nyheter</h2>
+<section aria-labelledby="nyheter-heading" class="mx-auto max-w-6xl px-4 py-18">
+  <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+    <h2 id="nyheter-heading" class="m-0 font-display text-5xl font-extrabold uppercase text-black">Nyheter</h2>
+    <span aria-hidden="true" class="min-w-8 flex-1 border-b border-black/20"></span>
     <a
       href="/nyheter"
       class="font-display text-small uppercase text-black hover:underline hover:underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
@@ -70,31 +71,33 @@ const slots: Slot[] = [
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {slots.map(({ card, variant, wrapClass, imgWidth, imgHeight }) =>
           variant === "bleed" ? (
-            <article class={`relative isolate flex aspect-square items-end overflow-hidden bg-black ${wrapClass}`}>
+            <article class={`group relative isolate flex aspect-square items-end overflow-hidden bg-black ${wrapClass}`}>
               <ResolvedImage
                 src={card.coverImage}
                 alt={card.heading}
                 width={imgWidth}
                 height={imgHeight}
                 loading="lazy"
-                class="absolute inset-0 h-full w-full object-cover"
+                class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
               />
               <div class="absolute inset-0 bg-[linear-gradient(to_top,rgb(0_0_0/0.75)_0%,rgb(0_0_0/0.25)_45%,rgb(0_0_0/0)_75%)]" />
               {/* z-10 (not `relative`) lifts the text above the image/scrim while keeping the
                   <article> as the containing block for the heading link's stretched ::after,
                   so the whole card is clickable, not just the text block. */}
               <div class="z-10 flex flex-col items-start gap-2 p-4">
+                {/* Red accent stroke — grows in length and thickness when the card is hovered. */}
+                <span aria-hidden="true" class="block h-0.5 w-10 origin-left bg-brand-red transition-transform duration-500 ease-out group-hover:scale-x-150 group-hover:scale-y-200 motion-reduce:transition-none"></span>
                 {card.hasTeam && (
-                  <span class="bg-brand-red px-2 py-0.5 font-display text-label uppercase text-white">
+                  <span class="font-display text-label uppercase text-white">
                     {card.tagLabel}
                   </span>
                 )}
-                <h3 class="m-0 font-display text-h4 text-white">
+                <h3 class="m-0 font-display text-2xl font-bold text-white">
                   <a href={card.href} class="after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
                     {card.heading}
                   </a>
                 </h3>
-                <p class="m-0 line-clamp-2 text-small text-white/85">{card.excerpt}</p>
+                <p class="m-0 line-clamp-2 text-body text-white/85">{card.excerpt}</p>
                 <p class="m-0 text-small text-white/70">{card.dateLabel}</p>
                 {/* Visual cue only — the heading link's stretched ::after already makes the card
                     clickable, so this is aria-hidden rather than a second link to the same URL. */}
@@ -102,7 +105,7 @@ const slots: Slot[] = [
               </div>
             </article>
           ) : (
-            <article class="relative isolate flex aspect-square flex-col justify-end overflow-hidden bg-black lg:bg-white">
+            <article class="group relative isolate flex aspect-square flex-col justify-end overflow-hidden bg-black lg:bg-white">
               {/* Below lg: absolute full-card image. From lg: an in-flow top half. */}
               <div class="absolute inset-0 lg:relative lg:inset-auto lg:flex-1">
                 <ResolvedImage
@@ -111,23 +114,25 @@ const slots: Slot[] = [
                   width={imgWidth}
                   height={imgHeight}
                   loading="lazy"
-                  class="absolute inset-0 h-full w-full object-cover"
+                  class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                 />
               </div>
               {/* Scrim only exists while the text sits over the photo (below lg). */}
               <div class="absolute inset-0 bg-[linear-gradient(to_top,rgb(0_0_0/0.75)_0%,rgb(0_0_0/0.25)_45%,rgb(0_0_0/0)_75%)] lg:hidden" />
               <div class="z-10 flex flex-col items-start gap-2 p-4 lg:flex-1 lg:justify-end lg:bg-white">
+                {/* Red accent stroke — grows in length and thickness when the card is hovered. */}
+                <span aria-hidden="true" class="block h-0.5 w-10 origin-left bg-brand-red transition-transform duration-500 ease-out group-hover:scale-x-150 group-hover:scale-y-200 motion-reduce:transition-none"></span>
                 {card.hasTeam && (
-                  <span class="bg-brand-red px-2 py-0.5 font-display text-label uppercase text-white">
+                  <span class="font-display text-label uppercase text-white lg:text-black">
                     {card.tagLabel}
                   </span>
                 )}
-                <h3 class="m-0 font-display text-h4 text-white lg:text-black">
+                <h3 class="m-0 font-display text-2xl font-bold text-white lg:text-black">
                   <a href={card.href} class="after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:focus-visible:outline-black">
                     {card.heading}
                   </a>
                 </h3>
-                <p class="m-0 line-clamp-2 text-small text-white/85 lg:text-black/70">{card.excerpt}</p>
+                <p class="m-0 line-clamp-2 text-body text-white/85 lg:text-black/70">{card.excerpt}</p>
                 <p class="m-0 text-small text-white/70 lg:text-black/50">{card.dateLabel}</p>
                 <span aria-hidden="true" class="text-small text-white underline underline-offset-4 md:hidden">Läs mer</span>
               </div>
