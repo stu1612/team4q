@@ -1,21 +1,18 @@
 ---
-// Homepage "Kommande matcher" section — the next upcoming fixtures as cards. Independent of
-// the result banner — see Result/index.astro. Built directly for this one use per the
-// standing "no shared components yet" instruction.
+// Homepage upcoming-fixture cards — rendered inside FixtureResultBanner, which owns the
+// visible section heading. Independent of the result banner — see Result/index.astro.
 //
-// Cards are the locked "upcoming" treatment (outlined box, no fill). They are not links —
-// no fixtures route or per-match URL exists yet — so there is no focus state to style.
+// Cards are not links — no fixtures route or per-match URL exists yet — so there is no
+// focus state to style.
 import { getUpcomingFixtureVMs } from "./mappers";
 
 const HOMEPAGE_FIXTURE_COUNT = 3;
 const result = await getUpcomingFixtureVMs(HOMEPAGE_FIXTURE_COUNT);
 ---
 
-<section aria-labelledby="matcher-heading" class="mx-auto max-w-6xl px-4 py-18">
-  <div class="mb-6 flex flex-wrap items-center gap-4">
-    <h2 id="matcher-heading" class="m-0 font-display text-5xl font-extrabold uppercase text-black">Kommande matcher</h2>
-    <span aria-hidden="true" class="min-w-8 flex-1 border-b border-black/20"></span>
-  </div>
+<div>
+  {/* Screen-reader-only: keeps the h2 → h3 outline under the wrapper's visible heading. */}
+  <h3 class="sr-only">Kommande matcher</h3>
 
   {
     // fetchOrFail failure: a full message block, the same visual weight as the card row it
@@ -69,7 +66,7 @@ const result = await getUpcomingFixtureVMs(HOMEPAGE_FIXTURE_COUNT);
                 </time>
               </div>
 
-              <h3 class="m-0 flex flex-col items-center gap-1 text-center font-display text-h3 uppercase text-black">
+              <h3 class="m-0 flex flex-col items-center gap-1 text-center font-display text-2xl font-extrabold uppercase text-black">
                 <span>{fixture.homeTeam}</span>
                 <span aria-hidden="true" class="text-small text-black/60">
                   vs
@@ -94,4 +91,4 @@ const result = await getUpcomingFixtureVMs(HOMEPAGE_FIXTURE_COUNT);
       </ul>
     )
   }
-</section>
+</div>

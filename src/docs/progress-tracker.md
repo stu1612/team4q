@@ -1,6 +1,6 @@
 # T4Q Progress Tracker
 
-Last updated: 2026-09-23 (Phase 4 — homepage design polish + Om oss + CommercialSlot)
+Last updated: 2026-09-24 (Phase 4 — Matcher & resultat section, sticky nav, /sponsorer removed)
 
 ## Status at a glance
 
@@ -108,11 +108,12 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
   - [x] Våra partners (logo row)
   - [x] Om oss (Mission) + commercial-slot / contact CTA grid — layout and styling done; commercial-slot no-slot fallback and a real `/kontakt` CTA target still open
   - [x] Homepage design-polish pass (section headers, hover effects, tag labels)
+  - [x] Matcher & resultat — Kommande matcher + Senaste resultat combined under one heading (`FixtureResultBanner`)
 - [x] `/herrlaget` (establishes team page pattern — includes fixture card past/upcoming decision)
 - [x] `/damlaget`
 - [ ] `/ungdomslaget`
 - [ ] `/nyheter` + `/nyheter/[slug]`
-- [ ] `/sponsorer` (tiered grid)
+- [x] ~~`/sponsorer`~~ — removed 2026-09-24; sponsors live only in the homepage section (nav → `/#partners`)
 - [ ] `/kontakt` + Resend
 
 ## Phase 5 — Quality
@@ -127,6 +128,14 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
 
 - [ ] Real content populated in HG
 - [ ] Webhook confirmed working
+- [ ] _Optional, decided 2026-09-24 — not required:_ switch `HYGRAPH_API_URL` (`.env` + Vercel,
+      all environments) to Hygraph's CDN endpoint, `https://eu-west-2.cdn.hygraph.com/content/<projectId>/master`.
+      - Audit result: production is already safe. ISR limits Hygraph traffic to about 14 requests per hour whatever the traffic (`/` makes 6 per render, `/herrlaget` and `/damlaget` 4 each), plus one set per deploy.
+      - The dev-server 429s ("Too Many Requests") come from the regular endpoint (`api-eu-west-2.hygraph.com`), which clears its whole project cache on every Studio edit. Refreshing while editing therefore sends uncached, rate-limited requests.
+      - The CDN endpoint clears only the model that changed, and cache hits aren't rate-limited. It was tested with the current read-only PAT and returned 200 with correct data.
+      - The only code change is the env comment in `astro.config.mjs`.
+      - Verify with `pnpm codegen` (no diff), `astro build`, and `x-vercel-cache: HIT` on a second load of `/`.
+      - Do it sooner if dev 429s start getting in the way.
 - [ ] Domain pointed to Vercel
 - [ ] Final Lighthouse check
 
@@ -153,6 +162,15 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
 ## COMPLETED TASKS
 
 - use this section to write a brief review of completed tasks. This section will act as a review for the developer to keep track of progress. Mark each task completed with a date, review (anything else you feel is usefull). Keep the review short but concise.
+
+- **2026-09-24 — Phase 4: Matcher & resultat section, mobile type consistency, sticky nav, `/sponsorer` removed.**
+  - **Matcher & resultat:** the new `FixtureResultBanner` wraps the upcoming fixture cards and the latest-result banner under one visible h2. `Fixture` and `Result` now render `<div>`s with sr-only h3s. That fixes Result's `aria-labelledby` pointing at a heading that no longer existed, and two nested sections sharing one label. Spacing moved to the wrapper.
+  - **Type:** section h2s use `text-3xl md:text-5xl font-extrabold`, card h3s use `text-2xl font-extrabold`, and Mission body text is `text-body md:text-lg`. The Sponsor heading was left unchanged on purpose. Oswald's maximum weight is 700, so `font-extrabold` renders the same as `font-bold`.
+  - **Nav:** `fixed` became `sticky top-0`, so the header no longer covers the top of each page. `html { scroll-padding-top: 5rem }` keeps anchor jumps below the header. The skip link was raised to `z-[60]` so the nav no longer hides it. Fixed an existing bug where no menu showed between 768 and 1023px (toggle `md:hidden` vs list `lg:flex`); the toggle is now `lg:hidden`.
+  - **`/sponsorer` removed:** the page, `SEO_STATIC.sponsors` and the `/seo` skill rows are gone. The nav/footer "Sponsorer" link now goes to `/#partners` (`id` on the Sponsor section). The old URL returns 404, with no redirect by choice. Earlier log entries that mention `/sponsorer` are left as history.
+  - **Also:** a new Hero focal point, new Mission images, and an optional Phase 6 item to switch Hygraph to its CDN endpoint (dev-only 429s; production is already limited by ISR).
+  - `astro check` (0 errors) and `astro build` pass.
+  - **Not checked in a browser:** whether 7 links fit one row at 1024px, and whether `/#partners` lands correctly from a team page.
 
 - **2026-09-23 — Phase 4, Homepage: design-polish pass + Om oss + CommercialSlot.** Developer-led visual pass over the homepage sections. **Section headers** unified as `text-5xl font-extrabold uppercase` with a hairline rule. **NewsCard:** tag pill replaced by plain uppercase label text; a short red accent stroke above each card grows in length and thickness on hover; card images scale to 105% on hover (`group` on the `<article>`, all transitions disabled under `motion-reduce`). **Result:** banner reworked into a contained image block under the heading; scrim is a 75/60/50% gradient (not flat) — the ≥55% band behind the centred score/date keeps white text ≥4.5:1; score sizes made responsive (was `text-8xl` unwrapped, which overflowed on mobile). **Cleanups:** removed non-existent `justify-left`/`stroke-*`/`text-md` classes (`text-md` is not a theme token; now `text-body`), fixed "Senaste result" typo, deleted commented-out markup. **New `Mission` ("Om oss")** section (developer-authored copy; three-team image row, centre image larger via `md:grid-cols-[1fr_1.6fr_1fr]`, all `aspect-square object-cover`). **New `CommercialSlot`** — `mappers.ts` reuses `getSponsorVMs()` (no new query) and returns the first active sponsor with `hasCommercialSlot` + `commercialImage`, `CommercialSlotVM` = `{ sponsorName, sponsorUrl, logo, image, tagline }`; the first commercial-slot consumer (previously "no consumer reads it yet"). 1×2 grid: left card = commercial image + 60% scrim + logo on a white chip + tagline, whole card links to the sponsor URL; right card = `team-news.jpg` + scrim + "Bli en del av T4Q" CTA copy, whole card is a `mailto:info@team4q.se` (`CONTACT_EMAIL` constant — swap for `/kontakt` once the form exists). Both cards share the news-card image-zoom hover. **Bug fixed:** `NewsCard/fallback.ts` still imported the renamed `team-news.jpeg` (now `.jpg`) — would have broken the fallback path. `astro check` (0 errors, 59 files) + `astro build` green. **Not visually verified headlessly — worth eyeballing:** all new sections at 375/768/1024/1400px; logo-chip legibility for each sponsor logo; scrim contrast over the commercial image. **Open:** commercial-slot fallback when no sponsor has a slot (currently the whole section renders nothing — to be decided); Sponsor heading is now a full sentence in an `h2` (deliberate, sponsor-facing); `Sponsor/index.astro` still not linking to `/sponsorer`.
 

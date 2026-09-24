@@ -2,9 +2,9 @@
 // Homepage "Våra partners" section — two independent rows grouped by the existing `tier`
 // field (no new CMS field needed): main-tier sponsors larger on top, partner + community
 // sponsors smaller below. Each row wraps independently so it scales past the current 6
-// sponsors without the rows competing for space. Does not link to /sponsorer — that route
-// is still an unbuilt placeholder shell. Built directly for this one use per the standing
-// "no shared components yet" instruction.
+// sponsors without the rows competing for space. This section is the site's only sponsor
+// surface: `id="partners"` is the nav's "Sponsorer" target (/#partners). Built directly for
+// this one use per the standing "no shared components yet" instruction.
 import ResolvedImage from "../ResolvedImage.astro";
 import { getSponsorGroups } from "./mappers";
 
@@ -13,7 +13,7 @@ const { main, featured } = await getSponsorGroups();
 
 {
   (main.length > 0 || featured.length > 0) && (
-    <section aria-labelledby="partners-heading" class="mx-auto max-w-6xl px-4 py-18">
+    <section id="partners" aria-labelledby="partners-heading" class="mx-auto max-w-6xl px-4 py-18">
       <div class="mb-6 flex flex-wrap items-center justify-center gap-4 before:flex-1 before:border-b before:border-black/20 after:flex-1 after:border-b after:border-black/20">
         <h2 id="partners-heading" class="m-0 font-display text-h2 uppercase text-black">
           Tack till våra fantastiska sponsorer som hjälper till att stödja vårt samhälle.

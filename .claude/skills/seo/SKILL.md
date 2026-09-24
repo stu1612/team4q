@@ -4,7 +4,7 @@
 
 SEO is the developer's responsibility, not the client's. No HG SEO fields exist, and none should be added — the client has no time or need to manage SEO, so it is not built as editable content.
 
-Almost all SEO is static, hand-written once by the developer at build time — homepage, team pages, sponsors, contact, and the news listing page all fall into this category, because their content is low-frequency and dev-controlled. The one exception is `/news/[slug]`, where article volume and client-driven publishing make dynamic derivation from NewsCardModel worth the complexity. Static-by-default, dynamic only where it earns its cost.
+Almost all SEO is static, hand-written once by the developer at build time — homepage, team pages, contact, and the news listing page all fall into this category, because their content is low-frequency and dev-controlled. The one exception is `/news/[slug]`, where article volume and client-driven publishing make dynamic derivation from NewsCardModel worth the complexity. Static-by-default, dynamic only where it earns its cost.
 
 ## Outcomes
 
@@ -45,7 +45,6 @@ Hand-written once, imported directly by the page — no fetch, no HG involvement
 | Homepage                       | `SEO_STATIC.home`                                                                                                                                                        |
 | `/mens`, `/womens`, `/juniors` | `SEO_STATIC.team['mens' \| 'womens' \| 'juniors']` — keyed by the page's TeamModel tag, not derived from any TeamModel field, since TeamModel has no SEO data of its own |
 | `/news` (listing page)         | `SEO_STATIC.newsListing`                                                                                                                                                 |
-| `/sponsors`                    | `SEO_STATIC.sponsors`                                                                                                                                                    |
 | `/contact`                     | `SEO_STATIC.contact`                                                                                                                                                     |
 
 Each entry supplies title, description, ogImage, and jsonLd in full — the page passes it straight to the SEO component, unmodified.
@@ -100,8 +99,6 @@ If the article's own fetch used its fallback content (i.e. `fetchWithFallback` s
 
 - name, address, telephone (from `src/constants/contact.ts`), url (canonical)
 - Hand-written in `SEO_STATIC.contact`
-
-**`/sponsors` — No JSON-LD needed**
 
 ## JSON-LD Suppression on Failure
 

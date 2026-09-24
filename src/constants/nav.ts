@@ -12,6 +12,6 @@ export const NAV_LINKS: readonly NavLink[] = [
   { href: "/damlaget", label: "Damlaget" },
   { href: "/ungdomslaget", label: "Ungdomslaget" },
   { href: "/nyheter", label: "Nyheter" },
-  { href: "/sponsorer", label: "Sponsorer" },
+  { href: "/#partners", label: "Sponsorer" },
   { href: "/kontakt", label: "Kontakt" },
 ];
