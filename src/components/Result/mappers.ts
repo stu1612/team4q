@@ -60,6 +60,8 @@ function toVM(rd: ResultRD): ResultVM {
     homeScore: rd.homeScore,
     awayTeam: rd.awayTeam,
     awayScore: rd.awayScore,
+    homeWon: rd.homeScore > rd.awayScore,
+    awayWon: rd.awayScore > rd.homeScore,
     hasTeam: Boolean(rd.teamModel),
     teamLabel: rd.teamModel ? teamLabel(rd.teamModel.slug) : "",
     tagLabel: rd.teamModel ? teamTagShort(rd.teamModel.slug) : "",

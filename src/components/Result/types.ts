@@ -19,6 +19,9 @@ export interface ResultVM {
   homeScore: number;
   awayTeam: string;
   awayScore: number;
+  /** Winner flags for de-emphasising the losing side. Both false on a level score. */
+  homeWon: boolean;
+  awayWon: boolean;
   hasTeam: boolean;
   teamLabel: string;
   /** HERR / DAM / UNGDOM — the short tag; "" when the result has no team. */

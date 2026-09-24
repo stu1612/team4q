@@ -106,10 +106,10 @@
 */
 @layer base {
   /* Anchor jumps (/#partners, the skip link's #main-content) stop below the sticky header
-     instead of under it. ~69px header (Nav.astro: py-3 + 44px logo + 1px border) plus a
+     instead of under it. ~79px header (Nav.astro: py-3 + 54px logo + 1px border) plus a
      little air — update this if the header's height changes. */
   html {
-    scroll-padding-top: 5rem;
+    scroll-padding-top: 5.5rem;
   }
 
   body {

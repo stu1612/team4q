@@ -5,7 +5,8 @@
 // address/telephone).
 //
 // TODO(developer): confirm the real values for every field flagged below — the email is
-// from the club's ClubMemberModel record; phone, socials and address are placeholders.
+// from the club's ClubMemberModel record; phone and address are placeholders. Socials
+// confirmed by the developer 2026-09-24 (same accounts the old team4q.se linked to).
 // An empty string means "not set" — consumers omit that line/link entirely.
 
 export interface ClubContact {
@@ -31,8 +32,8 @@ export const CLUB_CONTACT: ClubContact = {
   email: "info@team4q.se",
   phone: "",
   social: {
-    instagram: "", // e.g. "https://www.instagram.com/team4q/"
-    facebook: "", // e.g. "https://www.facebook.com/team4q/"
+    instagram: "https://www.instagram.com/team4q/",
+    facebook: "https://www.facebook.com/team4q/"
   },
   address: {
     street: "",
@@ -41,3 +42,20 @@ export const CLUB_CONTACT: ClubContact = {
     country: "SE",
   },
 };
+
+export type SocialNetwork = keyof ClubContact["social"];
+
+export interface SocialLink {
+  network: SocialNetwork;
+  label: string;
+}
+
+/** Set profiles only, in display order — shared by the header nav and the footer. */
+export const SOCIAL_LINKS: readonly (SocialLink & { href: string })[] = (
+  [
+    { network: "instagram", label: "Instagram" },
+    { network: "facebook", label: "Facebook" },
+  ] as const satisfies readonly SocialLink[]
+)
+  .map((link) => ({ ...link, href: CLUB_CONTACT.social[link.network] }))
+  .filter((link) => link.href.length > 0);
