@@ -11,44 +11,34 @@ const result = await getLatestResultVM();
 
 {
   result && (
-    // The section is the banner: `bg-black` is the paint while the lazy image loads (all text
-    // here is white), and `isolate` + `overflow-hidden` keep the absolute layers inside it.
-    // Same min-height as the Hero (Hero/index.astro) so the two bands read as a pair.
-    <section
-      aria-labelledby="resultat-heading"
-      class="relative isolate flex min-h-[clamp(28rem,70vh,44rem)] overflow-hidden bg-black"
-    >
-      {/* Decorative branded backdrop — the score and teams are the text alternative. */}
-      <ResolvedImage
-        src={result.backgroundImage}
-        alt=""
-        width={2400}
-        height={1600}
-        loading="lazy"
-        class="absolute inset-0 h-full w-full object-cover"
-      />
-      {/* Flat scrim, not a gradient: the text spans the full height (heading at the top, score
-          in the middle), and 60% black keeps white text above 4.5:1 even over a pure-white
-          pixel. */}
-      <div class="absolute inset-0 bg-black/60" />
-
-      {/* Column fills the band: heading pinned to the top, the score block centred in the space
-          that remains. */}
-      <div class="relative mx-auto flex w-full max-w-6xl flex-col px-4 py-12">
-        <h2 id="resultat-heading" class="m-0 mb-6 font-display text-h2 uppercase text-white">
+    <section aria-labelledby="resultat-heading" class="mx-auto max-w-6xl px-4 py-18">
+      <div class="mb-6 flex flex-wrap items-center justify-center gap-4 before:flex-1 before:border-b before:border-black/20 after:flex-1 after:border-b after:border-black/20">
+        <h2 id="resultat-heading" class="m-0 font-display text-5xl font-extrabold uppercase text-black">
           Senaste resultat
         </h2>
+      </div>
 
-        <div class="flex flex-1 flex-col items-center justify-center gap-3 text-center">
+      <div class="relative isolate flex items-center justify-center overflow-hidden bg-black min-h-[clamp(24rem,70vh,34rem)]">
+        {/* Decorative branded backdrop — the score and teams are the text alternative. */}
+        <ResolvedImage
+          src={result.backgroundImage}
+          alt=""
+          width={1600}
+          height={640}
+          loading="lazy"
+          class="absolute inset-0 h-full w-full object-cover object-top"
+        />
+        <div class="absolute inset-0 bg-[linear-gradient(to_top,rgb(0_0_0/0.75)_0%,rgb(0_0_0/0.6)_50%,rgb(0_0_0/0.5)_100%)]" />
+        <div class="z-10 flex w-full flex-col items-center gap-3 p-4 md:p-8">
           {result.hasTeam && (
             <span class="bg-brand-red px-2 py-0.5 font-display text-label uppercase text-white">
               {result.tagLabel}
             </span>
           )}
-          <p class="m-0 font-display text-h2 uppercase text-white md:text-h1">
-            {result.homeTeam} {result.homeScore} – {result.awayScore} {result.awayTeam}
+          <p class="m-0 flex flex-wrap items-center justify-center gap-x-4 font-display text-6xl font-black uppercase text-white md:text-8xl">
+            <span class="text-3xl font-bold md:text-5xl">{result.homeTeam}</span> {result.homeScore} – {result.awayScore} <span class="text-3xl font-bold md:text-5xl">{result.awayTeam}</span>
           </p>
-          {result.hasDate && <p class="m-0 text-small text-white">{result.dateLabel}</p>}
+          {result.hasDate && <p class="m-0 text-small text-white/85">{result.dateLabel}</p>}
         </div>
       </div>
     </section>

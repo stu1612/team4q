@@ -1,0 +1,36 @@
+---
+import { Image } from "astro:assets";
+import missionJunior from "../../images/fallback/mission/mission_junior.jpg";
+import missionMen from "../../images/fallback/teams/mens-cover.jpg";
+import missionWomen from "../../images/fallback/teams/womens-cover.jpg";
+---
+
+<section aria-labelledby="om-oss-heading" class="bg-zinc-200 px-4 py-18">
+  <div class="mx-auto max-w-6xl">
+    <div class="mb-6 flex flex-wrap items-center gap-4 before:flex-1 before:border-b before:border-black/20 after:flex-1 after:border-b after:border-black/20">
+      <h2 id="om-oss-heading" class="m-0 font-display text-5xl font-bold uppercase text-black">Om oss</h2>
+    </div>
+
+    <div class="mb-6 flex flex-col gap-4 text-center text-lg text-black">
+      <p class="m-0">
+        Sedan 2016 har Team4Q byggt en basketförening i Helsingborg där barn, ungdomar och seniorer
+        tränar, tävlar och utvecklas tillsammans.
+      </p>
+      <p class="m-0">
+        I tre hallar runt om i staden — GA Hallen, Rydebäck och Harlyckehallen — tränar våra lag med
+        målmedvetenhet, på och utanför planen. Men klubben har aldrig bara handlat om basket. Det
+        handlar om människorna som kommer tillbaka vecka efter vecka, vänskapen som växer fram, och
+        en gemenskap som sträcker sig långt bortom slutsignalen.
+      </p>
+      <p class="m-0">
+        Vi bygger för framtiden — för spelarna som lär sig spelet idag, och för klubben de en dag för vidare.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 items-center gap-4 py-9 md:grid-cols-[1fr_1.6fr_1fr]">
+      <Image src={missionWomen} alt="Damlaget" class="h-auto w-full aspect-square object-cover" width={300} height={300} />
+      <Image src={missionJunior} alt="Ungdomslaget" class="h-auto w-full aspect-square object-cover" width={300} height={300} />
+      <Image src={missionMen} alt="Herrlaget" class="h-auto w-full aspect-square object-cover" width={300} height={300} />
+    </div>
+  </div>
+</section>

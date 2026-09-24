@@ -5,6 +5,8 @@ import NewsCard from "../components/NewsCard/index.astro";
 import Fixture from "../components/Fixture/index.astro";
 import Result from "../components/Result/index.astro";
 import Sponsor from "../components/Sponsor/index.astro";
+import Mission from "../components/Mission/index.astro";
+import CommercialSlot from "../components/CommercialSlot/index.astro";
 import { SEO_STATIC } from "../constants/seo";
 // Homepage — built section by section. Hero + Nyheter + Matcher & resultat + Våra partners
 // done.
@@ -18,7 +20,9 @@ export const prerender = false;
 <Base seo={SEO_STATIC.home}>
   <Hero />
   <NewsCard />
-  <Result />
+  <Mission />
+  <CommercialSlot />
   <Fixture />
+  <Result />
   <Sponsor />
 </Base>
