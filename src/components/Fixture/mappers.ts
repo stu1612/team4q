@@ -11,29 +11,33 @@ import type {
   FixtureVM,
 } from "./types";
 
-const FIXTURE_FIELDS = `
-  heading
-  date
-  startTime
-  endTime
-  location
-  homeTeam
-  awayTeam
-  isActive
-  coverImage {
-    url
-    width
-    height
-  }
-  teamModel {
-    name
-    slug
-    teamAffiliation
-    affiliationUrl
-    affiliationLogo {
+// A real GraphQL fragment (not a plain string) so graphql-codegen can resolve it — the
+// operations spread it and append it after the operation body.
+const FIXTURE_FIELDS = gql`
+  fragment FixtureFields on FixtureModel {
+    heading
+    date
+    startTime
+    endTime
+    location
+    homeTeam
+    awayTeam
+    isActive
+    coverImage {
       url
       width
       height
+    }
+    teamModel {
+      name
+      slug
+      teamAffiliation
+      affiliationUrl
+      affiliationLogo {
+        url
+        width
+        height
+      }
     }
   }
 `;
@@ -41,9 +45,10 @@ const FIXTURE_FIELDS = `
 const FIXTURE_QUERY = gql`
   query FixtureList {
     fixtureModels(orderBy: date_ASC) {
-      ${FIXTURE_FIELDS}
+      ...FixtureFields
     }
   }
+  ${FIXTURE_FIELDS}
 `;
 
 // Team-scoped variant for team pages — same fields, filtered server-side. Mirrors the
@@ -51,9 +56,10 @@ const FIXTURE_QUERY = gql`
 const FIXTURE_BY_TEAM_QUERY = gql`
   query FixtureListByTeam($slug: String!) {
     fixtureModels(where: { teamModel: { slug: $slug } }, orderBy: date_ASC) {
-      ${FIXTURE_FIELDS}
+      ...FixtureFields
     }
   }
+  ${FIXTURE_FIELDS}
 `;
 
 function toVM(rd: FixtureRD): FixtureVM {
@@ -116,10 +122,14 @@ export async function getUpcomingFixtureVMs(limit: number): Promise<FixtureListV
   return { ok: true, fixtures };
 }
 
-/** Every active fixture for one team — both past and upcoming; each VM's own `isUpcoming`
- *  flag lets the caller group/style them (used by the team-page fixture list). */
-export async function getFixtureVMsByTeam(slug: string): Promise<FixtureListVM> {
+/** One team's fixtures still to be played, soonest first (team-page fixture list). Past
+ *  fixtures are dropped — a played match belongs to the Resultat section, which has the
+ *  score. */
+export async function getUpcomingFixtureVMsByTeam(slug: string): Promise<FixtureListVM> {
   const res = await fetchOrFail<FixtureResponseRD>(FIXTURE_BY_TEAM_QUERY, { slug });
   if (!res.ok) return { ok: false, contact: CLUB_CONTACT };
-  return { ok: true, fixtures: mapActiveFixtures(res.data.fixtureModels) };
+  const fixtures = mapActiveFixtures(res.data.fixtureModels)
+    .filter((fixture) => fixture.isUpcoming)
+    .sort((a, b) => a.isoDateTime.localeCompare(b.isoDateTime));
+  return { ok: true, fixtures };
 }

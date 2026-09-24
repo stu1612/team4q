@@ -1,0 +1,197 @@
+---
+// Team-page intro — static copy + imagery from src/constants/teamContent.ts (not Hygraph, so
+// no mapper/fallback: there is nothing to fetch or fail). Renders nothing for a team with no
+// entry. Parts, each optional beyond the first:
+//   1. copy + fact row beside a photo composition (a second, overlapping photo if given)
+//   2. `stages` — an age-group pathway as photo cards
+//   3. `goodToKnow` checklist beside the recruitment call to action (CTA alone otherwise)
+// `tone: "youth"` softens the treatment for a younger audience — rounded photos, gently
+// tilted cards that straighten on hover, pill labels — while keeping the site's type,
+// colours and layout grid, so it reads younger without reading childish. The straightening
+// transition is off under reduced motion; tilts only apply from md (stacked cards on a phone
+// stay straight).
+import { Image } from "astro:assets";
+import { TEAM_INTRO } from "../../constants/teamContent";
+import { CLUB_CONTACT } from "../../constants/contact";
+
+interface Props {
+  teamSlug: string;
+}
+
+const { teamSlug } = Astro.props;
+const intro = TEAM_INTRO[teamSlug];
+const youth = intro?.tone === "youth";
+
+const BUTTON_CLASS =
+  "inline-flex min-h-11 items-center px-5 font-display text-label uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+// Alternating tilt for the youth stage cards; hover/focus straightens them.
+const STAGE_TILTS = ["md:-rotate-1", "md:rotate-1", "md:-rotate-1"];
+const objectPosition = (position?: string) => `object-position: ${position ?? "50% 50%"}`;
+---
+
+{
+  intro && (
+    <section aria-labelledby="om-laget-heading" class="mx-auto max-w-6xl px-4 py-10 md:py-18">
+      <div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1fr_1fr] lg:gap-16">
+        <div class="flex flex-col items-start gap-4">
+          <p class="m-0 flex items-center gap-3 font-display text-label uppercase text-black/70">
+            <span aria-hidden="true" class="block h-0.5 w-8 bg-brand-red" />
+            {intro.kicker}
+          </p>
+          <h2 id="om-laget-heading" class="m-0 font-display text-3xl font-extrabold uppercase text-black md:text-5xl">
+            {intro.heading}
+          </h2>
+          {intro.paragraphs.map((paragraph) => (
+            <p class="m-0 max-w-[60ch] text-body text-black/80 md:text-lg">{paragraph}</p>
+          ))}
+
+          <dl class="m-0 mt-4 grid w-full grid-cols-3 gap-4">
+            {intro.facts.map((fact) => (
+              <div class="flex flex-col gap-1 border-t-2 border-black pt-3">
+                <dt class="font-display text-label uppercase text-black/60">{fact.label}</dt>
+                <dd class="m-0 font-display text-lg font-bold uppercase leading-tight text-black md:text-xl">
+                  {fact.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        {/* Both photos carry alt text since they show the team. */}
+        <div class:list={["relative", intro.images.secondary && "pb-12 md:pb-16"]}>
+          <Image
+            src={intro.images.primary.src}
+            alt={intro.images.primary.alt}
+            width={1200}
+            height={900}
+            loading="lazy"
+            class:list={["aspect-[4/3] w-full object-cover", youth && "rounded-2xl"]}
+            style={objectPosition(intro.images.primary.position)}
+          />
+          {intro.images.secondary && (
+            <div
+              class:list={[
+                "absolute bottom-0 left-4 w-2/5 border-4 border-white bg-white shadow-[0_12px_32px_rgb(0_0_0/0.25)] md:left-8",
+                youth && "rounded-2xl",
+              ]}
+            >
+              <Image
+                src={intro.images.secondary.src}
+                alt={intro.images.secondary.alt}
+                width={600}
+                height={600}
+                loading="lazy"
+                class:list={["aspect-square w-full object-cover", youth && "rounded-xl"]}
+                style={objectPosition(intro.images.secondary.position)}
+              />
+            </div>
+          )}
+          <span
+            aria-hidden="true"
+            class:list={["absolute h-1 w-1/3 bg-brand-red", youth ? "-top-3 right-6 rounded-full" : "top-0 right-0"]}
+          />
+        </div>
+      </div>
+
+      {intro.stages && (
+        <div class="mt-12 md:mt-18">
+          <h3 class="m-0 mb-6 font-display text-2xl font-extrabold uppercase text-black md:mb-8 md:text-4xl">
+            {intro.stages.heading}
+          </h3>
+          <ol class="m-0 grid list-none grid-cols-1 gap-6 p-0 md:grid-cols-3 md:gap-8">
+            {intro.stages.items.map((stage, i) => (
+              <li
+                class:list={[
+                  "flex flex-col overflow-hidden bg-white shadow-[0_8px_24px_rgb(0_0_0/0.12)] transition-transform duration-300 ease-out md:hover:rotate-0 motion-reduce:transition-none",
+                  youth ? `rounded-2xl ${STAGE_TILTS[i % STAGE_TILTS.length]}` : "",
+                ]}
+              >
+                <div class="relative">
+                  <Image
+                    src={stage.image.src}
+                    alt={stage.image.alt}
+                    width={800}
+                    height={640}
+                    loading="lazy"
+                    class="aspect-[5/4] w-full object-cover"
+                    style={objectPosition(stage.image.position)}
+                  />
+                  <span
+                    class:list={[
+                      "absolute top-3 left-3 bg-brand-red px-3 py-1 font-display text-label uppercase text-white",
+                      youth && "rounded-full",
+                    ]}
+                  >
+                    {stage.ageLabel}
+                  </span>
+                </div>
+                <div class="flex flex-col gap-2 border-t-4 border-brand-red p-5">
+                  <p class="m-0 font-display text-label uppercase text-black/60">Steg {i + 1}</p>
+                  <h4 class="m-0 font-display text-2xl font-extrabold uppercase text-black">{stage.title}</h4>
+                  <p class="m-0 text-body text-black/80">{stage.text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+
+      <div class:list={["mt-10 grid grid-cols-1 gap-4 md:mt-16", intro.goodToKnow && "lg:grid-cols-[1fr_1.4fr]"]}>
+        {intro.goodToKnow && (
+          <div class:list={["border-t-4 border-brand-red bg-zinc-100 p-6 md:p-8", youth && "rounded-2xl"]}>
+            <h3 class="m-0 mb-4 font-display text-xl font-extrabold uppercase text-black md:text-2xl">
+              {intro.goodToKnow.heading}
+            </h3>
+            <ul class="m-0 flex list-none flex-col gap-3 p-0">
+              {intro.goodToKnow.items.map((item) => (
+                <li class="flex items-start gap-3 text-body text-black">
+                  <span
+                    aria-hidden="true"
+                    class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-red text-white"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <path d="m5 12 5 5 9-10" />
+                    </svg>
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div
+          class:list={[
+            "flex flex-col items-start gap-5 border-t-4 border-brand-red bg-black p-6 md:p-10",
+            !intro.goodToKnow && "md:flex-row md:items-center md:justify-between",
+            intro.goodToKnow && "justify-center",
+            youth && "rounded-2xl",
+          ]}
+        >
+          <div class="flex flex-col gap-2">
+            <h3 class="m-0 font-display text-2xl font-extrabold uppercase text-white md:text-4xl">{intro.cta.heading}</h3>
+            <p class="m-0 max-w-[56ch] text-body text-white/80">{intro.cta.text}</p>
+          </div>
+          <div class="flex shrink-0 flex-wrap gap-3">
+            <a
+              href="#traning"
+              class:list={[BUTTON_CLASS, "bg-brand-red text-white hover:opacity-92", youth && "rounded-full"]}
+            >
+              Se träningstider
+            </a>
+            <a
+              href={`mailto:${CLUB_CONTACT.email}`}
+              class:list={[
+                BUTTON_CLASS,
+                "border border-white/60 text-white hover:border-white hover:bg-white hover:text-black",
+                youth && "rounded-full",
+              ]}
+            >
+              Mejla oss
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}

@@ -1,6 +1,6 @@
 // RD types derive from graphql-codegen output (src/gql/generated.ts). coverImage widened
-// (RawImage) so fallback.ts keeps a local import. Mapper wired; not rendered until the
-// /herrlaget /damlaget /ungdomslaget routes are built in Phase 4.
+// (RawImage) so fallback.ts keeps a local import. The team's league affiliation stays
+// URL-only — fallback.ts leaves it null, so a Hygraph outage just hides the league badge.
 
 import type { TeamPageBySlugQuery } from "../../gql/generated";
 import type { RawImage } from "../../lib/resolveImage";
@@ -20,4 +20,9 @@ export interface TeamPageVM {
   subheading: string;
   teamLabel: string;
   coverImage: ImageMetadata | string;
+  /** League badge (TeamModel affiliation) — Flag, all three fields or none. */
+  hasAffiliation: boolean;
+  affiliationName: string;
+  affiliationUrl: string;
+  affiliationLogo: ImageMetadata | string | null;
 }

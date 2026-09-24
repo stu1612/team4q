@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import TeamPage from "../components/TeamPage/index.astro";
+import TeamIntro from "../components/TeamIntro/index.astro";
 import TeamResultsList from "../components/Result/TeamResultsList.astro";
 import TeamFixtureList from "../components/Fixture/TeamFixtureList.astro";
 import Training from "../components/Training/index.astro";
@@ -8,6 +9,9 @@ import { SEO_STATIC } from "../constants/seo";
 
 const TEAM_SLUG = "damlaget";
 
+// Section order: header → static intro (renders nothing without a TEAM_INTRO entry) →
+// training (what most visitors come for) → matches → results.
+//
 // On-demand (ISR), same reasoning as the homepage: fixture past/upcoming and result
 // staleness depend on the current time, which a prerendered page would freeze at build.
 export const prerender = false;
@@ -15,7 +19,8 @@ export const prerender = false;
 
 <Base seo={SEO_STATIC.team.womens}>
   <TeamPage teamSlug={TEAM_SLUG} />
-  <TeamResultsList teamSlug={TEAM_SLUG} />
-  <TeamFixtureList teamSlug={TEAM_SLUG} />
+  <TeamIntro teamSlug={TEAM_SLUG} />
   <Training teamSlug={TEAM_SLUG} />
+  <TeamFixtureList teamSlug={TEAM_SLUG} />
+  <TeamResultsList teamSlug={TEAM_SLUG} />
 </Base>

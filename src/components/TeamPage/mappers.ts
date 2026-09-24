@@ -1,9 +1,8 @@
-// Wired to fetchWithFallback, keyed by team slug. Not rendered until the /herrlaget
-// /damlaget /ungdomslaget routes are built in Phase 4.
+// Wired to fetchWithFallback, keyed by team slug. Rendered as the team-page header band.
 
 import { gql } from "graphql-request";
 import { fetchWithFallback } from "../../lib/hygraphClient";
-import { resolveImage } from "../../lib/resolveImage";
+import { resolveImage, resolveImageOrNull } from "../../lib/resolveImage";
 import { teamLabel } from "../../lib/teamLabel";
 import {
   teamPageFallbackBySlug,
@@ -23,6 +22,13 @@ const TEAM_PAGE_QUERY = gql`
       teamModel {
         name
         slug
+        teamAffiliation
+        affiliationUrl
+        affiliationLogo {
+          url
+          width
+          height
+        }
       }
     }
   }
@@ -33,11 +39,18 @@ function toVM(rd: TeamPageRD): TeamPageVM {
     // Required-with-guard: the page is meaningless without its team relation.
     throw new Error("TeamPageModel is missing its teamModel relation");
   }
+  const team = rd.teamModel;
+  // Flag, paired as one (fallback-reference: TeamModel) — all three or no league badge.
+  const hasAffiliation = Boolean(team.teamAffiliation && team.affiliationUrl && team.affiliationLogo);
   return {
     heading: rd.heading,
     subheading: rd.subheading ?? "",
-    teamLabel: teamLabel(rd.teamModel.slug),
+    teamLabel: teamLabel(team.slug),
     coverImage: resolveImage(rd.coverImage),
+    hasAffiliation,
+    affiliationName: hasAffiliation ? (team.teamAffiliation as string) : "",
+    affiliationUrl: hasAffiliation ? (team.affiliationUrl as string) : "",
+    affiliationLogo: hasAffiliation ? resolveImageOrNull(team.affiliationLogo) : null,
   };
 }
 
