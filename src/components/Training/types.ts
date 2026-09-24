@@ -1,5 +1,6 @@
 // RD types derive from graphql-codegen output (src/gql/generated.ts). Coach image widened
-// (RawImage). Mapper wired; not rendered until Phase 4.
+// (RawImage). Coach email/contactNumber are public-facing (fallback-reference: ClubMember)
+// and selected only because this component renders them.
 
 import type { TrainingListQuery } from "../../gql/generated";
 import type { RawImage } from "../../lib/resolveImage";
@@ -25,11 +26,23 @@ export interface CoachVM {
   role: string;
   hasCoachPhoto: boolean;
   photo: ImageMetadata | string | null;
+  /** "" when not set — the contact link is omitted. */
+  email: string;
+  phone: string;
+  /** `tel:` href with whitespace stripped; "" when there's no phone. */
+  phoneHref: string;
 }
 
 export interface TrainingVM {
   venue: string;
   date: string;
+  /** Date split for the session card's date panel: "tis" / "8" / "sep". */
+  weekdayShort: string;
+  dayNumber: string;
+  monthShort: string;
+  /** Local start/end as "YYYY-MM-DDTHH:mm" for <time datetime>. */
+  isoStart: string;
+  isoEnd: string;
   startTime: string;
   endTime: string;
   trainingTypeLabel: string;
@@ -41,5 +54,5 @@ export interface TrainingVM {
 }
 
 export type TrainingListVM =
-  | { ok: true; sessions: TrainingVM[]; coaches: CoachVM[] }
+  | { ok: true; sessions: TrainingVM[] }
   | { ok: false; contact: ClubContact };

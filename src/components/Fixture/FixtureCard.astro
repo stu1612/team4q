@@ -1,0 +1,51 @@
+---
+// "Match ticket" fixture card — shared by the homepage (Fixture/index.astro) and the team
+// pages (TeamFixtureList.astro) so the two can't drift apart. Black date panel (the thing
+// people scan fixtures for, so the largest type) beside a light body; the red top bar is a
+// non-text accent. Both consumers only list upcoming fixtures — a played match is shown via
+// ResultModel, which has the score.
+import type { FixtureVM } from "./types";
+
+interface Props {
+  fixture: FixtureVM;
+}
+
+const { fixture } = Astro.props;
+---
+
+<article class="flex h-full border-t-4 border-brand-red bg-zinc-100">
+  <time
+    datetime={fixture.date}
+    class="flex w-22 shrink-0 flex-col items-center justify-center gap-1 bg-black px-2 py-4 font-display uppercase text-white"
+  >
+    <span class="text-label text-white/75">{fixture.weekdayShort}</span>
+    <span class="text-6xl leading-none font-extrabold">{fixture.dayNumber}</span>
+    <span class="text-label text-white/75">{fixture.monthShort}</span>
+  </time>
+
+  <div class="flex min-w-0 flex-1 flex-col gap-3 p-4">
+    <div class="flex items-center justify-between gap-2">
+      {
+        fixture.hasTeam ? (
+          <span class="bg-brand-red px-2 py-0.5 font-display text-label uppercase text-white">{fixture.tagLabel}</span>
+        ) : (
+          <span />
+        )
+      }
+      <time datetime={fixture.isoDateTime} class="font-display text-2xl font-bold text-black">
+        {fixture.timeLabel}
+      </time>
+    </div>
+
+    <h3 class="m-0 flex flex-col gap-0.5 font-display text-xl font-extrabold uppercase text-black md:text-2xl">
+      <span>{fixture.homeTeam}</span>
+      <span class="font-sans text-small font-normal normal-case text-black/60">mot</span>
+      <span>{fixture.awayTeam}</span>
+    </h3>
+
+    <div class="mt-auto flex flex-col gap-0.5 border-t border-black/15 pt-3">
+      <p class="m-0 text-small text-black">{fixture.location}</p>
+      {fixture.hasAffiliation && <p class="m-0 text-small text-black/60">{fixture.affiliationName}</p>}
+    </div>
+  </div>
+</article>

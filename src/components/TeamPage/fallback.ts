@@ -14,7 +14,7 @@ export const teamPageFallbackBySlug: Record<string, TeamPageResponseRD> = {
         subheading:
           "Herrlaget representerar T4Q i Skånes högsta serier med hjärta och lagkänsla.",
         coverImage: mensCover,
-        teamModel: { name: "Herr", slug: "herrlaget" },
+        teamModel: { name: "Herr", slug: "herrlaget", teamAffiliation: null, affiliationUrl: null, affiliationLogo: null },
       },
     ],
   },
@@ -25,7 +25,7 @@ export const teamPageFallbackBySlug: Record<string, TeamPageResponseRD> = {
         subheading:
           "Damlaget kombinerar bredd och spets och fortsätter att utvecklas match för match.",
         coverImage: womensCover,
-        teamModel: { name: "Dam", slug: "damlaget" },
+        teamModel: { name: "Dam", slug: "damlaget", teamAffiliation: null, affiliationUrl: null, affiliationLogo: null },
       },
     ],
   },
@@ -36,7 +36,7 @@ export const teamPageFallbackBySlug: Record<string, TeamPageResponseRD> = {
         subheading:
           "Ungdomslaget är grunden för klubbens framtid – här får unga spelare växa.",
         coverImage: juniorCover,
-        teamModel: { name: "Ungdom", slug: "ungdomslaget" },
+        teamModel: { name: "Ungdom", slug: "ungdomslaget", teamAffiliation: null, affiliationUrl: null, affiliationLogo: null },
       },
     ],
   },

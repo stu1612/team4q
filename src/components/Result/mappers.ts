@@ -8,40 +8,46 @@ import type { ResultRD, ResultResponseRD, ResultVM } from "./types";
 const STALE_AFTER_DAYS = 28;
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
-const RESULT_FIELDS = `
-  homeTeam
-  homeScore
-  awayTeam
-  awayScore
-  date
-  isActive
-  publishedAt
-  teamModel {
-    name
-    slug
-  }
-  backgroundImage {
-    url
-    width
-    height
+// A real GraphQL fragment (not a plain string) so graphql-codegen can resolve it — the
+// operations spread it and append it after the operation body.
+const RESULT_FIELDS = gql`
+  fragment ResultFields on ResultModel {
+    homeTeam
+    homeScore
+    awayTeam
+    awayScore
+    date
+    isActive
+    publishedAt
+    teamModel {
+      name
+      slug
+    }
+    backgroundImage {
+      url
+      width
+      height
+    }
   }
 `;
 
 const RESULT_QUERY = gql`
   query ResultList {
     resultModels(orderBy: publishedAt_DESC) {
-      ${RESULT_FIELDS}
+      ...ResultFields
     }
   }
+  ${RESULT_FIELDS}
 `;
 
 // Team-scoped variant for team pages — same fields, filtered server-side.
 const RESULT_BY_TEAM_QUERY = gql`
   query ResultListByTeam($slug: String!) {
     resultModels(where: { teamModel: { slug: $slug } }, orderBy: publishedAt_DESC) {
-      ${RESULT_FIELDS}
+      ...ResultFields
     }
   }
+  ${RESULT_FIELDS}
 `;
 
 function isVisible(rd: ResultRD): boolean {

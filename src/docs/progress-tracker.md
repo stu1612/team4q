@@ -1,6 +1,6 @@
 # T4Q Progress Tracker
 
-Last updated: 2026-09-24 (Phase 4 — homepage mobile pass, mobile nav drawer, footer redesign, social links, fixture + result redesign)
+Last updated: 2026-09-24 (Phase 4 — team pages: /herrlaget, /damlaget, /ungdomslaget redesigned)
 
 ## Status at a glance
 
@@ -114,7 +114,8 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
 - [x] Global: mobile nav drawer (native `<dialog>`), footer redesign, Instagram/Facebook links in nav + footer
 - [x] `/herrlaget` (establishes team page pattern — includes fixture card past/upcoming decision)
 - [x] `/damlaget`
-- [ ] `/ungdomslaget`
+- [x] `/ungdomslaget` (youth variant of the team page — age-group pathway, parents' checklist)
+- [x] Team pages redesign (herr/dam/ungdom): league badge, static intro, training with coach contact, upcoming-only fixtures, scoreboard results
 - [ ] `/nyheter` + `/nyheter/[slug]`
 - [x] ~~`/sponsorer`~~ — removed 2026-09-24; sponsors live only in the homepage section (nav → `/#partners`)
 - [ ] `/kontakt` + Resend
@@ -165,6 +166,38 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
 ## COMPLETED TASKS
 
 - use this section to write a brief review of completed tasks. This section will act as a review for the developer to keep track of progress. Mark each task completed with a date, review (anything else you feel is usefull). Keep the review short but concise.
+
+- **2026-09-24 (evening) — Phase 4: team pages redesigned + `/ungdomslaget` built.**
+  - **Shared composition** for all three pages: header → static intro → Träningstider → Kommande matcher → Resultat.
+  - **Header (TeamPage):**
+    - A live league badge (TeamModel affiliation: logo, name, "Se tabellen ↗" to profixio) and jump links to training and matches.
+    - A stronger mobile scrim.
+    - The affiliation fields are added to the TeamPage query. The fallback leaves them null, so the badge hides during an outage.
+  - **Static intro:**
+    - New `TeamIntro` component, with content in `src/constants/teamContent.ts`. It's code, not Hygraph, by developer decision.
+    - Heading, copy, a 3-fact row, a photo composition, and a recruitment CTA (#traning + mailto).
+    - Optional `tone: "youth"`, `stages` (age-group photo cards), `goodToKnow` (checklist), a second photo, and per-image `position`.
+  - **Träningstider:**
+    - Session cards use the fixture date panel, then type, time range, venue and notes.
+    - Each session's coach is shown with photo, name, role, mailto and tel links. `email` and `contactNumber` are now queried (public-facing per fallback-reference).
+    - The de-duplicated "Tränare" sub-section is removed. Date parts and ISO times moved into the mapper (the template no longer formats dates).
+  - **Fixtures:**
+    - The match ticket is extracted to a shared `FixtureCard.astro` (homepage + team pages).
+    - Team pages show upcoming fixtures only (`getUpcomingFixtureVMsByTeam`). Past matches belong to Resultat, which has the score.
+  - **Results:** compact black scoreboard cards (red bar, chip · SLUTRESULTAT, date, losing side dimmed).
+  - **`/ungdomslaget`:**
+    - Rounded photos, pill labels, and gently tilted age cards (straight on mobile, no transition under reduced motion).
+    - A "Från första studsen till juniorlaget" pathway (7–10 / 11–14 / 15–19, TODO(club) to confirm) and a parents' first-training checklist.
+  - **Fix — codegen had been broken since the 2026-09-22 team-page commit.** The `${X_FIELDS}` string interpolation is unreadable to graphql-tag-pluck. It's converted to real fragments (`FixtureFields` / `ResultFields` / `TrainingFields`) and `generated.ts` is regenerated, so the `…ByTeam` queries are now type-generated too.
+  - `astro check` (0 errors) + `astro build` pass. Verified on the dev server against live Hygraph for all three pages.
+  - **Open for the club:**
+    - All intro copy is a draft.
+    - Several photos are stock or AI-looking: `mens-cover`, `women-news`, `team4q_mission_jnr`, `junior-cover`.
+    - Guardian consent is needed for the youth photos.
+    - The Hygraph covers are low-res (960–1000px).
+    - The youth league badge reads "Pojkar" while the header shows a girls' squad (one affiliation per team).
+    - All current training sessions are dated in the past.
+  - **Not checked in a browser:** breakpoints for the intro photo composition, the youth stage-card tilt, and training cards with long emails.
 
 - **2026-09-24 (later) — Phase 4: homepage mobile pass, mobile nav drawer, footer redesign, social links, fixture + result redesign.**
   - **Homepage mobile** (below md; desktop unchanged via `md:` restores):

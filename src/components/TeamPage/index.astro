@@ -1,7 +1,11 @@
 ---
 // Team-page header band — same full-bleed cover-image + scrim conventions as Hero
-// (Hero/index.astro), shorter since it's a page header rather than the homepage's hero.
-// This section's heading is the page's only h1.
+// (Hero/index.astro), including its stronger mobile scrim. This section's heading is the
+// page's only h1. Below it: the team's league badge (TeamModel affiliation, linking out to
+// the league table) and jump links to the two sections visitors come for — training and
+// matches. Both targets always render (they show a message block rather than disappearing),
+// so the links never point at nothing; `html { scroll-padding-top }` keeps them clear of the
+// sticky header.
 import ResolvedImage from "../ResolvedImage.astro";
 import { getTeamPageVM } from "./mappers";
 
@@ -11,21 +15,71 @@ interface Props {
 
 const { teamSlug } = Astro.props;
 const team = await getTeamPageVM(teamSlug);
+
+const JUMP_LINK_CLASS =
+  "inline-flex min-h-11 items-center gap-2 border border-white/60 px-4 font-display text-label uppercase text-white hover:border-white hover:bg-white hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
 ---
 
-<section class="relative flex min-h-[clamp(20rem,50vh,32rem)] w-full items-end overflow-hidden bg-black">
+<section class="relative isolate flex min-h-[clamp(26rem,62vh,40rem)] w-full items-end overflow-hidden bg-black">
   <ResolvedImage
     src={team.coverImage}
     alt={team.heading}
     width={2400}
     height={1200}
     loading="eager"
-    class="absolute inset-0 h-full w-full object-cover"
+    class="absolute inset-0 -z-10 h-full w-full object-cover object-[50%_35%]"
   />
-  <div class="absolute inset-0 bg-[linear-gradient(to_top,rgb(0_0_0/0.78)_0%,rgb(0_0_0/0.35)_38%,rgb(0_0_0/0)_70%)]"></div>
+  <div
+    class="absolute inset-0 -z-10 bg-[linear-gradient(to_top,rgb(0_0_0/0.85)_0%,rgb(0_0_0/0.55)_55%,rgb(0_0_0/0.2)_100%)] md:bg-[linear-gradient(to_top,rgb(0_0_0/0.85)_0%,rgb(0_0_0/0.4)_45%,rgb(0_0_0/0)_75%)]"
+  >
+  </div>
 
-  <div class="relative mx-auto flex w-full max-w-6xl flex-col items-start gap-3 px-4 pb-[clamp(2rem,6vw,4rem)]">
+  <div class="mx-auto flex w-full max-w-6xl flex-col items-start gap-4 px-4 pt-10 pb-[clamp(2rem,6vw,4rem)]">
+    <p class="m-0 flex items-center gap-3 font-display text-label uppercase text-white/85">
+      <span aria-hidden="true" class="block h-0.5 w-8 bg-brand-red"></span>
+      T4Q Helsingborg
+    </p>
     <h1 class="m-0 font-display text-display uppercase text-white">{team.heading}</h1>
     {team.subheading && <p class="m-0 max-w-[46ch] text-h4 text-white/92">{team.subheading}</p>}
+
+    <div class="mt-2 flex flex-col items-start gap-4 md:flex-row md:items-center md:gap-6">
+      {
+        team.hasAffiliation && (
+          <a
+            href={team.affiliationUrl}
+            target="_blank"
+            rel="noopener"
+            class="group inline-flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            {/* White chip so the league's own logo colours stay legible on the dark band. */}
+            <span class="flex h-12 w-12 shrink-0 items-center justify-center bg-white p-1.5">
+              <ResolvedImage
+                src={team.affiliationLogo!}
+                alt=""
+                width={96}
+                height={96}
+                fit="contain"
+                loading="eager"
+                class="h-full w-full object-contain"
+              />
+            </span>
+            <span class="flex flex-col">
+              <span class="font-display text-label uppercase text-white/70">Serie</span>
+              <span class="font-display text-h4 font-bold uppercase text-white group-hover:underline group-hover:underline-offset-4">
+                {team.affiliationName}
+              </span>
+              <span class="text-small text-white/80">
+                Se tabellen ↗<span class="sr-only"> (öppnas i ny flik)</span>
+              </span>
+            </span>
+          </a>
+        )
+      }
+
+      <nav aria-label="Genvägar" class="flex flex-wrap gap-2">
+        <a href="#traning" class={JUMP_LINK_CLASS}>Träningstider ↓</a>
+        <a href="#matcher" class={JUMP_LINK_CLASS}>Matcher ↓</a>
+      </nav>
+    </div>
   </div>
 </section>
