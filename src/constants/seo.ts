@@ -24,7 +24,6 @@ type TeamKey = "mens" | "womens" | "juniors";
 interface SeoStatic {
   home: SeoEntry;
   newsListing: SeoEntry;
-  sponsors: SeoEntry;
   contact: SeoEntry;
   /** Keyed by TeamModel tag, NOT derived from any TeamModel field (TeamModel has no SEO data). */
   team: Record<TeamKey, SeoEntry>;
@@ -95,14 +94,6 @@ export const SEO_STATIC: SeoStatic = {
     title: `Nyheter | ${ORG_NAME}`,
     description:
       "Senaste nytt från Team Fourth Quarter – matchrapporter, klubbnyheter och information om herr-, dam- och ungdomslagen.",
-    ogImage: OG_DEFAULT,
-    jsonLd: null,
-  },
-
-  sponsors: {
-    title: `Sponsorer | ${ORG_NAME}`,
-    description:
-      "Företagen som stöttar Team Fourth Quarter. Vill ditt företag synas tillsammans med basketen i Helsingborg? Hör av dig.",
     ogImage: OG_DEFAULT,
     jsonLd: null,
   },

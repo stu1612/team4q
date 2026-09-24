@@ -1,8 +1,8 @@
 ---
-// Homepage "Senaste resultat" section — the latest result on a full-bleed branded band.
-// ResultModel is a cosmetic banner: no result, a stale one, or a failed fetch all resolve to
-// null here, and the whole section (heading included) renders nothing. Independent of the
-// fixtures section — see Fixture/index.astro.
+// Homepage latest-result banner — rendered inside FixtureResultBanner, which owns the
+// visible section heading. ResultModel is a cosmetic banner: no result, a stale one, or a
+// failed fetch all resolve to null here, and the banner renders nothing. Independent of the
+// fixture cards — see Fixture/index.astro.
 import ResolvedImage from "../ResolvedImage.astro";
 import { getLatestResultVM } from "./mappers";
 
@@ -11,12 +11,9 @@ const result = await getLatestResultVM();
 
 {
   result && (
-    <section aria-labelledby="resultat-heading" class="mx-auto max-w-6xl px-4 py-18">
-      <div class="mb-6 flex flex-wrap items-center justify-center gap-4 before:flex-1 before:border-b before:border-black/20 after:flex-1 after:border-b after:border-black/20">
-        <h2 id="resultat-heading" class="m-0 font-display text-5xl font-extrabold uppercase text-black">
-          Senaste resultat
-        </h2>
-      </div>
+    <div>
+      {/* Screen-reader-only: keeps the h2 → h3 outline under the wrapper's visible heading. */}
+      <h3 class="sr-only">Senaste resultat</h3>
 
       <div class="relative isolate flex items-center justify-center overflow-hidden bg-black min-h-[clamp(24rem,70vh,34rem)]">
         {/* Decorative branded backdrop — the score and teams are the text alternative. */}
@@ -41,6 +38,6 @@ const result = await getLatestResultVM();
           {result.hasDate && <p class="m-0 text-small text-white/85">{result.dateLabel}</p>}
         </div>
       </div>
-    </section>
+    </div>
   )
 }

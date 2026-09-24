@@ -2,14 +2,13 @@
 import Base from "../layouts/Base.astro";
 import Hero from "../components/Hero/index.astro";
 import NewsCard from "../components/NewsCard/index.astro";
-import Fixture from "../components/Fixture/index.astro";
-import Result from "../components/Result/index.astro";
 import Sponsor from "../components/Sponsor/index.astro";
 import Mission from "../components/Mission/index.astro";
 import CommercialSlot from "../components/CommercialSlot/index.astro";
+import FixtureResultBanner from "../components/FixtureResultBanner/index.astro";
 import { SEO_STATIC } from "../constants/seo";
-// Homepage — built section by section. Hero + Nyheter + Matcher & resultat + Våra partners
-// done.
+// Homepage — built section by section. Hero + Nyheter + Om oss + CommercialSlot +
+// Matcher & resultat + Våra partners done.
 //
 // On-demand (not prerendered) so the ISR setting in astro.config.mjs revalidates it hourly:
 // "upcoming" fixtures and the 28-day result expiry depend on the current time, which a
@@ -22,7 +21,6 @@ export const prerender = false;
   <NewsCard />
   <Mission />
   <CommercialSlot />
-  <Fixture />
-  <Result />
+  <FixtureResultBanner />
   <Sponsor />
 </Base>
