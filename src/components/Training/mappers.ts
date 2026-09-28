@@ -1,4 +1,5 @@
-// Wired to fetchOrFail. Rendered by the team-page training section (Training/index.astro).
+// Wired to fetchOrFail. Rendered by the team-page training section (Training/index.astro)
+// and the all-teams /traning page (TrainingSchedule.astro).
 
 import { gql } from "graphql-request";
 import { CLUB_CONTACT } from "../../constants/contact";
@@ -9,9 +10,11 @@ import { teamLabel } from "../../lib/teamLabel";
 import type {
   CoachRD,
   CoachVM,
+  TrainingByTeamVM,
   TrainingListVM,
   TrainingRD,
   TrainingResponseRD,
+  TrainingTeamGroupVM,
   TrainingVM,
 } from "./types";
 
@@ -98,6 +101,7 @@ function toVM(rd: TrainingRD): TrainingVM {
     trainingTypeLabel: TRAINING_TYPE_LABELS[rd.trainingType] ?? rd.trainingType,
     information: rd.information ?? "",
     hasTeam: Boolean(rd.teamModel),
+    teamSlug: rd.teamModel?.slug ?? "",
     teamLabel: rd.teamModel ? teamLabel(rd.teamModel.slug) : "",
     hasCoaches: coaches.length > 0,
     coaches,
@@ -111,6 +115,36 @@ export async function getTrainingVMs(): Promise<TrainingListVM> {
     .filter((rd) => rd.isActive === "active")
     .map(toVM);
   return { ok: true, sessions };
+}
+
+// /traning section order — matches the nav's team order. Any other team slug Hygraph adds
+// is appended after these, rather than silently dropped.
+const TEAM_ORDER = ["herrlaget", "damlaget", "ungdomslaget"];
+
+/** Every active training session across the club, grouped per team for the /traning page.
+ *  One query, grouped here — not one fetch per team. The three known teams always get a
+ *  group (even when empty, so the page can say so); sessions with no team relation land
+ *  in a trailing "Hela klubben" group, shown only when it has sessions. */
+export async function getTrainingVMsGroupedByTeam(): Promise<TrainingByTeamVM> {
+  const result = await getTrainingVMs();
+  if (!result.ok) return result;
+
+  const slugs = [
+    ...TEAM_ORDER,
+    ...new Set(result.sessions.map((s) => s.teamSlug).filter((slug) => slug && !TEAM_ORDER.includes(slug))),
+  ];
+  const groups: TrainingTeamGroupVM[] = slugs.map((slug) => ({
+    anchorId: `traning-${slug}`,
+    label: teamLabel(slug),
+    teamHref: `/${slug}`,
+    sessions: result.sessions.filter((s) => s.teamSlug === slug),
+  }));
+
+  const clubWide = result.sessions.filter((s) => !s.teamSlug);
+  if (clubWide.length > 0) {
+    groups.push({ anchorId: "traning-hela-klubben", label: "Hela klubben", teamHref: "", sessions: clubWide });
+  }
+  return { ok: true, groups };
 }
 
 /** Every active training session for one team, each with its own coaches and their

@@ -1,0 +1,82 @@
+---
+// All-teams training schedule (/traning) — the one place a parent or new player can see
+// every team's sessions without knowing which team page to open first. A compact black
+// heading band (TeamPage's type treatment, no cover photo) with jump links per team, then
+// one section per team built from the same TrainingCard as the team pages.
+import TrainingCard from "./TrainingCard.astro";
+import TrainingUnavailable from "./TrainingUnavailable.astro";
+import { getTrainingVMsGroupedByTeam } from "./mappers";
+
+const result = await getTrainingVMsGroupedByTeam();
+
+// Same outlined jump-link treatment as TeamPage's "Genvägar".
+const JUMP_LINK_CLASS =
+  "inline-flex min-h-11 items-center gap-2 border border-white/60 px-4 font-data text-label uppercase text-white hover:border-white hover:bg-white hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+---
+
+<section class="w-full bg-black">
+  <div class="mx-auto flex w-full max-w-6xl flex-col items-start gap-4 px-4 py-10 md:py-16">
+    <p class="m-0 flex items-center gap-3 font-data text-label uppercase text-white/85">
+      <span aria-hidden="true" class="block h-0.5 w-8 bg-brand-red"></span>
+      T4Q Helsingborg
+    </p>
+    <h1 class="m-0 font-heading text-display text-white">Träningstider</h1>
+    <p class="m-0 max-w-[52ch] text-h4 text-white/92">
+      Alla lagens träningar på ett ställe. Vill du testa? Hör av dig till tränaren för passet
+      innan du kommer, så vet vi att du är på väg.
+    </p>
+
+    {
+      result.ok && (
+        <nav aria-label="Välj lag" class="mt-2 flex flex-wrap gap-2">
+          {result.groups.map((group) => (
+            <a href={`#${group.anchorId}`} class={JUMP_LINK_CLASS}>
+              {group.label} ↓
+            </a>
+          ))}
+        </nav>
+      )
+    }
+  </div>
+</section>
+
+<div class="mx-auto max-w-6xl px-4 py-10 md:py-18">
+  {!result.ok && <TrainingUnavailable contact={result.contact} />}
+
+  {
+    result.ok && (
+      <div class="flex flex-col gap-12 md:gap-18">
+        {result.groups.map((group) => (
+          <section id={group.anchorId} aria-labelledby={`${group.anchorId}-heading`}>
+            <div class="mb-4 flex flex-wrap items-center gap-4 md:mb-6">
+              <h2 id={`${group.anchorId}-heading`} class="m-0 font-heading text-3xl font-bold text-black md:text-5xl">
+                {group.label}
+              </h2>
+              <span aria-hidden="true" class="min-w-8 flex-1 border-b border-black/20" />
+              {group.teamHref && (
+                <a
+                  href={group.teamHref}
+                  class="font-data text-small uppercase text-black hover:underline hover:underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                >
+                  Till {group.label} →
+                </a>
+              )}
+            </div>
+
+            {group.sessions.length === 0 ? (
+              <p class="m-0 text-body text-black">Inga träningstider just nu.</p>
+            ) : (
+              <ul class="m-0 grid list-none grid-cols-1 gap-4 p-0 md:grid-cols-2 lg:grid-cols-3">
+                {group.sessions.map((session) => (
+                  <li>
+                    <TrainingCard session={session} />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        ))}
+      </div>
+    )
+  }
+</div>

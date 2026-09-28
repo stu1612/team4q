@@ -1,0 +1,16 @@
+---
+import Base from "../layouts/Base.astro";
+import TrainingSchedule from "../components/Training/TrainingSchedule.astro";
+import { SEO_STATIC } from "../constants/seo";
+
+// Every team's training sessions on one page — linked from the nav, the homepage's Om oss
+// section and the footer, so training is never only reachable via a team page.
+//
+// On-demand (ISR), same as the team pages: a Hygraph training edit should show up on the
+// next revalidation, not wait for a rebuild.
+export const prerender = false;
+---
+
+<Base seo={SEO_STATIC.training}>
+  <TrainingSchedule />
+</Base>

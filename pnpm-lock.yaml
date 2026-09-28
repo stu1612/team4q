@@ -14,10 +14,13 @@ importers:
       '@astrojs/vercel':
         specifier: ^11.0.8
         version: 11.0.8(astro@7.2.4(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.2.0)(@vercel/functions@3.9.5(ws@8.21.3))(jiti@2.7.0)(yaml@2.9.0))(supports-color@7.2.0)(ws@8.21.3)
-      '@fontsource-variable/oswald':
+      '@fontsource-variable/familjen-grotesk':
         specifier: ^5.3.0
         version: 5.3.0
-      '@fontsource-variable/source-sans-3':
+      '@fontsource-variable/figtree':
+        specifier: ^5.3.0
+        version: 5.3.0
+      '@fontsource-variable/oswald':
         specifier: ^5.3.0
         version: 5.3.0
       '@tailwindcss/vite':
@@ -527,11 +530,14 @@ packages:
   '@fastify/busboy@3.2.1':
     resolution: {integrity: sha512-tgK4O+57iz5ycYNGXE5ZWj1ES03lD2XnnBYWSbU/3wYZRMQzCUq7Ycds/RdyBZQeL5MU4fxBt6lzbIWf/Bickw==}
 
+  '@fontsource-variable/familjen-grotesk@5.3.0':
+    resolution: {integrity: sha512-R9W0xEZRIHUV658cuOGRMAIcqX1QJ8p5/W6Boooa6zAw1BAozU//mr8C0VNggSE26/VHPwj2XNyMAG6yUJmjxA==}
+
+  '@fontsource-variable/figtree@5.3.0':
+    resolution: {integrity: sha512-VRVodD7OiG7apQwE8/2fMjaqpY/a0qRJqL5HtYj8CKIVps+9amaFcdfKmDIf7iqYQx6iPLlArVXAfKeIZmVcNQ==}
+
   '@fontsource-variable/oswald@5.3.0':
     resolution: {integrity: sha512-sSZzcTeaQGNyZbTVlS4tNNHElK38UktFLqKd6NQDLFCBV27320rQC3kXSZVytYm1PPjKmPxqVaGwqj7LEKUWQw==}
-
-  '@fontsource-variable/source-sans-3@5.3.0':
-    resolution: {integrity: sha512-dpi0GZk7EQe2tYpg6Q0Fx0OmUgnuGu+0rHPgtXqtKhglYmJuP7jZ12Mu1uN+NfRaJRY1Emn8AQJEWzmoZ4wa9g==}
 
   '@graphql-codegen/add@7.1.0':
     resolution: {integrity: sha512-bytJg1kel5zfgK3JSYbGwtpbNe6F9OPZSR6DiMDe9RVxblAgl6w4zEEPd/mM3rhNJ1VmGYLbNnf5e1eUfXQEbg==}
@@ -3801,9 +3807,11 @@ snapshots:
 
   '@fastify/busboy@3.2.1': {}
 
-  '@fontsource-variable/oswald@5.3.0': {}
+  '@fontsource-variable/familjen-grotesk@5.3.0': {}
 
-  '@fontsource-variable/source-sans-3@5.3.0': {}
+  '@fontsource-variable/figtree@5.3.0': {}
+
+  '@fontsource-variable/oswald@5.3.0': {}
 
   '@graphql-codegen/add@7.1.0(graphql@17.0.2)':
     dependencies:

@@ -48,6 +48,8 @@ export interface TrainingVM {
   trainingTypeLabel: string;
   information: string;
   hasTeam: boolean;
+  /** "" when the session has no team relation. */
+  teamSlug: string;
   teamLabel: string;
   hasCoaches: boolean;
   coaches: CoachVM[];
@@ -55,4 +57,18 @@ export interface TrainingVM {
 
 export type TrainingListVM =
   | { ok: true; sessions: TrainingVM[] }
+  | { ok: false; contact: ClubContact };
+
+/** One team's block on the all-teams /traning page. */
+export interface TrainingTeamGroupVM {
+  /** Section anchor id, e.g. "traning-herrlaget". */
+  anchorId: string;
+  label: string;
+  /** Team page href, or "" for the no-team "Hela klubben" group. */
+  teamHref: string;
+  sessions: TrainingVM[];
+}
+
+export type TrainingByTeamVM =
+  | { ok: true; groups: TrainingTeamGroupVM[] }
   | { ok: false; contact: ClubContact };

@@ -29,7 +29,9 @@ const isActive = (href: string): boolean => {
       aria-label="Team Fourth Quarter — hem"
     >
       <Image src={logo} alt="" width={55} height={54} loading="eager" />
-      <span class="hidden md:flex font-display text-h4 uppercase tracking-wide text-white">Team Fourth Quarter</span>
+      {/* Hidden across lg–xl: the full desktop link row needs that width, and the logo alone
+          still identifies the site there. Back from xl, and shown md–lg (drawer mode). */}
+      <span class="hidden md:flex lg:hidden xl:flex font-data text-h4 uppercase tracking-wide text-white">Team Fourth Quarter</span>
     </a>
 
     <button
@@ -54,7 +56,7 @@ const isActive = (href: string): boolean => {
           <li>
             <a
               href={link.href}
-              class="block border-b-3 border-b-transparent px-3 py-2 font-display text-small uppercase tracking-wide text-white hover:underline hover:underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white aria-[current=page]:border-b-brand-red"
+              class="block border-b-3 border-b-transparent px-3 py-2 font-data text-small uppercase tracking-wide text-white hover:underline hover:underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white aria-[current=page]:border-b-brand-red"
               aria-current={isActive(link.href) ? "page" : undefined}
             >
               {link.label}
@@ -113,7 +115,10 @@ const isActive = (href: string): boolean => {
         </button>
       </div>
 
-      <nav aria-label="Huvudmeny, mobil">
+      {/* The link list takes the free height and scrolls inside itself on short screens, so
+          the brand block below stays pinned in view whatever the link count. -m-1/p-1 keeps the
+          links' focus outlines from being clipped by the scroll container. */}
+      <nav aria-label="Huvudmeny, mobil" class="-m-1 min-h-0 flex-1 overflow-y-auto p-1">
         <ul class="m-0 flex list-none flex-col gap-1 p-0">
           {
             NAV_LINKS.map((link, i) => (
@@ -123,7 +128,7 @@ const isActive = (href: string): boolean => {
               >
                 <a
                   href={link.href}
-                  class="block border-l-4 border-l-transparent py-2 pl-4 font-display text-2xl font-bold uppercase tracking-wide text-white hover:text-white/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white aria-[current=page]:border-l-brand-red"
+                  class="block border-l-4 border-l-transparent py-2 pl-4 font-data text-2xl [@media(max-height:700px)]:py-1.5 [@media(max-height:700px)]:text-xl font-bold uppercase tracking-wide text-white hover:text-white/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white aria-[current=page]:border-l-brand-red"
                   aria-current={isActive(link.href) ? "page" : undefined}
                 >
                   {link.label}
@@ -134,8 +139,8 @@ const isActive = (href: string): boolean => {
         </ul>
       </nav>
 
-      <div class="mt-auto flex flex-col gap-4 border-t border-white/15 pt-6">
-        <p class="m-0 font-display text-h3 font-bold uppercase text-white">Mer än basket.</p>
+      <div class="flex shrink-0 flex-col gap-4 border-t border-white/15 pt-6">
+        <p class="m-0 font-heading text-h3 font-bold text-white">Mer än basket.</p>
         <a
           href={`mailto:${CLUB_CONTACT.email}`}
           class="text-small text-white/80 hover:text-white hover:underline hover:underline-offset-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"

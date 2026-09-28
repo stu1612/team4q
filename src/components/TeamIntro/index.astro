@@ -23,7 +23,7 @@ const intro = TEAM_INTRO[teamSlug];
 const youth = intro?.tone === "youth";
 
 const BUTTON_CLASS =
-  "inline-flex min-h-11 items-center px-5 font-display text-label uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+  "inline-flex min-h-11 items-center px-5 font-data text-label uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
 // Alternating tilt for the youth stage cards; hover/focus straightens them.
 const STAGE_TILTS = ["md:-rotate-1", "md:rotate-1", "md:-rotate-1"];
 const objectPosition = (position?: string) => `object-position: ${position ?? "50% 50%"}`;
@@ -34,11 +34,11 @@ const objectPosition = (position?: string) => `object-position: ${position ?? "5
     <section aria-labelledby="om-laget-heading" class="mx-auto max-w-6xl px-4 py-10 md:py-18">
       <div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1fr_1fr] lg:gap-16">
         <div class="flex flex-col items-start gap-4">
-          <p class="m-0 flex items-center gap-3 font-display text-label uppercase text-black/70">
+          <p class="m-0 flex items-center gap-3 font-data text-label uppercase text-black/70">
             <span aria-hidden="true" class="block h-0.5 w-8 bg-brand-red" />
             {intro.kicker}
           </p>
-          <h2 id="om-laget-heading" class="m-0 font-display text-3xl font-extrabold uppercase text-black md:text-5xl">
+          <h2 id="om-laget-heading" class="m-0 font-heading text-3xl font-bold text-black md:text-5xl">
             {intro.heading}
           </h2>
           {intro.paragraphs.map((paragraph) => (
@@ -48,8 +48,8 @@ const objectPosition = (position?: string) => `object-position: ${position ?? "5
           <dl class="m-0 mt-4 grid w-full grid-cols-3 gap-4">
             {intro.facts.map((fact) => (
               <div class="flex flex-col gap-1 border-t-2 border-black pt-3">
-                <dt class="font-display text-label uppercase text-black/60">{fact.label}</dt>
-                <dd class="m-0 font-display text-lg font-bold uppercase leading-tight text-black md:text-xl">
+                <dt class="font-data text-label uppercase text-black/60">{fact.label}</dt>
+                <dd class="m-0 font-data text-lg font-bold uppercase leading-tight text-black md:text-xl">
                   {fact.value}
                 </dd>
               </div>
@@ -95,7 +95,7 @@ const objectPosition = (position?: string) => `object-position: ${position ?? "5
 
       {intro.stages && (
         <div class="mt-12 md:mt-18">
-          <h3 class="m-0 mb-6 font-display text-2xl font-extrabold uppercase text-black md:mb-8 md:text-4xl">
+          <h3 class="m-0 mb-6 font-heading text-2xl font-bold text-black md:mb-8 md:text-4xl">
             {intro.stages.heading}
           </h3>
           <ol class="m-0 grid list-none grid-cols-1 gap-6 p-0 md:grid-cols-3 md:gap-8">
@@ -118,7 +118,7 @@ const objectPosition = (position?: string) => `object-position: ${position ?? "5
                   />
                   <span
                     class:list={[
-                      "absolute top-3 left-3 bg-brand-red px-3 py-1 font-display text-label uppercase text-white",
+                      "absolute top-3 left-3 bg-brand-red px-3 py-1 font-data text-label uppercase text-white",
                       youth && "rounded-full",
                     ]}
                   >
@@ -126,8 +126,8 @@ const objectPosition = (position?: string) => `object-position: ${position ?? "5
                   </span>
                 </div>
                 <div class="flex flex-col gap-2 border-t-4 border-brand-red p-5">
-                  <p class="m-0 font-display text-label uppercase text-black/60">Steg {i + 1}</p>
-                  <h4 class="m-0 font-display text-2xl font-extrabold uppercase text-black">{stage.title}</h4>
+                  <p class="m-0 font-data text-label uppercase text-black/60">Steg {i + 1}</p>
+                  <h4 class="m-0 font-heading text-2xl font-bold text-black">{stage.title}</h4>
                   <p class="m-0 text-body text-black/80">{stage.text}</p>
                 </div>
               </li>
@@ -139,7 +139,7 @@ const objectPosition = (position?: string) => `object-position: ${position ?? "5
       <div class:list={["mt-10 grid grid-cols-1 gap-4 md:mt-16", intro.goodToKnow && "lg:grid-cols-[1fr_1.4fr]"]}>
         {intro.goodToKnow && (
           <div class:list={["border-t-4 border-brand-red bg-zinc-100 p-6 md:p-8", youth && "rounded-2xl"]}>
-            <h3 class="m-0 mb-4 font-display text-xl font-extrabold uppercase text-black md:text-2xl">
+            <h3 class="m-0 mb-4 font-heading text-xl font-bold text-black md:text-2xl">
               {intro.goodToKnow.heading}
             </h3>
             <ul class="m-0 flex list-none flex-col gap-3 p-0">
@@ -169,7 +169,7 @@ const objectPosition = (position?: string) => `object-position: ${position ?? "5
           ]}
         >
           <div class="flex flex-col gap-2">
-            <h3 class="m-0 font-display text-2xl font-extrabold uppercase text-white md:text-4xl">{intro.cta.heading}</h3>
+            <h3 class="m-0 font-heading text-2xl font-bold text-white md:text-4xl">{intro.cta.heading}</h3>
             <p class="m-0 max-w-[56ch] text-body text-white/80">{intro.cta.text}</p>
           </div>
           <div class="flex shrink-0 flex-wrap gap-3">
