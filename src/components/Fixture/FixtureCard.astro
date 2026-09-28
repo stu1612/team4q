@@ -16,7 +16,7 @@ const { fixture } = Astro.props;
 <article class="flex h-full border-t-4 border-brand-red bg-zinc-100">
   <time
     datetime={fixture.date}
-    class="flex w-22 shrink-0 flex-col items-center justify-center gap-1 bg-black px-2 py-4 font-display uppercase text-white"
+    class="flex w-22 shrink-0 flex-col items-center justify-center gap-1 bg-black px-2 py-4 font-data uppercase text-white"
   >
     <span class="text-label text-white/75">{fixture.weekdayShort}</span>
     <span class="text-6xl leading-none font-extrabold">{fixture.dayNumber}</span>
@@ -27,17 +27,17 @@ const { fixture } = Astro.props;
     <div class="flex items-center justify-between gap-2">
       {
         fixture.hasTeam ? (
-          <span class="bg-brand-red px-2 py-0.5 font-display text-label uppercase text-white">{fixture.tagLabel}</span>
+          <span class="bg-brand-red px-2 py-0.5 font-data text-label uppercase text-white">{fixture.tagLabel}</span>
         ) : (
           <span />
         )
       }
-      <time datetime={fixture.isoDateTime} class="font-display text-2xl font-bold text-black">
+      <time datetime={fixture.isoDateTime} class="font-data text-2xl font-bold text-black">
         {fixture.timeLabel}
       </time>
     </div>
 
-    <h3 class="m-0 flex flex-col gap-0.5 font-display text-xl font-extrabold uppercase text-black md:text-2xl">
+    <h3 class="m-0 flex flex-col gap-0.5 font-data text-xl font-extrabold uppercase text-black md:text-2xl">
       <span>{fixture.homeTeam}</span>
       <span class="font-sans text-small font-normal normal-case text-black/60">mot</span>
       <span>{fixture.awayTeam}</span>

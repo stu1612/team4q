@@ -1,14 +1,23 @@
 @import "tailwindcss";
 
 /*
+  Three type roles, each with one job (tokens in @theme below):
+  - font-heading — Familjen Grotesk: the club's voice. Headings, hero, brand statements.
+    Sentence case, bold (the family tops out at 700).
+  - font-sans    — Figtree: reading. Body copy, descriptions, names.
+  - font-data    — Oswald: numbers and signage. Fixture/training/result data, scores,
+    and the uppercase text-label eyebrows, tags, buttons and nav links.
+*/
+
+/*
   Self-hosted variable fonts — hand-written, Latin-only, in place of the packages'
   generated stylesheets. Two reasons:
 
-  1. The packages' index.css ships 5 (Oswald) / 14 (Source Sans 3) @font-face blocks —
+  1. The packages' index.css ship several @font-face blocks each —
      Cyrillic, Greek, Vietnamese, italics — none of which this all-Swedish-content site
      ever renders. Swedish's å/ä/ö (U+00E5/E4/F6) fall inside the plain Latin
      U+0000-00FF range, so a single normal-weight Latin file per family is enough.
-  2. Both packages hardcode font-display: swap, which was causing a visible flash of
+  2. The packages hardcode font-display: swap, which was causing a visible flash of
      fallback-font text that re-flows to the branded font once it downloads (FOUT) on
      every load/navigation. font-display: optional removes the swap entirely — the
      fallback font is used for that page view with no later reflow if the font isn't
@@ -27,12 +36,23 @@
 }
 
 @font-face {
-  font-family: "Source Sans 3 Variable";
+  font-family: "Familjen Grotesk Variable";
   font-style: normal;
   font-display: optional;
-  font-weight: 200 900;
-  src: url("@fontsource-variable/source-sans-3/files/source-sans-3-latin-wght-normal.woff2")
+  font-weight: 400 700;
+  src: url("@fontsource-variable/familjen-grotesk/files/familjen-grotesk-latin-wght-normal.woff2")
     format("woff2-variations");
+  /* Exact Latin unicode-range copied from the package's own index.css. */
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Figtree Variable";
+  font-style: normal;
+  font-display: optional;
+  font-weight: 300 900;
+  src: url("@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2") format("woff2-variations");
   /* Exact Latin unicode-range copied from the package's own index.css. */
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
     U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
@@ -56,21 +76,25 @@
   --color-brand-red: #db1d24;
 
   /* Fonts */
-  --font-display: "Oswald Variable", "Oswald", sans-serif;
-  --font-sans: "Source Sans 3 Variable", "Source Sans 3", sans-serif;
+  --font-heading: "Familjen Grotesk Variable", "Familjen Grotesk", sans-serif;
+  --font-sans: "Figtree Variable", "Figtree", sans-serif;
+  --font-data: "Oswald Variable", "Oswald", sans-serif;
 
   /* Type scale */
   --text-display: clamp(3rem, 2rem + 4vw, 4.5rem);
   --text-display--line-height: 1.05;
   --text-display--font-weight: 700;
+  --text-display--letter-spacing: -0.01em;
 
   --text-h1: 2.25rem;
   --text-h1--line-height: 1.15;
   --text-h1--font-weight: 700;
+  --text-h1--letter-spacing: -0.01em;
 
   --text-h2: 1.75rem;
   --text-h2--line-height: 1.2;
   --text-h2--font-weight: 700;
+  --text-h2--letter-spacing: -0.01em;
 
   --text-h3: 1.375rem;
   --text-h3--line-height: 1.25;
@@ -101,7 +125,7 @@
 /*
   Base defaults. Component-level type-scale utilities (text-h1, text-h2, ...)
   are applied explicitly per component — this layer only sets the font
-  family split (display vs body) and the page-level colour/background,
+  family split (heading vs body) and the page-level colour/background,
   so it never fights a component's own sizing choice.
 */
 @layer base {
@@ -120,6 +144,6 @@
   h2,
   h3,
   h4 {
-    @apply font-display;
+    @apply font-heading;
   }
 }

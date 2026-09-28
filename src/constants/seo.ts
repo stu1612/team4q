@@ -25,6 +25,7 @@ interface SeoStatic {
   home: SeoEntry;
   newsListing: SeoEntry;
   contact: SeoEntry;
+  training: SeoEntry;
   /** Keyed by TeamModel tag, NOT derived from any TeamModel field (TeamModel has no SEO data). */
   team: Record<TeamKey, SeoEntry>;
 }
@@ -112,6 +113,14 @@ export const SEO_STATIC: SeoStatic = {
       ...(CLUB_CONTACT.phone ? { telephone: CLUB_CONTACT.phone } : {}),
       address: POSTAL_ADDRESS,
     },
+  },
+
+  training: {
+    title: `Träningstider | ${ORG_NAME}`,
+    description:
+      "Träningstider för Team Fourth Quarters herrlag, damlag och ungdomslag i Helsingborg – dagar, tider, hallar och tränare.",
+    ogImage: OG_DEFAULT,
+    jsonLd: null,
   },
 
   team: {

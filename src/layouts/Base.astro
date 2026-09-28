@@ -8,7 +8,8 @@ import Footer from "./Footer.astro";
 // there. Preloading is what lets font-display: optional land the branded font on first
 // paint instead of falling back, without reintroducing the swap-driven reflow.
 import oswaldLatin from "@fontsource-variable/oswald/files/oswald-latin-wght-normal.woff2?url";
-import sourceSans3Latin from "@fontsource-variable/source-sans-3/files/source-sans-3-latin-wght-normal.woff2?url";
+import familjenGroteskLatin from "@fontsource-variable/familjen-grotesk/files/familjen-grotesk-latin-wght-normal.woff2?url";
+import figtreeLatin from "@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2?url";
 
 interface Props {
   seo: SeoEntry;
@@ -34,7 +35,8 @@ const description = seo.description || DEFAULT_DESCRIPTION;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <link rel="preload" as="font" type="font/woff2" href={oswaldLatin} crossorigin="anonymous" />
-    <link rel="preload" as="font" type="font/woff2" href={sourceSans3Latin} crossorigin="anonymous" />
+    <link rel="preload" as="font" type="font/woff2" href={familjenGroteskLatin} crossorigin="anonymous" />
+    <link rel="preload" as="font" type="font/woff2" href={figtreeLatin} crossorigin="anonymous" />
     <SEO
       title={seo.title}
       description={description}

@@ -116,6 +116,8 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
 - [x] `/damlaget`
 - [x] `/ungdomslaget` (youth variant of the team page — age-group pathway, parents' checklist)
 - [x] Team pages redesign (herr/dam/ungdom): league badge, static intro, training with coach contact, upcoming-only fixtures, scoreboard results
+- [x] Typography: three-role font system (Familjen Grotesk headings / Figtree body / Oswald data & labels)
+- [x] `/traning` — all teams' training on one page; Om oss team links + CTA; "Träning" in nav
 - [ ] `/nyheter` + `/nyheter/[slug]`
 - [x] ~~`/sponsorer`~~ — removed 2026-09-24; sponsors live only in the homepage section (nav → `/#partners`)
 - [ ] `/kontakt` + Resend
@@ -166,6 +168,8 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
 ## COMPLETED TASKS
 
 - use this section to write a brief review of completed tasks. This section will act as a review for the developer to keep track of progress. Mark each task completed with a date, review (anything else you feel is usefull). Keep the review short but concise.
+
+- **2026-09-28 — Phase 4: typography roles + `/traning`.** (1) **Type system:** the single `--font-display` (Oswald) token was doing headings, labels and data at once. Split into `font-heading` (Familjen Grotesk: headings, sentence case, bold, since the family tops out at 700), `font-sans` (Figtree, replacing Source Sans 3) and `font-data` (Oswald: fixture/training/result data plus the uppercase `text-label` signage and nav). Same self-hosted Latin-only `optional` + preload setup. `font-display` was removed so every usage had to be assigned a role. (2) **Training discoverability:** new ISR `/traning` page (`TrainingSchedule.astro`) that groups every active session by team from one `fetchOrFail` query (`getTrainingVMsGroupedByTeam`, built on the previously unused `getTrainingVMs`). The session card and the failure block are extracted as `TrainingCard.astro` and `TrainingUnavailable.astro`, shared with the team-page section. The homepage Om oss photos now carry caption links to `/{team}#traning`, plus a "Se alla träningstider" CTA. "Träning" added to `NAV_LINKS` (header, drawer and footer). The nav wordmark is hidden from lg to xl so 8 links fit at 1024px; the drawer's link list is now a scrollable `flex-1` area with the brand block pinned, and it tightens on screens under 700px tall. Verified: `/traning` groups match each team page's own sessions exactly, with no leakage. The desktop row fits at 1024/1150/1280. The drawer at 375×667 fits all 8 links with no scroll. **Not yet eyeballed with real images:** the dev server's `/_image` endpoint was returning 500s during verification, so Om oss captions should be checked visually.
 
 - **2026-09-24 (evening) — Phase 4: team pages redesigned + `/ungdomslaget` built.**
   - **Shared composition** for all three pages: header → static intro → Träningstider → Kommande matcher → Resultat.

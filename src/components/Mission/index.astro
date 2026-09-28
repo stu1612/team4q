@@ -3,12 +3,20 @@ import { Image } from "astro:assets";
 import missionJunior from "../../images/fallback/mission/team4q_mission_jnr.jpg";
 import missionMen from "../../images/fallback/mission/team4q_mission_men.jpg";
 import missionWomen from "../../images/fallback/mission/team4q_mission_women.jpg";
+import { teamLabel } from "../../lib/teamLabel";
+
+// Photo order is deliberate (Ungdomslaget centred and larger from md up).
+const TEAMS = [
+  { slug: "damlaget", image: missionWomen },
+  { slug: "ungdomslaget", image: missionJunior },
+  { slug: "herrlaget", image: missionMen },
+].map((team) => ({ ...team, label: teamLabel(team.slug) }));
 ---
 
 <section aria-labelledby="om-oss-heading" class="bg-zinc-200 px-4 py-10 md:py-18">
   <div class="mx-auto max-w-6xl">
     <div class="mb-4 flex flex-wrap md:mb-6 items-center gap-4 before:hidden before:flex-1 md:before:block before:border-b before:border-black/20 after:flex-1 after:border-b after:border-black/20">
-      <h2 id="om-oss-heading" class="m-0 font-display text-3xl font-extrabold uppercase text-black md:text-5xl">Om oss</h2>
+      <h2 id="om-oss-heading" class="m-0 font-heading text-3xl font-bold text-black md:text-5xl">Om oss</h2>
     </div>
 
     <div class="mb-6 flex flex-col gap-4 text-left text-body text-black md:text-center md:text-lg">
@@ -27,10 +35,38 @@ import missionWomen from "../../images/fallback/mission/team4q_mission_women.jpg
       </p>
     </div>
 
-    <div class="grid grid-cols-3 items-center gap-2 py-6 md:grid-cols-[1fr_1.6fr_1fr] md:gap-4 md:py-9">
-      <Image src={missionWomen} alt="Damlaget" class="h-auto w-full aspect-square object-cover" width={300} height={300} />
-      <Image src={missionJunior} alt="Ungdomslaget" class="h-auto w-full aspect-square object-cover" width={300} height={300} />
-      <Image src={missionMen} alt="Herrlaget" class="h-auto w-full aspect-square object-cover" width={300} height={300} />
+    {/* Each team photo doubles as the way into that team's training times — training is
+        the one thing most homepage visitors actually came for. Photos are alt="" because
+        the caption link directly below names the team. */}
+    <ul class="m-0 grid list-none grid-cols-3 items-start gap-2 p-0 pt-6 md:grid-cols-[1fr_1.6fr_1fr] md:items-center md:gap-4 md:pt-9">
+      {
+        TEAMS.map((team) => (
+          <li>
+            <figure class="m-0 flex flex-col items-center gap-2">
+              <Image src={team.image} alt="" class="h-auto w-full aspect-square object-cover" width={300} height={300} />
+              <figcaption>
+                <a
+                  href={`/${team.slug}#traning`}
+                  class="inline-flex min-h-11 items-center gap-1 text-center font-data text-label uppercase text-black hover:underline hover:underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                >
+                  {team.label}
+                  <span class="sr-only md:not-sr-only">träningstider</span>
+                  <span aria-hidden="true">→</span>
+                </a>
+              </figcaption>
+            </figure>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="flex justify-center pt-6 md:pt-9">
+      <a
+        href="/traning"
+        class="inline-flex min-h-11 items-center bg-brand-red px-6 font-data text-label uppercase text-white no-underline hover:opacity-92 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-black"
+      >
+        Se alla träningstider
+      </a>
     </div>
   </div>
 </section>

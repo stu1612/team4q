@@ -41,7 +41,7 @@ const FOOTER_LINK_CLASS =
       class="mx-auto flex max-w-6xl flex-col items-center gap-8 px-4 py-10 text-center md:flex-row md:items-end md:justify-between md:py-16 md:text-left"
     >
       <div class="flex flex-col items-center gap-3 md:items-start">
-        <p class="m-0 font-display text-4xl font-extrabold uppercase text-white md:text-6xl">Mer än basket.</p>
+        <p class="m-0 font-heading text-4xl font-bold text-white md:text-6xl">Mer än basket.</p>
         <p class="m-0 max-w-[46ch] text-body text-white/85 md:text-lg">
           En gemenskap i Helsingborg sedan 2016 — för barn, ungdomar och seniorer.
         </p>
@@ -50,7 +50,7 @@ const FOOTER_LINK_CLASS =
       {
         SOCIAL_LINKS.length > 0 && (
           <div class="flex flex-col items-center gap-3 md:items-start">
-            <h2 class="m-0 font-display text-label uppercase text-white">Följ oss @team4q</h2>
+            <h2 class="m-0 font-data text-label uppercase text-white">Följ oss @team4q</h2>
             <ul class="m-0 flex list-none gap-3 p-0">
               {SOCIAL_LINKS.map((s) => (
                 <li>
@@ -76,7 +76,7 @@ const FOOTER_LINK_CLASS =
     <div class="flex flex-col items-center gap-4 md:items-start">
       <div class="flex items-center gap-3">
         <Image src={logo} alt="" width={65} height={64} loading="lazy" />
-        <p class="m-0 hidden font-display text-h4 uppercase tracking-wide text-white md:block">Team Fourth Quarter</p>
+        <p class="m-0 hidden font-data text-h4 uppercase tracking-wide text-white md:block">Team Fourth Quarter</p>
       </div>
       <p class="m-0 max-w-[40ch] text-small text-white/80">
         Basketklubb i Helsingborg med herrlag, damlag och ungdomsverksamhet.
@@ -112,7 +112,7 @@ const FOOTER_LINK_CLASS =
           )
         }
       </ul>
-      <p class="m-0 mt-6 mb-2 font-display text-label uppercase text-white">Hallar</p>
+      <p class="m-0 mt-6 mb-2 font-data text-label uppercase text-white">Hallar</p>
       <p class="m-0 text-small text-white/80">{VENUES.join(" · ")}</p>
     </div>
   </div>

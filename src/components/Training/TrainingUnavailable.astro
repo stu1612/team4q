@@ -1,0 +1,37 @@
+---
+// fetchOrFail failure state for training (per /graphql): a full message block pointing to
+// club contact details — never stale schedule data. Shared by the team-page section and
+// the /traning page.
+import type { ClubContact } from "../../constants/contact";
+
+interface Props {
+  contact: ClubContact;
+}
+
+const { contact } = Astro.props;
+---
+
+<div class="border-t-4 border-brand-red bg-zinc-100 p-6 md:p-8">
+  <p class="m-0 max-w-[60ch] text-h4 text-black">
+    Vi upplever tekniska problem. För träningsinformation, kontakta oss på{" "}
+    <a
+      href={`mailto:${contact.email}`}
+      class="underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+    >
+      {contact.email}
+    </a>
+    {contact.phone && (
+      <>
+        {" "}
+        eller{" "}
+        <a
+          href={`tel:${contact.phone.replace(/\s+/g, "")}`}
+          class="underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+        >
+          {contact.phone}
+        </a>
+      </>
+    )}
+    .
+  </p>
+</div>
