@@ -3,9 +3,9 @@
 // /nyheter listing page's own, separate build later). Built directly for this one
 // concrete use per the standing "no shared components yet" instruction.
 //
-// Mobile-first, all cards square:
+// Mobile-first, cards square from md:
 //
-//   base   1 col     every card full-bleed (image + scrim, text bottom-left)
+//   base   1 col     every card full-bleed, 4:5 portrait (image + scrim, text bottom-left)
 //   md     2 cols    card1 card2 / card3 card4 / card5 spanning both columns — still all
 //                    full-bleed
 //   lg     3 cols    card1 card2 card3 / card4 card5 (card5 spans col2+col3). card1 and
@@ -17,6 +17,7 @@
 // flip between the full-bleed and half/half treatments at lg, rather than two duplicated
 // trees shown/hidden per breakpoint.
 import ResolvedImage from "../ResolvedImage.astro";
+import { CARD_SCRIM, CARD_STROKE, CARD_TEXT_SHADOW } from "../cardStyles";
 import { getNewsCardVMs } from "./mappers";
 import type { NewsCardVM } from "./types";
 
@@ -71,7 +72,7 @@ const slots: Slot[] = [
       <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {slots.map(({ card, variant, wrapClass, imgWidth, imgHeight }) =>
           variant === "bleed" ? (
-            <article class={`group relative isolate flex aspect-square items-end overflow-hidden rounded-card bg-black ${wrapClass}`}>
+            <article class={`group relative isolate flex aspect-4/5 items-end overflow-hidden rounded-card bg-black md:aspect-square ${wrapClass}`}>
               <ResolvedImage
                 src={card.coverImage}
                 alt={card.heading}
@@ -80,34 +81,39 @@ const slots: Slot[] = [
                 loading="lazy"
                 class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
               />
-              <div class="absolute inset-0 bg-[linear-gradient(to_top,rgb(0_0_0/0.8)_0%,rgb(0_0_0/0.5)_55%,rgb(0_0_0/0.2)_100%)] md:bg-[linear-gradient(to_top,rgb(0_0_0/0.75)_0%,rgb(0_0_0/0.25)_45%,rgb(0_0_0/0)_75%)]" />
+              <div class={`absolute inset-0 ${CARD_SCRIM}`} />
               {/* z-10 (not `relative`) lifts the text above the image/scrim while keeping the
                   <article> as the containing block for the heading link's stretched ::after,
                   so the whole card is clickable, not just the text block. */}
-              <div class="z-10 flex flex-col items-start gap-2 p-4">
+              <div class={`z-10 flex flex-col items-start p-5 md:p-6 ${CARD_TEXT_SHADOW}`}>
                 {/* Red accent stroke — grows in length and thickness when the card is hovered. */}
-                <span aria-hidden="true" class="block h-0.5 w-10 origin-left bg-brand-red transition-transform duration-500 ease-out group-hover:scale-x-150 group-hover:scale-y-200 motion-reduce:transition-none"></span>
-                {card.hasTeam && (
-                  <span class="font-data text-label uppercase text-white">
-                    {card.tagLabel}
-                  </span>
-                )}
-                <h3 class="m-0 font-heading text-2xl font-bold text-white">
+                <span aria-hidden="true" class={CARD_STROKE}></span>
+                {/* Team + date share one meta line above the heading (editorial convention). */}
+                <p class="m-0 mb-2 flex flex-wrap items-center gap-x-2 font-data text-label uppercase text-white/80">
+                  {card.hasTeam && (
+                    <>
+                      <span class="text-white">{card.tagLabel}</span>
+                      <span aria-hidden="true">·</span>
+                    </>
+                  )}
+                  <span>{card.dateLabel}</span>
+                </p>
+                <h3 class="m-0 text-balance font-heading text-xl leading-tight font-bold text-white md:text-2xl">
                   <a href={card.href} class="after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
                     {card.heading}
                   </a>
                 </h3>
-                <p class="m-0 line-clamp-2 text-body text-white/85">{card.excerpt}</p>
-                <p class="m-0 text-small text-white/70">{card.dateLabel}</p>
+                <p class="m-0 mt-2 line-clamp-2 text-body text-white/90">{card.excerpt}</p>
                 {/* Visual cue only — the heading link's stretched ::after already makes the card
                     clickable, so this is aria-hidden rather than a second link to the same URL. */}
-                <span aria-hidden="true" class="text-small text-white underline underline-offset-4 md:hidden">Läs mer</span>
+                <span aria-hidden="true" class="mt-4 font-data text-label uppercase text-white md:hidden">Läs mer →</span>
               </div>
             </article>
           ) : (
-            <article class="group relative isolate flex aspect-square flex-col justify-end overflow-hidden rounded-card bg-black lg:bg-white">
-              {/* Below lg: absolute full-card image. From lg: an in-flow top half. */}
-              <div class="absolute inset-0 lg:relative lg:inset-auto lg:flex-1">
+            <article class="group relative isolate flex aspect-4/5 flex-col justify-end overflow-hidden rounded-card bg-black md:aspect-square lg:bg-white">
+              {/* Below lg: absolute full-card image. From lg: a fixed in-flow top 45%, so all three
+                  split cards line up whatever their copy length. */}
+              <div class="absolute inset-0 lg:relative lg:inset-auto lg:basis-[45%] lg:shrink-0">
                 <ResolvedImage
                   src={card.coverImage}
                   alt={card.heading}
@@ -118,23 +124,27 @@ const slots: Slot[] = [
                 />
               </div>
               {/* Scrim only exists while the text sits over the photo (below lg). */}
-              <div class="absolute inset-0 bg-[linear-gradient(to_top,rgb(0_0_0/0.8)_0%,rgb(0_0_0/0.5)_55%,rgb(0_0_0/0.2)_100%)] md:bg-[linear-gradient(to_top,rgb(0_0_0/0.75)_0%,rgb(0_0_0/0.25)_45%,rgb(0_0_0/0)_75%)] lg:hidden" />
-              <div class="z-10 flex flex-col items-start gap-2 p-4 lg:flex-1 lg:justify-end lg:bg-white">
+              <div class={`absolute inset-0 lg:hidden ${CARD_SCRIM}`} />
+              <div class={`z-10 flex flex-col items-start p-5 md:p-6 ${CARD_TEXT_SHADOW} lg:min-h-0 lg:flex-1 lg:justify-start lg:overflow-hidden lg:bg-white lg:p-5 lg:[text-shadow:none]`}>
                 {/* Red accent stroke — grows in length and thickness when the card is hovered. */}
-                <span aria-hidden="true" class="block h-0.5 w-10 origin-left bg-brand-red transition-transform duration-500 ease-out group-hover:scale-x-150 group-hover:scale-y-200 motion-reduce:transition-none"></span>
-                {card.hasTeam && (
-                  <span class="font-data text-label uppercase text-white lg:text-black">
-                    {card.tagLabel}
-                  </span>
-                )}
-                <h3 class="m-0 font-heading text-2xl font-bold text-white lg:text-black">
+                <span aria-hidden="true" class={CARD_STROKE}></span>
+                <p class="m-0 mb-2 flex flex-wrap items-center gap-x-2 font-data text-label uppercase text-white/80 lg:text-black/60">
+                  {card.hasTeam && (
+                    <>
+                      <span class="text-white lg:text-black">{card.tagLabel}</span>
+                      <span aria-hidden="true">·</span>
+                    </>
+                  )}
+                  <span>{card.dateLabel}</span>
+                </p>
+                <h3 class="m-0 text-balance font-heading text-xl leading-tight font-bold text-white md:text-2xl lg:text-xl lg:text-black">
                   <a href={card.href} class="after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:focus-visible:outline-black">
                     {card.heading}
                   </a>
                 </h3>
-                <p class="m-0 line-clamp-2 text-body text-white/85 lg:text-black/70">{card.excerpt}</p>
-                <p class="m-0 text-small text-white/70 lg:text-black/50">{card.dateLabel}</p>
-                <span aria-hidden="true" class="text-small text-white underline underline-offset-4 md:hidden">Läs mer</span>
+                {/* The half-height panel only has room for the excerpt from xl up. */}
+                <p class="m-0 mt-2 line-clamp-2 text-body text-white/90 lg:hidden lg:text-black/70 xl:line-clamp-2">{card.excerpt}</p>
+                <span aria-hidden="true" class="mt-4 font-data text-label uppercase text-white md:hidden">Läs mer →</span>
               </div>
             </article>
           ),

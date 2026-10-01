@@ -23,7 +23,7 @@ Full design reference material — screenshots, extracted patterns, locked and o
 - **Styling:** Tailwind CSS 4 via the Vite plugin — no `tailwind.config.js`, design tokens live in an `@theme` block
 - **Data layer:** `graphql-request` (chosen over Apollo — Astro is server-rendered/static, Apollo's client-side caching is dead weight here) + `graphql-codegen` (schema-generated types feed every RD type — never hand-written)
 - **Hosting:** Vercel, connected to GitHub, environment variables configured
-- **Email:** Resend, for the contact form (the one SSR route on an otherwise static site)
+- **Contact:** `mailto:` only — no contact form or email service (`/kontakt` + Resend dropped 2026-10-01)
 - **Package manager:** pnpm
 
 ## How this project is built

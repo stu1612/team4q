@@ -4,6 +4,7 @@ import SEO from "../components/SEO/index.astro";
 import type { SeoEntry } from "../constants/seo";
 import Nav from "./Nav.astro";
 import Footer from "./Footer.astro";
+import ContactRail from "../components/ContactRail.astro";
 // Preloaded alongside the Latin-only @font-face rules in global.css — see the comment
 // there. Preloading is what lets font-display: optional land the branded font on first
 // paint instead of falling back, without reintroducing the swap-driven reflow.
@@ -62,5 +63,7 @@ const description = seo.description || DEFAULT_DESCRIPTION;
     </main>
 
     <Footer />
+
+    <ContactRail />
   </body>
 </html>

@@ -18,7 +18,7 @@ export interface ClubContact {
     instagram: string;
     facebook: string;
   };
-  /** Physical address — used only by the /kontakt LocalBusiness JSON-LD. */
+  /** Physical address — used only by the homepage Organization JSON-LD. */
   address: {
     street: string;
     postalCode: string;
