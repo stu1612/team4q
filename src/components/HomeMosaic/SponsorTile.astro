@@ -1,0 +1,37 @@
+---
+// Sponsor commercial-slot tile — the sponsor's commercial image with their logo and
+// tagline; the whole tile links to the sponsor.
+import ResolvedImage from "../ResolvedImage.astro";
+import type { CommercialSlotVM } from "../CommercialSlot/types";
+
+interface Props {
+  sponsor: CommercialSlotVM;
+  /** Grid-placement classes from HomeMosaic's layout lookup. */
+  class?: string;
+}
+
+const { sponsor, class: className = "" } = Astro.props;
+---
+
+<a
+  href={sponsor.sponsorUrl}
+  class={`group relative isolate flex min-h-min flex-col items-start justify-end gap-4 overflow-hidden rounded-card bg-black p-5 md:p-8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black ${className}`}
+>
+  {/* Decorative backdrop — the logo's alt and the tagline carry the meaning. */}
+  <ResolvedImage
+    src={sponsor.image}
+    alt=""
+    width={1200}
+    height={800}
+    loading="lazy"
+    class="absolute inset-0 -z-10 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+  />
+  {/* Flat 60% scrim: keeps white text above 4.5:1 even over a pure-white pixel. */}
+  <div class="absolute inset-0 -z-10 bg-black/60" />
+  {/* White chip so logos of any colour stay legible on the dark scrim. The logo's alt is
+      the heading's text. */}
+  <h3 class="m-0 rounded-chip bg-white p-3">
+    <ResolvedImage src={sponsor.logo} alt={sponsor.sponsorName} width={240} height={80} fit="contain" loading="lazy" class="h-10 w-auto" />
+  </h3>
+  {sponsor.tagline && <p class="m-0 text-body text-white">{sponsor.tagline}</p>}
+</a>

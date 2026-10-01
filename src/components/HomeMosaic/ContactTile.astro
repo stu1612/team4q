@@ -1,0 +1,35 @@
+---
+// "Bli en del av T4Q" contact CTA tile (mailto for now — swap for /kontakt once the form
+// exists).
+import { Image } from "astro:assets";
+import ctaImage from "../../images/fallback/news/team-news.jpg";
+import { CLUB_CONTACT } from "../../constants/contact";
+
+interface Props {
+  /** Grid-placement classes from HomeMosaic's layout lookup. */
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<a
+  href={`mailto:${CLUB_CONTACT.email}`}
+  class={`group relative isolate flex min-h-min flex-col items-start justify-end gap-4 overflow-hidden rounded-card bg-black p-5 md:p-8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black ${className}`}
+>
+  {/* Decorative backdrop — the copy carries the meaning. */}
+  <Image
+    src={ctaImage}
+    alt=""
+    width={1200}
+    height={800}
+    loading="lazy"
+    class="absolute inset-0 -z-10 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+  />
+  <div class="absolute inset-0 -z-10 bg-black/60" />
+  <h3 class="m-0 font-heading text-2xl font-bold text-white md:text-h2">Bli en del av T4Q</h3>
+  <p class="m-0 text-body text-white">
+    Vill du spela, engagera dig som ledare eller synas som sponsor? Hör av dig så berättar vi mer.
+  </p>
+  <span class="font-data text-small uppercase text-white underline underline-offset-4">Kontakta oss →</span>
+</a>

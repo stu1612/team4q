@@ -68,10 +68,10 @@ const slots: Slot[] = [
     // Guards against a short data set (fewer than 5 items) rather than rendering a broken
     // mosaic with holes in it — render nothing until there are enough to fill it.
     cards.length === HOMEPAGE_NEWS_COUNT && (
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {slots.map(({ card, variant, wrapClass, imgWidth, imgHeight }) =>
           variant === "bleed" ? (
-            <article class={`group relative isolate flex aspect-square items-end overflow-hidden bg-black ${wrapClass}`}>
+            <article class={`group relative isolate flex aspect-square items-end overflow-hidden rounded-card bg-black ${wrapClass}`}>
               <ResolvedImage
                 src={card.coverImage}
                 alt={card.heading}
@@ -105,7 +105,7 @@ const slots: Slot[] = [
               </div>
             </article>
           ) : (
-            <article class="group relative isolate flex aspect-square flex-col justify-end overflow-hidden bg-black lg:bg-white">
+            <article class="group relative isolate flex aspect-square flex-col justify-end overflow-hidden rounded-card bg-black lg:bg-white">
               {/* Below lg: absolute full-card image. From lg: an in-flow top half. */}
               <div class="absolute inset-0 lg:relative lg:inset-auto lg:flex-1">
                 <ResolvedImage

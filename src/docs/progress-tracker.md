@@ -1,6 +1,6 @@
 # T4Q Progress Tracker
 
-Last updated: 2026-09-24 (Phase 4 — team pages: /herrlaget, /damlaget, /ungdomslaget redesigned)
+Last updated: 2026-10-01 (Phase 4 — homepage mosaic: result + commercial slot + socials)
 
 ## Status at a glance
 
@@ -111,6 +111,7 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
   - [x] Matcher & resultat — Kommande matcher + Senaste resultat combined under one heading (`FixtureResultBanner`)
   - [x] Homepage mobile pass (tighter spacing, left-aligned, stronger image scrims)
   - [x] Fixture cards redesigned ("match ticket") + result banner as a centred scoreboard
+  - [x] Homepage mosaic (`HomeMosaic`) — latest result, commercial slot, contact CTA, Instagram + Facebook in one compact grid; replaces the full-width result banner and the separate commercial-slot row; resolves the commercial-slot no-slot fallback
 - [x] Global: mobile nav drawer (native `<dialog>`), footer redesign, Instagram/Facebook links in nav + footer
 - [x] `/herrlaget` (establishes team page pattern — includes fixture card past/upcoming decision)
 - [x] `/damlaget`
@@ -168,6 +169,8 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
 ## COMPLETED TASKS
 
 - use this section to write a brief review of completed tasks. This section will act as a review for the developer to keep track of progress. Mark each task completed with a date, review (anything else you feel is usefull). Keep the review short but concise.
+
+- **2026-10-01 — Phase 4: homepage mosaic.** The full-width latest-result banner took a lot of space for one score, and the commercial slot was its own 1×2 row. Both are folded into one 5-tile grid, `src/components/HomeMosaic/`: `ResultTile` (compact scoreboard, same `ResultVM`), `SponsorTile` + `ContactTile` (moved from `CommercialSlot/index.astro`), and `SocialTile` ×2 (Instagram on a photo, Facebook as a solid black tile so the grid isn't five photos). The socials are static and driven by `SOCIAL_LINKS`. There's no live feed, since that would need a Meta API token plus client JS. Layout: lg is Result (2 cols) + Sponsor, then CTA, Instagram, Facebook. md is Result full width with the other four 2×2. Below md the big tiles are full width and the socials sit 2-up. **Missing data keeps the grid whole:** the layout is looked up by the number of "big" tiles. 3 gives the layout above, 2 (no result or no slot) gives 2×2, and 1 (CTA only) gives one row of three on lg. This resolves the open commercial-slot no-slot fallback. `FixtureResultBanner` is removed: `Fixture/index.astro` owns its section again, under the heading **Kommande matcher**. `Result/index.astro` and `CommercialSlot/index.astro` are removed, and their mappers and types are reused unchanged. The contact tile now reads `CLUB_CONTACT.email` instead of a local constant. Page order: Hero → Nyheter → Om oss → Kommande matcher → mosaic → Våra partners. `astro check` (0 errors) + `astro build` green. Checked visually with headless Chrome at 1400 / 768 / 375 px, plus the 4- and 3-tile fallbacks (forced with a temporary edit, then reverted).
 
 - **2026-09-28 — Phase 4: typography roles + `/traning`.** (1) **Type system:** the single `--font-display` (Oswald) token was doing headings, labels and data at once. Split into `font-heading` (Familjen Grotesk: headings, sentence case, bold, since the family tops out at 700), `font-sans` (Figtree, replacing Source Sans 3) and `font-data` (Oswald: fixture/training/result data plus the uppercase `text-label` signage and nav). Same self-hosted Latin-only `optional` + preload setup. `font-display` was removed so every usage had to be assigned a role. (2) **Training discoverability:** new ISR `/traning` page (`TrainingSchedule.astro`) that groups every active session by team from one `fetchOrFail` query (`getTrainingVMsGroupedByTeam`, built on the previously unused `getTrainingVMs`). The session card and the failure block are extracted as `TrainingCard.astro` and `TrainingUnavailable.astro`, shared with the team-page section. The homepage Om oss photos now carry caption links to `/{team}#traning`, plus a "Se alla träningstider" CTA. "Träning" added to `NAV_LINKS` (header, drawer and footer). The nav wordmark is hidden from lg to xl so 8 links fit at 1024px; the drawer's link list is now a scrollable `flex-1` area with the brand block pinned, and it tightens on screens under 700px tall. Verified: `/traning` groups match each team page's own sessions exactly, with no leakage. The desktop row fits at 1024/1150/1280. The drawer at 375×667 fits all 8 links with no scroll. **Not yet eyeballed with real images:** the dev server's `/_image` endpoint was returning 500s during verification, so Om oss captions should be checked visually.
 

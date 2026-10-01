@@ -1,0 +1,70 @@
+---
+// Homepage mosaic — latest result, sponsor commercial slot, contact CTA and the two social
+// follow tiles in one compact grid (replaces the full-width result banner and the separate
+// commercial-slot row).
+//
+// Result and the commercial slot are both optional (no/stale result, no sponsor with a slot),
+// so the layout is looked up by how many "big" tiles are present rather than fixed:
+//
+//   3 big   base: big tiles full width, socials 2-up
+//           md:   Result spans 2 cols (2:1) / Sponsor CTA / Insta FB
+//           lg:   Result (2 cols) Sponsor / CTA Insta FB — Result stretches to the
+//                 square Sponsor's height, the same trick as NewsCard's card5
+//   2 big   md+:  2×2, all tiles the same shape
+//   1 big   (CTA only) md: CTA spans 2 cols / Insta FB;  lg: one row of three
+//
+// The socials are static constants (SOCIAL_LINKS), so they're always the "small" tiles.
+import ResultTile from "./ResultTile.astro";
+import SponsorTile from "./SponsorTile.astro";
+import ContactTile from "./ContactTile.astro";
+import SocialTile from "./SocialTile.astro";
+import { getLatestResultVM } from "../Result/mappers";
+import { getCommercialSlotVM } from "../CommercialSlot/mappers";
+import { SOCIAL_LINKS } from "../../constants/contact";
+
+const [result, slot] = await Promise.all([getLatestResultVM(), getCommercialSlotVM()]);
+
+const bigCount = 1 + (result ? 1 : 0) + (slot ? 1 : 0);
+
+// Below md every big tile is full width at 4:3; the socials pair up as squares.
+const BIG_BASE = "col-span-2 aspect-4/3";
+
+const LAYOUT = {
+  3: {
+    grid: "lg:grid-cols-3",
+    result: `${BIG_BASE} md:aspect-2/1 lg:aspect-auto lg:h-full`,
+    sponsor: `${BIG_BASE} md:col-span-1 md:aspect-square`,
+    contact: `${BIG_BASE} md:col-span-1 md:aspect-square`,
+    social: "aspect-square",
+  },
+  2: {
+    grid: "lg:grid-cols-2",
+    result: `${BIG_BASE} md:col-span-1 lg:aspect-2/1`,
+    sponsor: `${BIG_BASE} md:col-span-1 lg:aspect-2/1`,
+    contact: `${BIG_BASE} md:col-span-1 lg:aspect-2/1`,
+    social: "aspect-square md:aspect-4/3 lg:aspect-2/1",
+  },
+  1: {
+    grid: "lg:grid-cols-3",
+    result: "",
+    sponsor: "",
+    contact: `${BIG_BASE} md:aspect-2/1 lg:col-span-1 lg:aspect-square`,
+    social: "aspect-square",
+  },
+}[bigCount]!;
+---
+
+<section aria-labelledby="mosaic-heading" class="mx-auto max-w-6xl px-4 py-10 md:py-18">
+  <h2 id="mosaic-heading" class="sr-only">Mer från Team4Q</h2>
+
+  <div class={`grid grid-cols-2 gap-4 md:gap-6 ${LAYOUT.grid}`}>
+    {result && <ResultTile result={result} class={LAYOUT.result} />}
+    {slot && <SponsorTile sponsor={slot} class={LAYOUT.sponsor} />}
+    <ContactTile class={LAYOUT.contact} />
+    {
+      SOCIAL_LINKS.map((link) => (
+        <SocialTile network={link.network} href={link.href} class={LAYOUT.social} />
+      ))
+    }
+  </div>
+</section>

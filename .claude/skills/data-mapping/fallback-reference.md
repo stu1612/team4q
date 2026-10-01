@@ -53,7 +53,17 @@ holds the pattern.
   tab / the typo "Idrottshalen")
 - `isActive` (`IsActive` enum) — **Required**; `isVisible = isActive === "active"`. The
   past/upcoming split is a separate derived `isUpcoming` on the VM — see Compound Visibility
-- `coverImage` (Asset) — **Flag** (`hasCoverImage`)
+- `coverImage` (Asset) — **not selected** (2026-09-30). The match card has no background
+  image by design decision; the field stays in the schema, unqueried, until something
+  renders it (it would return as **Flag**, `hasCoverImage`).
+- Crests / home-away (2026-09-30, match card) — derived, no schema field. `homeTeam` /
+  `awayTeam` are free text; the mapper recognises the club's side by name (`T4Q`, or the
+  spelled-out forms) and derives `venueLabel` (`"Hemma"` / `"Borta"`, `""` if neither side
+  matches) plus `homeCrest` / `awayCrest` — the club logo on the club's side, the bundled
+  generic opponent crest (`src/images/fallback/fixture/opponent-crest.svg`) on the other.
+  **Pending:** an optional `opponentLogo` (Asset) field on FixtureModel, to be added in
+  Hygraph by the developer. Once live it becomes **Default (derived placeholder)** — the
+  real crest when set, the bundled generic crest when not, with `hasOpponentLogo` alongside.
 - `teamModel` — **Flag** (`hasTeam`) — schema permits null; always present in practice, but
   the mapper guards rather than assuming
 - Affiliation — **removed from Fixture.** Reached through `teamModel.teamAffiliation` /

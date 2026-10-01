@@ -4,11 +4,11 @@ import Hero from "../components/Hero/index.astro";
 import NewsCard from "../components/NewsCard/index.astro";
 import Sponsor from "../components/Sponsor/index.astro";
 import Mission from "../components/Mission/index.astro";
-import CommercialSlot from "../components/CommercialSlot/index.astro";
-import FixtureResultBanner from "../components/FixtureResultBanner/index.astro";
+import Fixture from "../components/Fixture/index.astro";
+import HomeMosaic from "../components/HomeMosaic/index.astro";
 import { SEO_STATIC } from "../constants/seo";
-// Homepage — built section by section. Hero + Nyheter + Om oss + CommercialSlot +
-// Matcher & resultat + Våra partners done.
+// Homepage — Hero, Nyheter, Om oss, Kommande matcher, the mosaic (latest result, commercial
+// slot, contact CTA, socials) and Våra partners.
 //
 // On-demand (not prerendered) so the ISR setting in astro.config.mjs revalidates it hourly:
 // "upcoming" fixtures and the 28-day result expiry depend on the current time, which a
@@ -20,7 +20,7 @@ export const prerender = false;
   <Hero />
   <NewsCard />
   <Mission />
-  <CommercialSlot />
-  <FixtureResultBanner />
+  <Fixture />
+  <HomeMosaic />
   <Sponsor />
 </Base>

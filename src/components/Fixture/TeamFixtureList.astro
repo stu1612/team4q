@@ -24,7 +24,7 @@ const result = await getUpcomingFixtureVMsByTeam(teamSlug);
   {
     // fetchOrFail failure: a full message block (per /graphql) — never stale schedule data.
     !result.ok && (
-      <div class="border-t-4 border-brand-red bg-zinc-100 p-6 md:p-8">
+      <div class="rounded-card border border-black/10 bg-white shadow-card p-6 md:p-8">
         <p class="m-0 max-w-[60ch] text-h4 text-black">
           Vi upplever tekniska problem. För matchinformation, kontakta oss på{" "}
           <a
