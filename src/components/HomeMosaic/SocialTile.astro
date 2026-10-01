@@ -1,0 +1,49 @@
+---
+// Follow tile for one social network. Static — no live feed (that would need a Meta API
+// token and client JS). Solid network colour (the AA-safe tokens in global.css) with the
+// glyph centred and white copy.
+import SocialIcon from "../SocialIcon.astro";
+import type { SocialNetwork } from "../../constants/contact";
+
+interface Props {
+  network: SocialNetwork;
+  href: string;
+  /** Grid-placement classes from HomeMosaic's layout lookup. */
+  class?: string;
+}
+
+const { network, href, class: className = "" } = Astro.props;
+
+const TILE: Record<SocialNetwork, { title: string; text: string; bg: string }> = {
+  instagram: {
+    title: "Följ oss på Instagram",
+    text: "Bilder och klipp från träning, matcher och klubblivet.",
+    bg: "bg-instagram",
+  },
+  facebook: {
+    title: "Gilla oss på Facebook",
+    text: "Matchbilder, evenemang och klubbnytt.",
+    bg: "bg-facebook",
+  },
+};
+
+// "https://www.instagram.com/team4q/" → "@team4q"
+const handle = `@${new URL(href).pathname.replace(/\//g, "")}`;
+const { title, text, bg } = TILE[network];
+---
+
+<a
+  href={href}
+  target="_blank"
+  rel="me noopener"
+  class={`group flex min-h-min flex-col items-center justify-center gap-2 rounded-card p-4 text-center md:gap-3 md:p-8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black ${bg} ${className}`}
+>
+  <span class="text-white transition-transform duration-500 ease-out group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100">
+    <SocialIcon network={network} size={64} />
+  </span>
+  <h3 class="m-0 mt-2 font-heading text-xl font-bold text-white md:text-h2">{title}</h3>
+  <p class="m-0 hidden text-body text-white md:block">{text}</p>
+  <span class="font-data text-small uppercase text-white underline underline-offset-4">
+    {handle} →<span class="sr-only"> (öppnas i ny flik)</span>
+  </span>
+</a>

@@ -13,8 +13,7 @@ export interface FixtureTeamRD extends Omit<FixtureTeamRow, "affiliationLogo"> {
   affiliationLogo: RawImage | null;
 }
 
-export interface FixtureRD extends Omit<FixtureRow, "coverImage" | "teamModel"> {
-  coverImage: RawImage | null;
+export interface FixtureRD extends Omit<FixtureRow, "teamModel"> {
   teamModel: FixtureTeamRD | null;
 }
 
@@ -44,8 +43,13 @@ export interface FixtureVM {
   timeLabel: string;
   /** Local start as "YYYY-MM-DDTHH:mm" for <time datetime>. */
   isoDateTime: string;
-  hasCoverImage: boolean;
-  coverImage: ImageMetadata | string | null;
+  /** "Hemma" / "Borta" from the club's side of the fixture; "" when neither team name is
+   *  recognised as the club. */
+  venueLabel: string;
+  /** Crest per side — the club logo on the club's side, the generic opponent crest on the
+   *  other. Always renderable (Default with derived placeholder). */
+  homeCrest: ImageMetadata | string;
+  awayCrest: ImageMetadata | string;
   hasAffiliation: boolean;
   affiliationName: string;
   affiliationUrl: string;

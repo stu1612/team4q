@@ -1,4 +1,6 @@
 import { gql } from "graphql-request";
+import clubCrest from "../../images/logos/t4q-logo.png";
+import opponentCrest from "../../images/fallback/fixture/opponent-crest.svg";
 import { CLUB_CONTACT } from "../../constants/contact";
 import { fetchOrFail } from "../../lib/hygraphClient";
 import { resolveImageOrNull } from "../../lib/resolveImage";
@@ -23,11 +25,6 @@ const FIXTURE_FIELDS = gql`
     homeTeam
     awayTeam
     isActive
-    coverImage {
-      url
-      width
-      height
-    }
     teamModel {
       name
       slug
@@ -62,12 +59,22 @@ const FIXTURE_BY_TEAM_QUERY = gql`
   ${FIXTURE_FIELDS}
 `;
 
+// homeTeam/awayTeam are free text, so the club's side is recognised by name. Editors enter
+// "T4Q"; the longer forms are accepted so a spelled-out entry still resolves.
+const CLUB_NAME = /^(t4q|team\s*4\s*q|team fourth quarter)$/i;
+
+function isClub(name: string): boolean {
+  return CLUB_NAME.test(name.trim());
+}
+
 function toVM(rd: FixtureRD): FixtureVM {
   const team = rd.teamModel;
   const hasAffiliation = Boolean(
     team?.teamAffiliation && team?.affiliationUrl && team?.affiliationLogo,
   );
   const dateParts = formatDatePartsSv(rd.date);
+  const homeIsClub = isClub(rd.homeTeam);
+  const awayIsClub = isClub(rd.awayTeam);
   return {
     heading: rd.heading,
     date: rd.date,
@@ -87,8 +94,9 @@ function toVM(rd: FixtureRD): FixtureVM {
     monthShort: dateParts.month,
     timeLabel: rd.startTime,
     isoDateTime: `${rd.date}T${rd.startTime}`,
-    hasCoverImage: Boolean(rd.coverImage),
-    coverImage: resolveImageOrNull(rd.coverImage),
+    venueLabel: homeIsClub ? "Hemma" : awayIsClub ? "Borta" : "",
+    homeCrest: homeIsClub ? clubCrest : opponentCrest,
+    awayCrest: awayIsClub ? clubCrest : opponentCrest,
     hasAffiliation,
     affiliationName: hasAffiliation ? (team!.teamAffiliation as string) : "",
     affiliationUrl: hasAffiliation ? (team!.affiliationUrl as string) : "",

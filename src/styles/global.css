@@ -74,6 +74,10 @@
   --color-white: #fafafa;
   --color-black: #181818;
   --color-brand-red: #db1d24;
+  /* Third-party network colours — only for the homepage social tiles. Darkened from the
+     official #e4405f / #1877f2 (3.9:1 / 4.1:1 with white) so white text passes AA. */
+  --color-instagram: #c7354f; /* 4.97:1 with white */
+  --color-facebook: #1466d8; /* 5.13:1 with white */
 
   /* Fonts */
   --font-heading: "Familjen Grotesk Variable", "Familjen Grotesk", sans-serif;
@@ -114,6 +118,22 @@
   --text-label--line-height: 1.2;
   --text-label--letter-spacing: 0.05em;
   --text-label--font-weight: 700;
+
+  /* Corner radii — two steps, so rounding reads as one system rather than per-component
+     guesses. `rounded-card` for anything that sits inside the content width as a block
+     (photos, cards, message panels, banners); `rounded-chip` for small filled labels and
+     logo chips nested inside those blocks. Full-bleed bands (hero, team header, nav,
+     footer) stay square — they run edge to edge, so there is no corner to round.
+     Nested inset content (e.g. a photo inside a 4px frame) uses the card radius minus the
+     inset so the curves stay concentric. */
+  --radius-card: 1rem; /* 16px */
+  --radius-chip: 0.375rem; /* 6px */
+
+  /* Light-card surface — white card lifted off the white page by a hairline edge and a
+     soft, low-contrast shadow rather than a grey fill or a coloured accent. Pair with
+     `border border-black/10`. Two layers: a tight one that defines the edge, a wide
+     diffuse one that gives depth without reading as a drop shadow. */
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.06);
 
   /* Page content width. Overrides Tailwind's default --container-6xl (72rem/1152px) —
      every max-w-6xl usage (Base.astro's header/footer, and any future section container)

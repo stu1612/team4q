@@ -38,7 +38,7 @@ export interface TeamStage {
 }
 
 export interface TeamIntroContent {
-  /** "youth" softens the visual treatment (rounded photos, tilted cards, pill labels) for a
+  /** "youth" softens the visual treatment (tilted cards, pill labels and buttons) for a
    *  younger audience without going childish. Omit for the senior teams. */
   tone?: "youth";
   kicker: string;

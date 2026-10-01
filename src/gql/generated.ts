@@ -16,19 +16,19 @@ export type TrainingType =
   | 'individual'
   | 'team';
 
-export type FixtureFieldsFragment = { heading: string, date: string, startTime: string, endTime: string, location: string, homeTeam: string, awayTeam: string, isActive: IsActive, coverImage: { url: string, width: number | null, height: number | null } | null, teamModel: { name: string, slug: string, teamAffiliation: string | null, affiliationUrl: string | null, affiliationLogo: { url: string, width: number | null, height: number | null } | null } | null };
+export type FixtureFieldsFragment = { heading: string, date: string, startTime: string, endTime: string, location: string, homeTeam: string, awayTeam: string, isActive: IsActive, teamModel: { name: string, slug: string, teamAffiliation: string | null, affiliationUrl: string | null, affiliationLogo: { url: string, width: number | null, height: number | null } | null } | null };
 
 export type FixtureListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FixtureListQuery = { fixtureModels: Array<{ heading: string, date: string, startTime: string, endTime: string, location: string, homeTeam: string, awayTeam: string, isActive: IsActive, coverImage: { url: string, width: number | null, height: number | null } | null, teamModel: { name: string, slug: string, teamAffiliation: string | null, affiliationUrl: string | null, affiliationLogo: { url: string, width: number | null, height: number | null } | null } | null }> };
+export type FixtureListQuery = { fixtureModels: Array<{ heading: string, date: string, startTime: string, endTime: string, location: string, homeTeam: string, awayTeam: string, isActive: IsActive, teamModel: { name: string, slug: string, teamAffiliation: string | null, affiliationUrl: string | null, affiliationLogo: { url: string, width: number | null, height: number | null } | null } | null }> };
 
 export type FixtureListByTeamQueryVariables = Exact<{
   slug: string;
 }>;
 
 
-export type FixtureListByTeamQuery = { fixtureModels: Array<{ heading: string, date: string, startTime: string, endTime: string, location: string, homeTeam: string, awayTeam: string, isActive: IsActive, coverImage: { url: string, width: number | null, height: number | null } | null, teamModel: { name: string, slug: string, teamAffiliation: string | null, affiliationUrl: string | null, affiliationLogo: { url: string, width: number | null, height: number | null } | null } | null }> };
+export type FixtureListByTeamQuery = { fixtureModels: Array<{ heading: string, date: string, startTime: string, endTime: string, location: string, homeTeam: string, awayTeam: string, isActive: IsActive, teamModel: { name: string, slug: string, teamAffiliation: string | null, affiliationUrl: string | null, affiliationLogo: { url: string, width: number | null, height: number | null } | null } | null }> };
 
 export type HeroContentQueryVariables = Exact<{ [key: string]: never; }>;
 

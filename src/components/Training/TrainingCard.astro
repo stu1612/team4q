@@ -16,7 +16,7 @@ const CONTACT_LINK_CLASS =
   "inline-flex items-center gap-2 break-all text-small text-black underline-offset-3 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black";
 ---
 
-<article class="flex h-full border-t-4 border-brand-red bg-zinc-100">
+<article class="flex h-full overflow-hidden rounded-card border border-black/10 bg-white shadow-card">
   <time
     datetime={session.date}
     class="flex w-22 shrink-0 flex-col items-center justify-center gap-1 bg-black px-2 py-4 font-data uppercase text-white"
@@ -27,7 +27,7 @@ const CONTACT_LINK_CLASS =
   </time>
 
   <div class="flex min-w-0 flex-1 flex-col gap-3 p-4">
-    <span class="self-start border border-black px-2 py-0.5 font-data text-label uppercase text-black">
+    <span class="self-start rounded-chip border border-black px-2 py-0.5 font-data text-label uppercase text-black">
       {session.trainingTypeLabel}
     </span>
 
