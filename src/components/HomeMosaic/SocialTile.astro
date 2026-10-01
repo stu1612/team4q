@@ -1,8 +1,12 @@
 ---
 // Follow tile for one social network. Static — no live feed (that would need a Meta API
-// token and client JS). Solid network colour (the AA-safe tokens in global.css) with the
-// glyph centred and white copy.
+// token and client JS). Network colour (the AA-safe tokens in global.css) as the base, with
+// a grayscale photo multiplied into it for a duotone look — multiply can only darken the
+// base, so white copy never drops below the token's own contrast ratio.
+import { Image } from "astro:assets";
 import SocialIcon from "../SocialIcon.astro";
+import instagramImage from "../../images/fallback/social/social_1.jpg";
+import facebookImage from "../../images/fallback/social/social_2.jpg";
 import type { SocialNetwork } from "../../constants/contact";
 
 interface Props {
@@ -14,36 +18,62 @@ interface Props {
 
 const { network, href, class: className = "" } = Astro.props;
 
-const TILE: Record<SocialNetwork, { title: string; text: string; bg: string }> = {
+// Full class strings (not `bg-${x}`) so Tailwind's scanner picks them up.
+const TILE: Record<
+  SocialNetwork,
+  { lead: string; name: string; text: string; bg: string; scrim: string; image: ImageMetadata }
+> = {
   instagram: {
-    title: "Följ oss på Instagram",
+    lead: "Följ oss på",
+    name: "Instagram",
     text: "Bilder och klipp från träning, matcher och klubblivet.",
     bg: "bg-instagram",
+    scrim: "from-instagram/85 via-instagram/40 to-instagram/10",
+    image: instagramImage,
   },
   facebook: {
-    title: "Gilla oss på Facebook",
+    lead: "Gilla oss på",
+    name: "Facebook",
     text: "Matchbilder, evenemang och klubbnytt.",
     bg: "bg-facebook",
+    scrim: "from-facebook/85 via-facebook/40 to-facebook/10",
+    image: facebookImage,
   },
 };
 
 // "https://www.instagram.com/team4q/" → "@team4q"
 const handle = `@${new URL(href).pathname.replace(/\//g, "")}`;
-const { title, text, bg } = TILE[network];
+const { lead, name, text, bg, scrim, image } = TILE[network];
 ---
 
 <a
   href={href}
   target="_blank"
   rel="me noopener"
-  class={`group flex min-h-min flex-col items-center justify-center gap-2 rounded-card p-4 text-center md:gap-3 md:p-8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black ${bg} ${className}`}
+  class={`group relative isolate flex min-h-min flex-col items-center justify-center gap-2 overflow-hidden rounded-card p-4 text-center md:gap-3 md:p-8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black ${bg} ${className}`}
 >
-  <span class="text-white transition-transform duration-500 ease-out group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100">
+  {/* Decorative backdrop — the copy carries the meaning. */}
+  <Image
+    src={image}
+    alt=""
+    width={900}
+    height={675}
+    loading="lazy"
+    class="absolute inset-0 -z-10 h-full w-full object-cover mix-blend-multiply grayscale contrast-125 transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+  />
+  <div class={`absolute inset-0 -z-10 bg-linear-to-t ${scrim}`} />
+  {/* Dark vignette — deepens the edges and grounds the copy without softening the photo. */}
+  <div class="absolute inset-0 -z-10 bg-radial from-transparent via-black/25 to-black/65" />
+  {/* 40px glyph on the ~165px mobile tiles, 64px from md. */}
+  <span class="text-white transition-transform duration-500 ease-out group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100 [&>svg]:size-10 md:[&>svg]:size-16">
     <SocialIcon network={network} size={64} />
   </span>
-  <h3 class="m-0 mt-2 font-heading text-xl font-bold text-white md:text-h2">{title}</h3>
-  <p class="m-0 hidden text-body text-white md:block">{text}</p>
-  <span class="font-data text-small uppercase text-white underline underline-offset-4">
+  {/* Below md the tile only has room for the network name; the lead-in stays for screen readers. */}
+  <h3 class="m-0 mt-1 text-balance font-heading text-lg leading-tight font-bold text-white md:mt-2 md:text-h2">
+    <span class="sr-only md:not-sr-only">{lead}{" "}</span>{name}
+  </h3>
+  <p class="m-0 hidden text-body text-white/90 md:block">{text}</p>
+  <span class="font-data text-label uppercase text-white">
     {handle} →<span class="sr-only"> (öppnas i ny flik)</span>
   </span>
 </a>

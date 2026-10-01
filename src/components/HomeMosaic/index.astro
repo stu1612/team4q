@@ -6,7 +6,7 @@
 // Result and the commercial slot are both optional (no/stale result, no sponsor with a slot),
 // so the layout is looked up by how many "big" tiles are present rather than fixed:
 //
-//   3 big   base: big tiles full width, socials 2-up
+//   3 big   base: big tiles full width (photo tiles 4:5), socials 2-up
 //           md:   Result spans 2 cols (2:1) / Sponsor CTA / Insta FB
 //           lg:   Result (2 cols) Sponsor / CTA Insta FB — Result stretches to the
 //                 square Sponsor's height, the same trick as NewsCard's card5
@@ -26,29 +26,32 @@ const [result, slot] = await Promise.all([getLatestResultVM(), getCommercialSlot
 
 const bigCount = 1 + (result ? 1 : 0) + (slot ? 1 : 0);
 
-// Below md every big tile is full width at 4:3; the socials pair up as squares.
+// Below md every big tile is full width; the socials pair up as squares. The scoreboard is
+// 4:3, the photo-and-copy tiles 4:5 portrait (as NewsCard) so their bottom-left text stays
+// inside the scrim's dark band.
 const BIG_BASE = "col-span-2 aspect-4/3";
+const PHOTO_BASE = "col-span-2 aspect-4/5";
 
 const LAYOUT = {
   3: {
     grid: "lg:grid-cols-3",
     result: `${BIG_BASE} md:aspect-2/1 lg:aspect-auto lg:h-full`,
-    sponsor: `${BIG_BASE} md:col-span-1 md:aspect-square`,
-    contact: `${BIG_BASE} md:col-span-1 md:aspect-square`,
+    sponsor: `${PHOTO_BASE} md:col-span-1 md:aspect-square`,
+    contact: `${PHOTO_BASE} md:col-span-1 md:aspect-square`,
     social: "aspect-square",
   },
   2: {
     grid: "lg:grid-cols-2",
     result: `${BIG_BASE} md:col-span-1 lg:aspect-2/1`,
-    sponsor: `${BIG_BASE} md:col-span-1 lg:aspect-2/1`,
-    contact: `${BIG_BASE} md:col-span-1 lg:aspect-2/1`,
+    sponsor: `${PHOTO_BASE} md:col-span-1 md:aspect-4/3 lg:aspect-2/1`,
+    contact: `${PHOTO_BASE} md:col-span-1 md:aspect-4/3 lg:aspect-2/1`,
     social: "aspect-square md:aspect-4/3 lg:aspect-2/1",
   },
   1: {
     grid: "lg:grid-cols-3",
     result: "",
     sponsor: "",
-    contact: `${BIG_BASE} md:aspect-2/1 lg:col-span-1 lg:aspect-square`,
+    contact: `${PHOTO_BASE} md:aspect-2/1 lg:col-span-1 lg:aspect-square`,
     social: "aspect-square",
   },
 }[bigCount]!;

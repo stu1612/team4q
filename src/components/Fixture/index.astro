@@ -55,13 +55,15 @@ const result = await getUpcomingFixtureVMs(HOMEPAGE_FIXTURE_COUNT);
     // next one peeks in as the cue to swipe. From md: the usual grid. The row is a labelled,
     // focusable region so keyboard users can scroll it (the cards hold no focusable content
     // of their own); the bottom padding keeps the card shadows from being clipped by the
-    // scroll container.
+    // scroll container. `relative` is load-bearing: it makes the scroller the containing
+    // block for the cards' absolutely-positioned sr-only text — without it those spans
+    // escape the clip and widen the whole page on mobile.
     result.ok && result.fixtures.length > 0 && (
       <div
         role="region"
         aria-label="Kommande matcher"
         tabindex="0"
-        class="-mx-4 -mb-4 snap-x snap-mandatory scroll-px-4 overflow-x-auto px-4 pt-1 pb-6 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black md:mx-0 md:mb-0 md:overflow-visible md:p-0"
+        class="relative -mx-4 -mb-4 snap-x snap-mandatory scroll-px-4 overflow-x-auto px-4 pt-1 pb-6 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black md:mx-0 md:mb-0 md:overflow-visible md:p-0"
       >
         <ul class="m-0 flex list-none gap-4 p-0 md:grid md:grid-cols-2 lg:grid-cols-3">
           {result.fixtures.map((fixture) => (

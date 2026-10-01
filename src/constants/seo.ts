@@ -24,7 +24,6 @@ type TeamKey = "mens" | "womens" | "juniors";
 interface SeoStatic {
   home: SeoEntry;
   newsListing: SeoEntry;
-  contact: SeoEntry;
   training: SeoEntry;
   /** Keyed by TeamModel tag, NOT derived from any TeamModel field (TeamModel has no SEO data). */
   team: Record<TeamKey, SeoEntry>;
@@ -87,6 +86,11 @@ export const SEO_STATIC: SeoStatic = {
       name: ORG_NAME,
       url: abs("/"),
       logo: abs("/logo.png"),
+      // Contact details live here since /kontakt was dropped — the homepage is now the
+      // club's one canonical "who we are and how to reach us" entity.
+      email: CLUB_CONTACT.email,
+      ...(CLUB_CONTACT.phone ? { telephone: CLUB_CONTACT.phone } : {}),
+      address: POSTAL_ADDRESS,
       ...(SOCIAL_URLS.length ? { sameAs: SOCIAL_URLS } : {}),
     },
   },
@@ -99,21 +103,6 @@ export const SEO_STATIC: SeoStatic = {
     jsonLd: null,
   },
 
-  contact: {
-    title: `Kontakt | ${ORG_NAME}`,
-    description:
-      "Kontakta Team Fourth Quarter – e-post, telefon och adress till basketklubben i Helsingborg.",
-    ogImage: OG_DEFAULT,
-    jsonLd: {
-      "@context": "https://schema.org",
-      "@type": "LocalBusiness",
-      name: ORG_NAME,
-      url: abs("/kontakt"),
-      email: CLUB_CONTACT.email,
-      ...(CLUB_CONTACT.phone ? { telephone: CLUB_CONTACT.phone } : {}),
-      address: POSTAL_ADDRESS,
-    },
-  },
 
   training: {
     title: `Träningstider | ${ORG_NAME}`,

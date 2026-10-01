@@ -1,0 +1,37 @@
+---
+// Fixed contact rail — social profiles + email, pinned to the right edge and vertically
+// centred so it stays in reach while the page scrolls. The site's contact channel since
+// /kontakt was dropped. Desktop only (lg+): on phones it would sit over content under the
+// scrolling thumb, and the nav drawer + footer already carry the same links there.
+import SocialIcon from "./SocialIcon.astro";
+import { CLUB_CONTACT, SOCIAL_LINKS } from "../constants/contact";
+
+const ITEM_CLASS =
+  "flex size-11 items-center justify-center rounded-full text-brand-red transition-colors duration-200 hover:bg-white hover:text-black focus-visible:bg-white focus-visible:text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:transition-none";
+---
+
+<nav
+  aria-label="Kontakt och sociala medier"
+  class="fixed top-1/2 right-0 z-40 hidden -translate-y-1/2 rounded-l-card border border-r-0 border-white/10 bg-black/90 p-1.5 shadow-[-8px_0_24px_rgb(0_0_0/0.25)] backdrop-blur-sm lg:block"
+>
+  <ul class="m-0 flex list-none flex-col items-center gap-1 p-0">
+    {
+      SOCIAL_LINKS.map((s) => (
+        <li>
+          <a href={s.href} class={ITEM_CLASS} aria-label={s.label} rel="me noopener" target="_blank">
+            <SocialIcon network={s.network} size={20} />
+          </a>
+        </li>
+      ))
+    }
+    <li class="mx-auto my-1 h-px w-5 bg-white/15" aria-hidden="true"></li>
+    <li>
+      <a href={`mailto:${CLUB_CONTACT.email}`} class={ITEM_CLASS} aria-label={`Mejla oss på ${CLUB_CONTACT.email}`}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="14" rx="2" />
+          <path d="m3 7 9 6 9-6" />
+        </svg>
+      </a>
+    </li>
+  </ul>
+</nav>

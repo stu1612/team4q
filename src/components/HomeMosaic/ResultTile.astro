@@ -3,6 +3,7 @@
 // ResultVM; only the scale changed. Not a link (no results route exists).
 import ResolvedImage from "../ResolvedImage.astro";
 import type { ResultVM } from "../Result/types";
+import { CARD_STROKE, CARD_TEXT_SHADOW } from "../cardStyles";
 
 interface Props {
   result: ResultVM;
@@ -25,11 +26,24 @@ const { result, class: className = "" } = Astro.props;
   />
   <div class="absolute inset-0 -z-10 bg-[linear-gradient(to_top,rgb(0_0_0/0.75)_0%,rgb(0_0_0/0.6)_50%,rgb(0_0_0/0.5)_100%)]" />
 
-  <div class="flex w-full flex-col items-start gap-3 p-5 md:items-center md:p-8">
+  <div class={`flex w-full flex-col items-start p-5 md:items-center md:p-6 ${CARD_TEXT_SHADOW}`}>
     <h3 class="sr-only">Senaste resultat</h3>
-    <p class="m-0 flex items-center gap-3 font-data text-label uppercase text-white/85">
-      {result.hasTeam && <span class="rounded-chip bg-brand-red px-2 py-0.5 text-white">{result.tagLabel}</span>}
-      Slutresultat
+    {/* Same stroke + single meta line as the news cards; centred from md with the scoreboard. */}
+    <span aria-hidden="true" class={CARD_STROKE}></span>
+    <p class="m-0 mb-4 flex flex-wrap items-center gap-x-2 font-data text-label uppercase text-white/80 md:justify-center">
+      {result.hasTeam && (
+        <>
+          <span class="text-white">{result.tagLabel}</span>
+          <span aria-hidden="true">·</span>
+        </>
+      )}
+      <span>Slutresultat</span>
+      {result.hasDate && (
+        <>
+          <span aria-hidden="true">·</span>
+          <span>{result.dateLabel}</span>
+        </>
+      )}
     </p>
 
     {/* Scoreboard. Mobile: two rows, "team … score". From md: one row on a
@@ -53,7 +67,5 @@ const { result, class: className = "" } = Astro.props;
         {result.awayTeam}
       </span>
     </p>
-
-    {result.hasDate && <p class="m-0 text-small text-white/85">{result.dateLabel}</p>}
   </div>
 </article>

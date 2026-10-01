@@ -3,6 +3,7 @@
 // a local import so <Image> keeps optimising it.
 
 import heroCover from "../../images/fallback/hero/hero-cover.jpg";
+import { CLUB_CONTACT } from "../../constants/contact";
 import type { HeroResponseRD } from "./types";
 
 export const heroFallback: HeroResponseRD = {
@@ -12,7 +13,7 @@ export const heroFallback: HeroResponseRD = {
       subheading:
         "Herr, dam och ungdom – en klubb, tre lag, samma passion för basket i Helsingborg.",
       ctaLabel: "Kontakta oss",
-      ctaUrl: "/kontakt",
+      ctaUrl: `mailto:${CLUB_CONTACT.email}`,
       coverImage: heroCover,
     },
   ],

@@ -14,5 +14,4 @@ export const NAV_LINKS: readonly NavLink[] = [
   { href: "/traning", label: "Träning" },
   { href: "/nyheter", label: "Nyheter" },
   { href: "/#partners", label: "Sponsorer" },
-  { href: "/kontakt", label: "Kontakt" },
 ];
