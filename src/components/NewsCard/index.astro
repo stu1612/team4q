@@ -103,7 +103,7 @@ const slots: Slot[] = [
                     {card.heading}
                   </a>
                 </h3>
-                <p class="m-0 mt-2 line-clamp-2 text-body text-white/90">{card.excerpt}</p>
+                <p class="m-0 mt-2 line-clamp-2 text-body text-white/90 text-shadow-none">{card.excerpt}</p>
                 {/* Visual cue only — the heading link's stretched ::after already makes the card
                     clickable, so this is aria-hidden rather than a second link to the same URL. */}
                 <span aria-hidden="true" class="mt-4 font-data text-label uppercase text-white md:hidden">Läs mer →</span>
@@ -125,7 +125,7 @@ const slots: Slot[] = [
               </div>
               {/* Scrim only exists while the text sits over the photo (below lg). */}
               <div class={`absolute inset-0 lg:hidden ${CARD_SCRIM}`} />
-              <div class={`z-10 flex flex-col items-start p-5 md:p-6 ${CARD_TEXT_SHADOW} lg:min-h-0 lg:flex-1 lg:justify-start lg:overflow-hidden lg:bg-white lg:p-5 lg:[text-shadow:none]`}>
+              <div class={`z-10 flex flex-col items-start p-5 md:p-6 ${CARD_TEXT_SHADOW} lg:min-h-0 lg:flex-1 lg:justify-start lg:overflow-hidden lg:bg-white lg:p-5 lg:text-shadow-none`}>
                 {/* Red accent stroke — grows in length and thickness when the card is hovered. */}
                 <span aria-hidden="true" class={CARD_STROKE}></span>
                 <p class="m-0 mb-2 flex flex-wrap items-center gap-x-2 font-data text-label uppercase text-white/80 lg:text-black/60">
@@ -143,7 +143,7 @@ const slots: Slot[] = [
                   </a>
                 </h3>
                 {/* The half-height panel only has room for the excerpt from xl up. */}
-                <p class="m-0 mt-2 line-clamp-2 text-body text-white/90 lg:hidden lg:text-black/70 xl:line-clamp-2">{card.excerpt}</p>
+                <p class="m-0 mt-2 line-clamp-2 text-body text-white/90 text-shadow-none lg:hidden lg:text-black/70 xl:line-clamp-2">{card.excerpt}</p>
                 <span aria-hidden="true" class="mt-4 font-data text-label uppercase text-white md:hidden">Läs mer →</span>
               </div>
             </article>

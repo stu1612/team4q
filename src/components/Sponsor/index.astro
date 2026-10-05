@@ -14,15 +14,15 @@ const { main, featured } = await getSponsorGroups();
 {
   (main.length > 0 || featured.length > 0) && (
     <section id="partners" aria-labelledby="partners-heading" class="mx-auto max-w-6xl px-4 py-10 md:py-18">
-      <div class="mb-4 flex flex-wrap md:mb-6 items-center gap-4 before:hidden before:flex-1 md:justify-center md:before:block before:border-b before:border-black/20 after:flex-1 after:border-b after:border-black/20">
-        <h2 id="partners-heading" class="m-0 text-left font-heading text-h2 text-black md:text-center">
+      <div class="mb-6 flex flex-wrap justify-center items-center gap-4 before:hidden before:flex-1 md:before:block before:border-b before:border-black/20 after:hidden after:flex-1 md:after:block after:border-b after:border-black/20">
+        <h2 id="partners-heading" class="m-0 text-center font-heading text-h2 text-black">
           Tack till våra fantastiska sponsorer som hjälper till att stödja vårt samhälle.
         </h2>
       </div>
 
       <div class="flex flex-col gap-8">
         {main.length > 0 && (
-          <ul class="m-0 grid list-none grid-cols-2 items-center gap-6 p-0 md:flex md:flex-wrap md:justify-center md:gap-x-12 md:gap-y-8">
+          <ul class="m-0 grid list-none grid-cols-1 items-center gap-6 p-0 md:flex md:flex-wrap md:justify-center md:gap-x-12 md:gap-y-8">
             {main.map((sponsor) => (
               <li class="flex h-16 w-full items-center justify-center last:odd:col-span-2 md:h-24 md:w-52">
                 <a
@@ -47,7 +47,7 @@ const { main, featured } = await getSponsorGroups();
         )}
 
         {featured.length > 0 && (
-          <ul class="m-0 grid list-none grid-cols-2 items-center gap-6 p-0 md:flex md:flex-wrap md:justify-center md:gap-x-10 md:gap-y-6">
+          <ul class="m-0 grid list-none grid-cols-1 items-center gap-6 p-0 md:flex md:flex-wrap md:justify-center md:gap-x-10 md:gap-y-6">
             {featured.map((sponsor) => (
               <li class="flex h-14 w-full items-center justify-center last:odd:col-span-2 md:h-16 md:w-32">
                 <a

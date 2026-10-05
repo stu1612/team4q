@@ -1,4 +1,5 @@
 import { gql } from "graphql-request";
+import { CLUB_CONTACT } from "../../constants/contact";
 import { fetchWithFallback } from "../../lib/hygraphClient";
 import { resolveImage } from "../../lib/resolveImage";
 import { heroFallback } from "./fallback";
@@ -20,8 +21,13 @@ const HERO_QUERY = gql`
   }
 `;
 
+// Contact is mailto-only (the /kontakt route was dropped 2026-10-01), so the CTA always
+// targets the club email. HeroModel's ctaUrl is still queried but ignored — an older
+// Hygraph entry may still hold "/kontakt".
+const CTA_URL = `mailto:${CLUB_CONTACT.email}`;
+
 function toVM(rd: HeroRD): HeroVM {
-  const hasCTA = Boolean(rd.ctaLabel && rd.ctaUrl);
+  const hasCTA = Boolean(rd.ctaLabel);
   return {
     heading: rd.heading,
     coverImage: resolveImage(rd.coverImage),
@@ -29,7 +35,7 @@ function toVM(rd: HeroRD): HeroVM {
     hasSubheading: Boolean(rd.subheading),
     hasCTA,
     ctaLabel: hasCTA ? (rd.ctaLabel as string) : "",
-    ctaUrl: hasCTA ? (rd.ctaUrl as string) : "",
+    ctaUrl: hasCTA ? CTA_URL : "",
   };
 }
 
