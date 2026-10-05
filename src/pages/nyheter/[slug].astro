@@ -1,25 +1,33 @@
 ---
+import { getImage } from "astro:assets";
 import Base from "../../layouts/Base.astro";
-import type { SeoEntry } from "../../constants/seo";
+import NewsArticle from "../../components/NewsCard/NewsArticle.astro";
+import { getNewsArticleVM } from "../../components/NewsCard/mappers";
+import { newsArticleSeo } from "../../constants/seo";
+// Article route. On-demand (ISR) so a newly published article opens on its first visit,
+// with no rebuild. Unknown slugs render the 404 page; fallback.ts slugs always resolve
+// (see getNewsArticleVM) so a fallback card never leads to a 404.
+export const prerender = false;
 
-export function getStaticPaths() {
-  // Phase 4: replace the placeholder with real slugs pulled from NewsCardModel.
-  return [{ params: { slug: "placeholder" } }];
+const result = await getNewsArticleVM(Astro.params.slug ?? "");
+if (!result) {
+  // A bodiless 404 makes Astro serve the custom 404 page with a 404 status.
+  // (Astro.rewrite("/404") is forbidden here: /404 is prerendered and this route isn't.)
+  return new Response(null, { status: 404 });
 }
+const { article, isFallback } = result;
 
-const { slug } = Astro.params;
+// OG image must be absolute: Hygraph URLs already are; a local placeholder is optimised
+// and resolved against the site origin.
+const site = Astro.site ?? new URL("https://team4q.se");
+const ogImage =
+  typeof article.coverImage === "string"
+    ? article.coverImage
+    : new URL((await getImage({ src: article.coverImage, width: 1200, format: "jpg" })).src, site).href;
 
-// Phase 4: derive this from the article's NewsCard VM — title from the heading,
-// description from the excerpt, ogImage from the resolved cover image, and a NewsArticle
-// JSON-LD block (see /seo skill). Placeholder until the detail route is built.
-const seo: SeoEntry = {
-  title: `${slug} | Team Fourth Quarter`,
-  description: "Nyhet från Team Fourth Quarter.",
-  ogImage: new URL("/og-default.jpg", Astro.site ?? "https://team4q.se").href,
-  jsonLd: null,
-};
+const seo = newsArticleSeo({ ...article, ogImage, isFallback });
 ---
 
 <Base seo={seo}>
-  <h1>{slug}</h1>
+  <NewsArticle article={article} />
 </Base>

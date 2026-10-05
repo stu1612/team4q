@@ -17,6 +17,9 @@ export interface SeoEntry {
   ogImage: string;
   /** schema.org JSON-LD for this page, or null when the page type needs none. */
   jsonLd: object | null;
+  /** Keep the page out of search results. Only /nyheter/[slug] sets it, for fallback.ts
+   *  articles — served so their cards always open, but not real club content. */
+  noindex?: boolean;
 }
 
 type TeamKey = "mens" | "womens" | "juniors";
@@ -118,3 +121,38 @@ export const SEO_STATIC: SeoStatic = {
     juniors: teamEntry("juniors"),
   },
 };
+
+/**
+ * /nyheter/[slug] — the one dynamic SEO entry (see /seo skill), derived from the article's
+ * own VM values. Takes plain values rather than the VM so this file stays independent of
+ * component types. `ogImage` must already be absolute (the page resolves local images).
+ */
+export function newsArticleSeo(article: {
+  heading: string;
+  excerpt: string;
+  publishedDate: string;
+  href: string;
+  hasAuthor: boolean;
+  authorName: string;
+  ogImage: string;
+  isFallback: boolean;
+}): SeoEntry {
+  const publisher = { "@type": "Organization", name: ORG_NAME, url: abs("/"), logo: abs("/logo.png") };
+  return {
+    title: `${article.heading} | ${ORG_NAME}`,
+    description: article.excerpt,
+    ogImage: article.ogImage,
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      headline: article.heading,
+      description: article.excerpt,
+      image: [article.ogImage],
+      datePublished: article.publishedDate,
+      mainEntityOfPage: abs(article.href),
+      author: article.hasAuthor ? { "@type": "Person", name: article.authorName } : publisher,
+      publisher,
+    },
+    noindex: article.isFallback,
+  };
+}

@@ -1,0 +1,57 @@
+---
+// Standard news card for grids — the /nyheter listing and the article page's "Fler
+// nyheter". Image on top, white text panel below (the homepage mosaic's lg "split" look),
+// so long headings never fight a photo for contrast. The heading link's stretched ::after
+// makes the whole card clickable with a single tab stop.
+import ResolvedImage from "../ResolvedImage.astro";
+import { CARD_STROKE } from "../cardStyles";
+import type { NewsCardVM } from "./types";
+
+interface Props {
+  card: NewsCardVM;
+  /** h2 on the listing (siblings of the featured card), h3 under "Fler nyheter". */
+  headingLevel?: "h2" | "h3";
+}
+
+const { card, headingLevel = "h2" } = Astro.props;
+const Heading = headingLevel;
+---
+
+<article
+  class="group relative isolate flex h-full flex-col overflow-hidden rounded-card border border-black/10 bg-white shadow-card transition-shadow duration-300 hover:shadow-lg motion-reduce:transition-none"
+>
+  <div class="relative aspect-16/10 overflow-hidden bg-black">
+    <ResolvedImage
+      src={card.coverImage}
+      alt={card.heading}
+      width={800}
+      height={500}
+      loading="lazy"
+      class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+    />
+  </div>
+  <div class="flex flex-1 flex-col items-start p-5 md:p-6">
+    <span aria-hidden="true" class={CARD_STROKE}></span>
+    <p class="m-0 mb-2 flex flex-wrap items-center gap-x-2 font-data text-label uppercase text-black/60">
+      {
+        card.hasTeam && (
+          <>
+            <span class="text-black">{card.tagLabel}</span>
+            <span aria-hidden="true">·</span>
+          </>
+        )
+      }
+      <time datetime={card.publishedDate}>{card.dateLabel}</time>
+    </p>
+    <Heading class="m-0 text-balance font-heading text-xl leading-tight font-bold text-black">
+      <a
+        href={card.href}
+        class="after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+      >
+        {card.heading}
+      </a>
+    </Heading>
+    <p class="m-0 mt-2 line-clamp-3 text-body text-black/70">{card.excerpt}</p>
+    <span aria-hidden="true" class="mt-auto pt-4 font-data text-label uppercase text-black">Läs mer →</span>
+  </div>
+</article>

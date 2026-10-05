@@ -42,3 +42,10 @@ export interface NewsCardVM {
   /** Link to the article's detail route. */
   href: string;
 }
+
+/** /nyheter/[slug]: the article plus whether it came from fallback.ts — fallback articles
+ *  are served (their cards must always open) but marked noindex. */
+export interface NewsArticleVM {
+  article: NewsCardVM;
+  isFallback: boolean;
+}

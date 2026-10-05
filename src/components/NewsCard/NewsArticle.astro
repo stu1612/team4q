@@ -1,0 +1,182 @@
+---
+// /nyheter/[slug] article body. The page resolves the article (it also needs the VM for
+// SEO) and passes it in; "Fler nyheter" fetches the list itself — the article page's one
+// extra request.
+//
+// The body is Hygraph rich-text HTML rendered with set:html (trusted, editor-authored
+// content), styled by the scoped rules below rather than a typography plugin — the
+// handful of elements Hygraph emits doesn't justify a dependency.
+import ResolvedImage from "../ResolvedImage.astro";
+import { CARD_STROKE } from "../cardStyles";
+import NewsGridCard from "./NewsGridCard.astro";
+import { getNewsCardVMs } from "./mappers";
+import type { NewsCardVM } from "./types";
+
+interface Props {
+  article: NewsCardVM;
+}
+
+const { article } = Astro.props;
+
+const MORE_COUNT = 3;
+const more = (await getNewsCardVMs()).filter((card) => card.slug !== article.slug).slice(0, MORE_COUNT);
+---
+
+<article class="mx-auto max-w-6xl px-4 pt-8 pb-10 md:pt-12 md:pb-18">
+  <header class="mx-auto flex max-w-3xl flex-col items-start">
+    <a
+      href="/nyheter"
+      class="group mb-8 inline-flex min-h-11 items-center gap-2 font-data text-label uppercase text-black/70 no-underline hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+    >
+      <span aria-hidden="true" class="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transition-none">←</span>
+      Alla nyheter
+    </a>
+
+    <span aria-hidden="true" class={CARD_STROKE}></span>
+    <p class="m-0 mb-3 flex flex-wrap items-center gap-x-2 font-data text-label uppercase text-black/60">
+      {
+        article.hasTeam && (
+          <>
+            <span class="text-black">{article.tagLabel}</span>
+            <span aria-hidden="true">·</span>
+          </>
+        )
+      }
+      <time datetime={article.publishedDate}>{article.dateLabel}</time>
+    </p>
+
+    <h1 class="m-0 text-balance font-heading text-4xl leading-tight font-bold text-black md:text-6xl">
+      {article.heading}
+    </h1>
+    <p class="m-0 mt-5 text-h4 font-normal text-black/75 md:text-xl">{article.excerpt}</p>
+
+    {
+      article.hasAuthor && (
+        <p class="m-0 mt-6 flex items-center gap-3 text-small text-black/70">
+          {article.hasAuthorPhoto && article.authorPhoto && (
+            <ResolvedImage
+              src={article.authorPhoto}
+              alt=""
+              width={80}
+              height={80}
+              class="size-10 rounded-full object-cover"
+            />
+          )}
+          <span>
+            Av <span class="font-semibold text-black">{article.authorName}</span>
+            {article.authorRole && <>, {article.authorRole}</>}
+          </span>
+        </p>
+      )
+    }
+  </header>
+
+  <div class="mx-auto mt-8 max-w-5xl overflow-hidden rounded-card bg-black md:mt-12">
+    <ResolvedImage
+      src={article.coverImage}
+      alt={article.heading}
+      width={1600}
+      height={900}
+      loading="eager"
+      class="aspect-video h-full w-full object-cover"
+    />
+  </div>
+
+  <div class="article-body mx-auto mt-8 max-w-3xl text-body text-black md:mt-12 md:text-lg" set:html={article.bodyHtml} />
+</article>
+
+{
+  more.length > 0 && (
+    <section aria-labelledby="fler-nyheter-heading" class="bg-zinc-100 px-4 py-10 md:py-18">
+      <div class="mx-auto max-w-6xl">
+        <div class="mb-6 flex flex-wrap items-center justify-center gap-4 md:mb-8 md:justify-start">
+          <h2 id="fler-nyheter-heading" class="m-0 text-center font-heading text-3xl font-bold text-black md:text-left md:text-5xl">
+            Fler nyheter
+          </h2>
+          <span aria-hidden="true" class="hidden min-w-8 flex-1 border-b border-black/20 md:block" />
+          <a
+            href="/nyheter"
+            class="hidden font-data text-small uppercase text-black hover:underline hover:underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black md:inline"
+          >
+            Se alla →
+          </a>
+        </div>
+        <ul class="m-0 grid list-none grid-cols-1 gap-6 p-0 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+          {more.map((card) => (
+            <li>
+              <NewsGridCard card={card} headingLevel="h3" />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  /* Rich-text body. :global because set:html content doesn't carry Astro's scope hash. */
+  .article-body {
+    line-height: 1.75;
+  }
+  .article-body :global(> * + *) {
+    margin-top: 1.25em;
+  }
+  .article-body :global(h2),
+  .article-body :global(h3) {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-top: 2em;
+  }
+  .article-body :global(h2) {
+    font-size: 1.75rem;
+  }
+  .article-body :global(h3) {
+    font-size: 1.375rem;
+  }
+  .article-body :global(ul),
+  .article-body :global(ol) {
+    padding-left: 1.5em;
+  }
+  .article-body :global(ul) {
+    list-style: disc;
+  }
+  .article-body :global(ol) {
+    list-style: decimal;
+  }
+  .article-body :global(li + li) {
+    margin-top: 0.5em;
+  }
+  .article-body :global(li::marker) {
+    color: var(--color-brand-red);
+  }
+  .article-body :global(a) {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: var(--color-brand-red);
+    text-decoration-thickness: 2px;
+  }
+  .article-body :global(a:hover) {
+    text-decoration-color: currentColor;
+  }
+  .article-body :global(a:focus-visible) {
+    outline: 2px solid var(--color-black);
+    outline-offset: 2px;
+  }
+  .article-body :global(strong) {
+    font-weight: 700;
+  }
+  .article-body :global(blockquote) {
+    border-left: 3px solid var(--color-brand-red);
+    padding-left: 1.25em;
+    font-family: var(--font-heading);
+    font-size: 1.25em;
+    font-weight: 600;
+  }
+  .article-body :global(img) {
+    border-radius: var(--radius-card);
+    height: auto;
+    max-width: 100%;
+  }
+</style>

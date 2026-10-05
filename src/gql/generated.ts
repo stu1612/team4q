@@ -35,10 +35,19 @@ export type HeroContentQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type HeroContentQuery = { heroModels: Array<{ heading: string, subheading: string | null, ctaLabel: string | null, ctaUrl: string | null, coverImage: { url: string, width: number | null, height: number | null } }> };
 
+export type NewsCardFieldsFragment = { heading: string, slug: string, publishedDate: string, excerpt: string, body: { html: string, text: string }, coverImage: { url: string, width: number | null, height: number | null } | null, teamModel: { name: string, slug: string } | null, clubMemberModel: { name: string | null, role: string | null, profileImage: { url: string, width: number | null, height: number | null } | null } | null };
+
 export type NewsCardListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type NewsCardListQuery = { newsCardModels: Array<{ heading: string, slug: string, publishedDate: string, excerpt: string, body: { html: string, text: string }, coverImage: { url: string, width: number | null, height: number | null } | null, teamModel: { name: string, slug: string } | null, clubMemberModel: { name: string | null, role: string | null, profileImage: { url: string, width: number | null, height: number | null } | null } | null }> };
+
+export type NewsCardBySlugQueryVariables = Exact<{
+  slug: string;
+}>;
+
+
+export type NewsCardBySlugQuery = { newsCardModels: Array<{ heading: string, slug: string, publishedDate: string, excerpt: string, body: { html: string, text: string }, coverImage: { url: string, width: number | null, height: number | null } | null, teamModel: { name: string, slug: string } | null, clubMemberModel: { name: string | null, role: string | null, profileImage: { url: string, width: number | null, height: number | null } | null } | null }> };
 
 export type ResultFieldsFragment = { homeTeam: string, homeScore: number, awayTeam: string, awayScore: number, date: string | null, isActive: IsActive, publishedAt: string | null, teamModel: { name: string, slug: string } | null, backgroundImage: { url: string, width: number | null, height: number | null } };
 

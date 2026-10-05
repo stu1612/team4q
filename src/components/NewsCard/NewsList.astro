@@ -1,0 +1,74 @@
+---
+// /nyheter listing — the newest article as a large full-bleed featured card, the rest in a
+// grid of NewsGridCards. All articles, newest first; no pagination or team filter in v1
+// (low publishing volume — Hygraph returns up to 100 by default).
+import ResolvedImage from "../ResolvedImage.astro";
+import { CARD_SCRIM, CARD_STROKE, CARD_TEXT_SHADOW } from "../cardStyles";
+import NewsGridCard from "./NewsGridCard.astro";
+import { getNewsCardVMs } from "./mappers";
+
+const [featured, ...rest] = await getNewsCardVMs();
+---
+
+<section aria-labelledby="nyheter-heading" class="mx-auto max-w-6xl px-4 py-10 md:py-18">
+  <div class="mb-6 flex flex-wrap items-center justify-center gap-4 md:mb-8 md:justify-start">
+    <h1 id="nyheter-heading" class="m-0 text-center font-heading text-4xl font-bold text-black md:text-left md:text-6xl">
+      Nyheter
+    </h1>
+    <span aria-hidden="true" class="hidden min-w-8 flex-1 border-b border-black/20 md:block"></span>
+  </div>
+
+  {!featured && <p class="m-0 text-body text-black">Inga nyheter just nu.</p>}
+
+  {
+    featured && (
+      <article class="group relative isolate mb-8 flex aspect-4/5 items-end overflow-hidden rounded-card bg-black md:mb-10 md:aspect-video lg:aspect-[21/9]">
+        <ResolvedImage
+          src={featured.coverImage}
+          alt={featured.heading}
+          width={1600}
+          height={900}
+          loading="eager"
+          class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+        />
+        <div class={`absolute inset-0 ${CARD_SCRIM}`} />
+        <div class={`z-10 flex max-w-3xl flex-col items-start p-5 md:p-8 lg:p-10 ${CARD_TEXT_SHADOW}`}>
+          <span aria-hidden="true" class={CARD_STROKE} />
+          <p class="m-0 mb-2 flex flex-wrap items-center gap-x-2 font-data text-label uppercase text-white/80">
+            <span class="text-white">Senaste nytt</span>
+            <span aria-hidden="true">·</span>
+            {featured.hasTeam && (
+              <>
+                <span class="text-white">{featured.tagLabel}</span>
+                <span aria-hidden="true">·</span>
+              </>
+            )}
+            <time datetime={featured.publishedDate}>{featured.dateLabel}</time>
+          </p>
+          <h2 class="m-0 text-balance font-heading text-2xl leading-tight font-bold text-white md:text-4xl">
+            <a
+              href={featured.href}
+              class="after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              {featured.heading}
+            </a>
+          </h2>
+          <p class="m-0 mt-3 line-clamp-3 text-body text-white/90 text-shadow-none md:text-lg">{featured.excerpt}</p>
+          <span aria-hidden="true" class="mt-4 font-data text-label uppercase text-white">Läs mer →</span>
+        </div>
+      </article>
+    )
+  }
+
+  {
+    rest.length > 0 && (
+      <ul class="m-0 grid list-none grid-cols-1 gap-6 p-0 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+        {rest.map((card) => (
+          <li>
+            <NewsGridCard card={card} />
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</section>
