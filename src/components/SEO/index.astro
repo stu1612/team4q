@@ -13,9 +13,11 @@ interface Props {
   canonical: string;
   /** schema.org object, or null to emit no structured data (see /seo JSON-LD suppression). */
   jsonLd?: object | null;
+  /** Fallback-content pages only (see SeoEntry.noindex). */
+  noindex?: boolean;
 }
 
-const { title, description, ogImage, canonical, jsonLd = null } = Astro.props;
+const { title, description, ogImage, canonical, jsonLd = null, noindex = false } = Astro.props;
 
 const SITE_NAME = "T4Q Helsingborg";
 ---
@@ -23,7 +25,7 @@ const SITE_NAME = "T4Q Helsingborg";
 <title>{title}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
-<meta name="robots" content="index, follow" />
+<meta name="robots" content={noindex ? "noindex, follow" : "index, follow"} />
 
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content={SITE_NAME} />

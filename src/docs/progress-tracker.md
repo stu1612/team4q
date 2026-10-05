@@ -1,6 +1,6 @@
 # T4Q Progress Tracker
 
-Last updated: 2026-10-05 (Phase 4 — hero redesign + mobile section-header pass)
+Last updated: 2026-10-05 (Phase 4 — /nyheter + /nyheter/[slug] built; Phase 4 build items complete)
 
 ## Status at a glance
 
@@ -88,7 +88,7 @@ Last updated: 2026-10-05 (Phase 4 — hero redesign + mobile section-header pass
 - [x] SEO component + `src/constants/seo.ts` (static SEO data) — dynamic derivation for `/nyheter/[slug]` deferred to Phase 4
 - [x] `@theme` design tokens — done ahead of phase, see COMPLETED TASKS
 - [x] 404 page
-- [x] Astro on-demand config — `@astrojs/vercel` adapter; `output` stays `static`, only `/kontakt` sets `prerender = false`
+- [x] Astro on-demand config — `@astrojs/vercel` adapter; `output` stays `static`; content pages (`/`, team pages, `/traning`, `/nyheter`, `/nyheter/[slug]`) set `prerender = false` and are cached by ISR (hourly)
 - [x] HG → Vercel rebuild webhook — created by the developer 2026-09-10 (dashboard config, not code)
 - [x] `src/constants/contact.ts` — created in Phase 2 for the fetchOrFail message block (phone number still a TODO placeholder)
 
@@ -106,7 +106,7 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
   - [x] Nyheter (responsive 5-card mosaic)
   - [x] Senaste resultat (latest-result banner) + Kommande matcher (upcoming fixture cards) — two independent sections, results first
   - [x] Våra partners (logo row)
-  - [x] Om oss (Mission) + commercial-slot / contact CTA grid — layout and styling done; commercial-slot no-slot fallback and a real `/kontakt` CTA target still open
+  - [x] Om oss (Mission) + commercial-slot / contact CTA grid — layout and styling done; commercial-slot fallback resolved by HomeMosaic; contact is `mailto:` (`/kontakt` dropped)
   - [x] Homepage design-polish pass (section headers, hover effects, tag labels)
   - [x] Matcher & resultat — Kommande matcher + Senaste resultat combined under one heading (`FixtureResultBanner`)
   - [x] Homepage mobile pass (tighter spacing, left-aligned, stronger image scrims)
@@ -119,7 +119,7 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
 - [x] Team pages redesign (herr/dam/ungdom): league badge, static intro, training with coach contact, upcoming-only fixtures, scoreboard results
 - [x] Typography: three-role font system (Familjen Grotesk headings / Figtree body / Oswald data & labels)
 - [x] `/traning` — all teams' training on one page; Om oss team links + CTA; "Träning" in nav
-- [ ] `/nyheter` + `/nyheter/[slug]`
+- [x] `/nyheter` + `/nyheter/[slug]` — listing (featured + grid), article page, dynamic SEO + NewsArticle JSON-LD (2026-10-05)
 - [x] ~~`/sponsorer`~~ — removed 2026-09-24; sponsors live only in the homepage section (nav → `/#partners`)
 - [x] ~~`/kontakt` + Resend~~ — dropped 2026-10-01; contact is `mailto:` via the fixed `ContactRail` (lg+), nav drawer and footer
 - [x] UI polish pass — shared card styles, NewsCard / HomeMosaic / Mission / Fixtures typography + mobile, mobile overflow fix (2026-10-01; review continuing)
@@ -171,6 +171,8 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
 ## COMPLETED TASKS
 
 - use this section to write a brief review of completed tasks. This section will act as a review for the developer to keep track of progress. Mark each task completed with a date, review (anything else you feel is usefull). Keep the review short but concise.
+
+- **2026-10-05 — Phase 4: news pages (`/nyheter`, `/nyheter/[slug]`).** Planned, then confirmed by the developer. (1) **Fallback first:** the five `fallback.ts` articles were rewritten as full, evergreen articles (welcome, how to start playing, youth, women's, men's teams). Each has subheadings, lists and internal links, and uses only facts already on the site. They no longer contain time-bound claims that would read as invented news during an outage. Marked `TODO(club)` for wording review. (2) **Data:** a `NewsCardFields` fragment is shared by the list query (same fields as before) and the new `NewsCardBySlug` query. It uses `newsCardModels(where: {slug}, first: 1)`, so it doesn't depend on `slug` being marked unique. `getNewsArticleVM(slug)` resolves fallback articles in two cases: the fetch fails, or Hygraph has no such slug (an ISR-cached page from an outage can still link to fallback cards). It returns `isFallback`, and fallback articles get `noindex`. Any other unknown slug returns 404. (3) **Pages:** both are on-demand with ISR, so new articles need no rebuild. `NewsList` shows a full-bleed featured card plus a 1/2/3-column grid. `NewsArticle` has a back link, meta line, h1, standfirst, byline, cover, the rich-text body styled by scoped `:global` rules (no typography plugin), and "Fler nyheter" (3 other articles, a second fetch). `NewsGridCard` is shared by both. (4) **SEO:** `newsArticleSeo()` in `seo.ts` derives the title, excerpt description, absolute OG image (local images via `getImage()`) and NewsArticle JSON-LD. A new optional `noindex` is passed through `SeoEntry` → Base → SEO. (5) **404:** `Astro.rewrite("/404")` throws `ForbiddenRewrite` (the prerendered /404 can't be a rewrite target from an on-demand route), so the page returns a bodiless `Response(null, {status: 404})` and Astro serves the custom 404 page. `astro check` (0 errors) and `astro build` pass. Routes were checked in dev: listing 200, real slug 200, fallback slug 200 + noindex, unknown slug 404. Screenshots at 375 and 1400px. **To verify on a Vercel preview:** an unknown slug returns 404 there, and ISR doesn't cache it. **Note:** the live Hygraph articles are still placeholder content (Phase 6).
 
 - **2026-10-05 — Phase 4: Hero redesign + mobile header pass.** Developer-led review on mobile and desktop. (1) **Hero:** rebuilt as a taller full-bleed hero (`clamp(36rem,88svh,54rem)`). Copy sits bottom-left: a red stroke with the "Basket i Helsingborg · Sedan 2016" eyebrow, then the heading, subheading, red CTA and a secondary `Se träningstider →` link. A "Våra lag" rail links to the three team pages (glass panels numbered 01–03 at lg, with a red sweep on hover/focus; a 3-chip row on mobile). From lg, a faint outlined "4Q" sits behind the rail. **Motion has zero JS**, in a scoped `<style>` block: Ken Burns entrance and drift, heading words rising in sequence (split server-side; the `<h1>` holds the full text as `sr-only` and the visual word spans are `aria-hidden`), staggered copy and rail. The scroll-out parallax and fade use CSS scroll-driven animations (`@supports (animation-timeline: view())`, static elsewhere). `prefers-reduced-motion` disables all of it. The image animates scale only, never opacity, so LCP isn't held back. A club fact bar (2016 / 3 lag / 3 hallar) and a scroll cue were built and then removed by the developer, because the facts may be out of date. No new data fetching: team links come from `NAV_LINKS`. (2) **Hero CTA → mailto:** `Hero/mappers.ts` now always sets `ctaUrl` to `mailto:${CLUB_CONTACT.email}`, and `hasCTA` depends only on `ctaLabel`. The query is unchanged; HeroModel's `ctaUrl` is fetched but ignored, since a live entry may still hold `/kontakt`. **Open:** clear the field in Hygraph or remove it from the schema (developer decision). (3) **Mobile section headers:** Kommande matcher, Om oss and the sponsor heading are centred with no divider rule below md. md+ is unchanged. Nyheter, Träning and the team-page list headers still show the rule on mobile. (4) **NewsCard:** removed the text shadow from the excerpt; fixed the invalid `lg:text-shadow:none` to `lg:text-shadow-none`. `astro check` passes with 0 errors. The homepage renders in dev. Not yet browser-tested by Claude: the motion, reduced motion, and whether the 375px team chips fit.
 

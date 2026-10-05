@@ -1,9 +1,12 @@
 ---
 import Base from "../../layouts/Base.astro";
+import NewsList from "../../components/NewsCard/NewsList.astro";
 import { SEO_STATIC } from "../../constants/seo";
-// Placeholder shell — Phase 4 builds the news listing (featured card + grid).
+// News listing. On-demand (ISR, like the other content pages) so a newly published
+// article appears without a rebuild.
+export const prerender = false;
 ---
 
 <Base seo={SEO_STATIC.newsListing}>
-  <h1>Nyheter</h1>
+  <NewsList />
 </Base>
