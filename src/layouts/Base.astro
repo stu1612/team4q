@@ -33,8 +33,13 @@ const description = seo.description || DEFAULT_DESCRIPTION;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
+    <!-- Club crest. favicon.ico holds 16/32/48px; no SVG icon, since the crest only exists as
+         a raster (public/logo.png, 512px). iOS fills the touch icon's transparency with black,
+         which suits the crest. -->
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#181818" />
     <link rel="preload" as="font" type="font/woff2" href={oswaldLatin} crossorigin="anonymous" />
     <link rel="preload" as="font" type="font/woff2" href={familjenGroteskLatin} crossorigin="anonymous" />
     <link rel="preload" as="font" type="font/woff2" href={figtreeLatin} crossorigin="anonymous" />
@@ -52,7 +57,7 @@ const description = seo.description || DEFAULT_DESCRIPTION;
     <!-- First focusable element, off-screen until focused. -->
     <a
       href="#main-content"
-      class="absolute top-0 left-0 z-[60] translate-y-[-110%] bg-black px-4 py-3 font-semibold text-white transition-transform duration-150 ease-out focus-visible:translate-y-0"
+      class="absolute top-0 left-0 z-60 translate-y-[-110%] bg-black px-4 py-3 font-semibold text-white transition-transform duration-150 ease-out focus-visible:translate-y-0"
     >
       Hoppa till innehåll
     </a>
