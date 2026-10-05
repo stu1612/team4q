@@ -146,6 +146,7 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
       - Verify with `pnpm codegen` (no diff), `astro build`, and `x-vercel-cache: HIT` on a second load of `/`.
       - Do it sooner if dev 429s start getting in the way.
 - [ ] Domain pointed to Vercel
+- [ ] When the club supplies better images, replace `public/og-default.jpg` (1200×630) and the crest (`public/logo.png` and `src/images/logos/t4q-logo.png`: the current one is softened and has a faint watermark; ideally get an SVG), then regenerate the favicon set. After deploying, force a re-scrape of shared pages in Facebook's Sharing Debugger (and LinkedIn Post Inspector) so cached previews update.
 - [ ] Final Lighthouse check
 
 ---
