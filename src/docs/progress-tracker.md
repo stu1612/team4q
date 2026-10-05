@@ -145,7 +145,10 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
       - The only code change is the env comment in `astro.config.mjs`.
       - Verify with `pnpm codegen` (no diff), `astro build`, and `x-vercel-cache: HIT` on a second load of `/`.
       - Do it sooner if dev 429s start getting in the way.
+- [ ] Pre-launch preview shared with the club (team4q.vercel.app) — kept out of search by `vercel.json`: `X-Robots-Tag: noindex, nofollow` only when the host is `team4q.vercel.app`, so it switches itself off on `team4q.se`. After deploying, verify with `curl -sI https://team4q.vercel.app/ | grep -i x-robots`. Collect from the club: photos (T4Q-focused OG image, team photos, original/SVG crest), phone + address, training times/halls, "Sedan 2016", review of `TODO(club)` copy, and who will publish news (Hygraph access).
+- [ ] Replace the placeholder Hygraph news, fixtures and results with real content before launch.
 - [ ] Domain pointed to Vercel
+- [ ] At launch, confirm `https://team4q.se/` sends no `X-Robots-Tag` and serves `index, follow`. The `.vercel.app` URL should keep `noindex` (it will, via the host rule), so it never competes with the real domain.
 - [ ] When the club supplies better images, replace `public/og-default.jpg` (1200×630) and the crest (`public/logo.png` and `src/images/logos/t4q-logo.png`: the current one is softened and has a faint watermark; ideally get an SVG), then regenerate the favicon set. After deploying, force a re-scrape of shared pages in Facebook's Sharing Debugger (and LinkedIn Post Inspector) so cached previews update.
 - [ ] Final Lighthouse check
 
