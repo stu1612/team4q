@@ -1,6 +1,11 @@
 # T4Q Progress Tracker
 
-Last updated: 2026-10-07 (Phase 5 started — accessibility audit done, AA fixes applied)
+Last updated: 2026-10-07 (Phase 4b design iteration started — static three-photo Hero built, HeroModel retired; Phase 5 paused until 4b is done)
+
+## Next session — start here
+
+1. **Phase 4b, design iteration** (see the Phase 4b section): the Hero is done. Next are the **4px corner radius** and the **Mission section** (decisions listed there are still open). Design work is built directly, without a plan (developer preference).
+2. **Then resume Phase 5.** Re-run the accessibility scripts on anything 4b changed, then do the remaining Phase 5 items, including the **team-page `SportsEvent` JSON-LD**. Its approach was agreed on 2026-10-07 (see the Phase 5 item and the `/seo` skill's "Fixtures — SportsEvent" section). Start the SEO conversation from there.
 
 ## Status at a glance
 
@@ -11,14 +16,15 @@ Last updated: 2026-10-07 (Phase 5 started — accessibility audit done, AA fixes
 | Phase 2 — HG Connection                 | ✅ Done        |
 | Phase 3 — Global                        | ✅ Done        |
 | Phase 4 — UI Build                      | ✅ Done        |
-| Phase 5 — Quality                       | 🟨 In progress |
+| Phase 4b — Design iteration (blocks)    | 🟨 In progress |
+| Phase 5 — Quality                       | ⏸ Paused       |
 | Phase 6 — Launch                        | ⬜ Not started |
 
 ---
 
 ## Planning ✅
 
-- [x] Stack locked (Astro 7, Hygraph, Tailwind 4, graphql-request/codegen, Vercel, Resend, pnpm)
+- [x] Stack locked (Astro 7, Hygraph, Tailwind 4, graphql-request/codegen, Vercel, pnpm; contact is `mailto:` only)
 - [x] Hygraph schema built and reconciled field-by-field against actual config — re-reconciled 2026-08-29 against live schema + content (10 models: Team, NewsCard, Fixture, Player, Training, TeamPage, Sponsor, Hero, Result, ClubMember; no shared components)
 - [x] `/accessibility` skill — locked
 - [x] `/data-mapping` skill — locked
@@ -37,7 +43,7 @@ Last updated: 2026-10-07 (Phase 5 started — accessibility audit done, AA fixes
 ## Phase 1 — Foundation
 
 - [x] Folder structure (`src/components/[name]/{index.astro,mappers.ts,types.ts,fallback.ts?}`)
-- [x] Page routes scaffolded (`/`, `/mens`, `/womens`, `/juniors`, `/news`, `/news/[slug]`, `/sponsors`, `/contact`) — renamed to Swedish slugs in Phase 3 (`/herrlaget`, `/damlaget`, `/ungdomslaget`, `/nyheter`, `/nyheter/[slug]`, `/sponsorer`, `/kontakt`)
+- [x] Page routes scaffolded — now Swedish slugs: `/`, `/herrlaget`, `/damlaget`, `/ungdomslaget`, `/traning`, `/nyheter`, `/nyheter/[slug]`
 - [x] Dummy data matching reconciled HG field shapes (not the original pre-reconciliation guesses)
 - [x] Data mapping pattern validated end-to-end (RD → mapper → VM → UI) on at least one component
 
@@ -78,14 +84,12 @@ Last updated: 2026-10-07 (Phase 5 started — accessibility audit done, AA fixes
 - **`fetchOrFail` models**: `dummy.ts` deleted for Fixture / Training / Result. Fixture &
   Training mappers return a discriminated `{ ok: true; … } | { ok: false; contact }`
   (contact from `src/constants/contact.ts` — phone is a TODO placeholder); Result returns
-  `[]` on failure (cosmetic banner, render nothing). The full message-block UI is Phase 4/5.
-- **`/news/[slug].astro`** still uses the hardcoded `"placeholder"` slug — the article detail
-  route is Phase 4.
+  `[]` on failure (cosmetic banner, render nothing).
 
 ## Phase 3 — Global
 
 - [x] `Base.astro` layout (nav, footer)
-- [x] SEO component + `src/constants/seo.ts` (static SEO data) — dynamic derivation for `/nyheter/[slug]` deferred to Phase 4
+- [x] SEO component + `src/constants/seo.ts` (static SEO data); dynamic derivation for `/nyheter/[slug]` added in Phase 4
 - [x] `@theme` design tokens — done ahead of phase, see COMPLETED TASKS
 - [x] 404 page
 - [x] Astro on-demand config — `@astrojs/vercel` adapter; `output` stays `static`; content pages (`/`, team pages, `/traning`, `/nyheter`, `/nyheter/[slug]`) set `prerender = false` and are cached by ISR (hourly)
@@ -106,7 +110,7 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
   - [x] Nyheter (responsive 5-card mosaic)
   - [x] Senaste resultat (latest-result banner) + Kommande matcher (upcoming fixture cards) — two independent sections, results first
   - [x] Våra partners (logo row)
-  - [x] Om oss (Mission) + commercial-slot / contact CTA grid — layout and styling done; commercial-slot fallback resolved by HomeMosaic; contact is `mailto:` (`/kontakt` dropped)
+  - [x] Om oss (Mission) + commercial-slot / contact CTA grid — layout and styling done; commercial-slot fallback resolved by HomeMosaic; contact is `mailto:`
   - [x] Homepage design-polish pass (section headers, hover effects, tag labels)
   - [x] Matcher & resultat — Kommande matcher + Senaste resultat combined under one heading (`FixtureResultBanner`)
   - [x] Homepage mobile pass (tighter spacing, left-aligned, stronger image scrims)
@@ -120,10 +124,16 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
 - [x] Typography: three-role font system (Familjen Grotesk headings / Figtree body / Oswald data & labels)
 - [x] `/traning` — all teams' training on one page; Om oss team links + CTA; "Träning" in nav
 - [x] `/nyheter` + `/nyheter/[slug]` — listing (featured + grid), article page, dynamic SEO + NewsArticle JSON-LD (2026-10-05)
-- [x] ~~`/sponsorer`~~ — removed 2026-09-24; sponsors live only in the homepage section (nav → `/#partners`)
-- [x] ~~`/kontakt` + Resend~~ — dropped 2026-10-01; contact is `mailto:` via the fixed `ContactRail` (lg+), nav drawer and footer
 - [x] UI polish pass — shared card styles, NewsCard / HomeMosaic / Mission / Fixtures typography + mobile, mobile overflow fix (2026-10-01; review continuing)
-- [x] Hero redesign (zero-JS motion, Våra lag rail, mailto CTA) + mobile section headers centred without divider rule (2026-10-05)
+- [x] Hero redesign (zero-JS motion, Våra lag rail, mailto CTA) + mobile section headers centred without divider rule (2026-10-05) — superseded by Phase 4b
+
+## Phase 4b — Design iteration (block layout)
+
+Developer direction (2026-10-07), inspired by adidas/Nike: block design, where photos say what T4Q is and text sits in a few deliberate places. Full-bleed image bands break up the contained content (news, mosaic) so the page has a rhythm, instead of mixing grid blocks with standard flex sections. Done before the rest of Phase 5, because Phase 5's checks (states, images, Lighthouse) should run against the final UI.
+
+- [x] **Hero:** static three-photo block (ungdom / herr / dam), heading "Mer än basket" in a white label box. No CTA, subheading, links or motion. HeroModel retired (see COMPLETED TASKS, 2026-10-07).
+- [ ] **Corner radius 4px.** Plan: `--radius-card` 16px → 4px, `--radius-chip` 6px → 2px (nested chips stay nested). The youth tone's pill labels and buttons, `rounded-xl`, and any `rounded-full` used only to round a rectangle move to the tokens. True circles stay (coach avatars, round badges, ContactRail icons).
+- [ ] **Mission section** (currently headed "Om oss"; the codebase name is Mission). Planned: heading in the "our mission" sense, and a full-width three-photo band like the Hero (herr / dam / ungdom), with the team tiles kept as `/{team}#traning` links. Rename `om-oss-heading` → `mission-heading` (nothing links to `#om-oss`). **Open decisions:** the Swedish heading ("Vårt uppdrag" recommended, or "Vår mission"); the copy (cut to one paragraph in an overlay box, or keep all three paragraphs above the band); which photos to use, since the Hero now uses the real T4Q mission photos and the remaining local "team" images are stock or AI (see the Hero entry).
 
 ## Phase 5 — Quality
 
@@ -131,12 +141,14 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
 - [ ] Error states verified per `/graphql`'s failure-strategy table (message block vs silent, per model)
 - [ ] Empty states per component
 - [ ] Image optimisation audit
+- [ ] Team-page `SportsEvent` JSON-LD (per `/seo`) — after the design iteration. Page fetches upcoming fixtures once and passes them to both `TeamFixtureList` and the JSON-LD builder; one event per visible fixture, none on fetch failure or when empty. No extra fields (`eventStatus`, offers). Staleness = the visible cards' staleness (same render, same ISR entry); the HG publish webhook redeploys, so verify that webhook (Phase 6) rather than adding JSON-LD-specific refresh logic.
 - [ ] Lighthouse / Core Web Vitals — target 95+
 
 ## Phase 6 — Launch
 
 - [ ] Real content populated in HG
-- [ ] Webhook confirmed working
+- [ ] Webhook confirmed working — this also keeps ISR pages, and the planned SportsEvent JSON-LD, fresh after a Hygraph publish
+- [ ] **Delete `HeroModel` in Hygraph** (developer, dashboard). It has been unused since 2026-10-07, so the club never edits something that has no effect. Run `pnpm codegen` afterwards (expect no diff).
 - [ ] _Optional, decided 2026-09-24 — not required:_ switch `HYGRAPH_API_URL` (`.env` + Vercel,
       all environments) to Hygraph's CDN endpoint, `https://eu-west-2.cdn.hygraph.com/content/<projectId>/master`.
       - Audit result: production is already safe. ISR limits Hygraph traffic to about 14 requests per hour whatever the traffic (`/` makes 6 per render, `/herrlaget` and `/damlaget` 4 each), plus one set per deploy.
@@ -175,6 +187,8 @@ the per-component `index.astro` test templates (Phase 4 builds real branded UI).
 ## COMPLETED TASKS
 
 - use this section to write a brief review of completed tasks. This section will act as a review for the developer to keep track of progress. Mark each task completed with a date, review (anything else you feel is usefull). Keep the review short but concise.
+
+- **2026-10-07 — Phase 4b: static three-photo Hero; HeroModel retired.** Developer-led design direction (see the Phase 4b section). **Why HeroModel was removed from Hygraph:** (1) Hygraph exists so the club can publish what changes week to week without technical help: news, training, fixtures and results. The hero is brand framing the developer owns, and the club was never going to rotate it. (2) The new hero is three fixed team photos and one heading, with no field left for an editor to manage. (3) It closes the stale-data issues the model kept causing: the live entry's `ctaUrl` pointed at the removed `/contact` and then `/kontakt` routes (404s), and its heading had a typo, which is why the mapper had to ignore `ctaUrl`. (4) It removes one Hygraph request per homepage render, plus the hero's fallback path, so an outage can no longer change the hero. **Built:** `Hero/index.astro` is now static. Below lg, a "1 + 2" block fills the screen under the header: the youth photo full width on top, herr + dam side by side below, split by a 2px hairline. From lg, three equal portrait columns edge to edge. The h1 "Mer än basket" sits in an opaque white box (black on white, so no scrim is needed), aligned to the site container, and sized to stay inside the first column from lg. No CTA, subheading, links, eyebrow, team rail, "T4Q" outline mark, entrance animation or parallax. All three images are eager, the first with `fetchpriority="high"`, and `widths`/`sizes` give a responsive srcset. Alt text describes each photo, written in code. **Images:** a new `src/images/hero/` folder: `hero-ungdom.jpg` (the real T4Q coach-talk photo, 2048×1536, saved from the live Hygraph Hero asset), plus `hero-herr.jpg` and `hero-dam.jpg`, copied from the real T4Q mission photos. Several local "team" photos turned out not to be T4Q: `teams/womens-cover` is a US college team ("Bruins"), the deleted `hero/hero-cover` was a US high school team ("Falcons"), and `mission/team4q_mission_jnr` looks AI-generated. These must not appear anywhere as club photos. **Removed:** `Hero/mappers.ts`, `types.ts`, `fallback.ts`, the `HeroContent` query (`pnpm codegen` dropped its generated types) and `images/fallback/hero/hero-cover.jpg`. **Docs:** the `/graphql`, `/seo` and `/accessibility` skills, `fallback-reference.md`, `CLAUDE.md` (nine models in use) and the design brief now mark HeroModel as retired. The same pass fixed the stale route references (Swedish routes, no `/contact` page, `/traning` added to the `/seo` table), and the `/seo` skill now records the agreed SportsEvent approach. **Checks:** `astro check` passes with 0 errors, and screenshots were checked at 375, 768, 1024 and 1400px. axe at 375px shows no new issues (only the known Om oss false positive). **TODO(club):** `hero-herr.jpg` is only 1024×585 and softens on large screens. Ask the club for original high-resolution team photos (Phase 6 photo list).
 
 - **2026-10-07 — Phase 5: accessibility audit + AA fixes.** Audited against the `/accessibility` Definition of Done, then fixed what the developer approved. **How it was checked:** every route's markup read by hand; axe-core 4.10 (WCAG 2.1 A/AA + best practice) in headless Chrome on all 8 routes at 1400 and 375px; a scripted Tab walk (homepage) and mobile-drawer keyboard test; text-over-photo contrast measured from the rendered pixels (text hidden, screenshot, per-pixel ratio, 5th percentile vs the 4.5:1 / 3:1 threshold), since axe can't judge text on images; brand red recalculated (4.77:1 on white, 3.56:1 on black); reflow at 320px. **Passed as built:** skip link first; logical tab order; a `focus-visible` ring on every stop; drawer moves focus to ✕, contains it, Escape returns it to the toggle, `aria-expanded` syncs; one h1 and sequential headings on every page; labelled landmarks/navs; all images through `<Image>` with alt per the skill; no horizontal scroll at 320px; reduced motion stops the hero animation. axe's only flag is on the Om oss tile labels, a false positive (it reads them against the grey section, not the photo; measured ≥10:1). **Fixed:** (1) ContactRail backdrop `bg-black/90` → solid `bg-black` (over white sections the red icons fell to 2.7:1; now 3.56:1, non-text 3:1 met), blur removed. (2) Team-page header: eyebrow solid white, shared text shadow on the copy block, md+ scrim holds ~0.55 up to the eyebrow (`/damlaget` eyebrow was 2.1:1 over the light floor). (3) Hero: eyebrow solid white; mobile scrim holds ~0.5 up to the eyebrow (was 3.2:1 at 375px); lg bottom scrim 0.3 → 0.6 at 45% so the right-hand "Våra lag" rail is covered; rail label white/70 → white/90, numerals white/60 → white/80, shared text shadow. (4) ResultTile meta line white/80 → white (was 4.4:1). (5) "(öppnas i ny flik)" added to the nav-drawer, footer and rail social links (in `aria-label`) and to sponsor logo links (sr-only), matching SocialTile and the league badge. (6) 404 "Till startsidan" link gets the standard `focus-visible` ring. **Hero Ken Burns removed entirely** (developer decision): on mobile the scaling image jumped under the finger, and the endless drift would need a pause control under WCAG 2.2.2. The photo is static; the copy entrance and scroll-out parallax stay. If the jump persists on mobile, the parallax is the next suspect. **Left as-is (developer agreed):** the homepage fixture row is a focusable scroll region at every width (only scrolls below md); cover images use the heading as alt per the skill table, so screen readers hear it twice. **Note:** the photo-contrast fixes are measured against the current Hygraph images. Re-measure if the club uploads much brighter photos. `astro check` (0 errors) + `astro build` green. **Still for the developer by hand:** Tab/Shift+Tab pass on each page, a VoiceOver spot check, 200% zoom.
 

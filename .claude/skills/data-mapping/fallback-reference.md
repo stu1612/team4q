@@ -107,8 +107,8 @@ holds the pattern.
 
 - `heading`, `coverImage` (Asset) — **Required**
 - `subheading` — **Default** `""`
-- `teamModel` — **Required-with-guard** — schema now permits null, but `/mens` `/womens`
-  `/juniors` are meaningless without the relation; a missing one is a developer-facing error
+- `teamModel` — **Required-with-guard** — schema now permits null, but `/herrlaget` `/damlaget`
+  `/ungdomslaget` are meaningless without the relation; a missing one is a developer-facing error
   via the client, not a silent empty state
 
 ## SponsorModel
@@ -124,14 +124,12 @@ holds the pattern.
   2026-09-22, reserved for a future commercial-slot feature — no consumer reads it yet. Every
   live sponsor currently has `hasCommercialSlot: false` / `commercialImage: null`.
 
-## HeroModel
+## HeroModel — retired 2026-10-07
 
-- `heading`, `coverImage` (Asset) — **Required**
-- `ctaLabel` + `ctaUrl` — **Flag**, paired as one (`hasCTA`) — never a label with no link or
-  vice versa
-- `subheading` — **Default** `""`
-- **No `isActive` field.** Mapper queries `heroModels(first: 1)`, takes `[0]`; an empty
-  collection falls through to `fallback.ts`. Assumes the club maintains exactly one Hero.
+No longer queried: the homepage hero is static markup in code, so there is no mapper, RD/VM,
+`fallback.ts` or generated type for it. The model may still exist in Hygraph until the
+developer deletes it there; nothing on the site reads it. Reasons are logged in
+`progress-tracker.md` (2026-10-07).
 
 ## ResultModel
 
@@ -209,8 +207,8 @@ ones. `getUpcomingFixtureVMs(limit)` is the homepage's filtered/sorted/limited v
   nullable fields on `TeamModel`.
 - **`ClubMemberComponent`** — replaced by the `ClubMemberModel` model above.
 - **`FixtureModel.affiliations`** (repeatable) — gone; affiliation via the team relation.
-- **Boolean `isActive`** — now the `IsActive` enum everywhere it exists; Hero, NewsCard, and
-  TeamPage have no active-flag field at all.
+- **Boolean `isActive`** — now the `IsActive` enum everywhere it exists; NewsCard and TeamPage
+  (and the since-retired Hero) have no active-flag field at all.
 - The team relation is named **`teamModel`** on every model and is nullable on all of them.
 
 ## In schema but unused

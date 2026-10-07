@@ -119,15 +119,15 @@
   --text-label--letter-spacing: 0.05em;
   --text-label--font-weight: 700;
 
-  /* Corner radii — two steps, so rounding reads as one system rather than per-component
-     guesses. `rounded-card` for anything that sits inside the content width as a block
-     (photos, cards, message panels, banners); `rounded-chip` for small filled labels and
-     logo chips nested inside those blocks. Full-bleed bands (hero, team header, nav,
-     footer) stay square — they run edge to edge, so there is no corner to round.
-     Nested inset content (e.g. a photo inside a 4px frame) uses the card radius minus the
-     inset so the curves stay concentric. */
-  --radius-card: 1rem; /* 16px */
-  --radius-chip: 0.375rem; /* 6px */
+  /* Corner radii — one minimal 4px value (block design: corners barely softened, never
+     "rounded"). Two named tokens kept so intent stays readable: `rounded-card` for anything
+     that sits inside the content width as a block (photos, cards, message panels, banners);
+     `rounded-chip` for small filled labels and logo chips nested inside those blocks.
+     Full-bleed bands (hero, team header, nav, footer) stay square — they run edge to edge,
+     so there is no corner to round. Nested inset content (e.g. a photo inside a 4px frame)
+     uses the card radius minus the inset so the curves stay concentric. */
+  --radius-card: 0.25rem; /* 4px */
+  --radius-chip: 0.25rem; /* 4px */
 
   /* Light-card surface — white card lifted off the white page by a hairline edge and a
      soft, low-contrast shadow rather than a grey fill or a coloured accent. Pair with

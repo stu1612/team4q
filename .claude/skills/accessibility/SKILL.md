@@ -38,7 +38,7 @@ Alt text is derived from existing VM values — never left empty on meaningful i
 | Team cover image    | Team heading                         |
 | Player photo        | Player name                          |
 | Sponsor logo        | Sponsor name                         |
-| Hero image          | Hero heading                         |
+| Hero team photos    | Describes each photo — static alt text written in code (the hero is not HG content) |
 | Fixture cover image | Home team vs Away team               |
 | Decorative images   | `alt=""` — empty string, not omitted |
 
@@ -89,7 +89,7 @@ T4Q brand colours — black and red on white backgrounds.
 - Width and height attributes always set — prevents layout shift
 - HG asset URLs are absolute — pass directly to Astro Image `src`
 - Lazy loading on all images below the fold — `loading="lazy"`
-- Hero image above the fold — `loading="eager"`
+- Hero images above the fold — `loading="eager"`, first one `fetchpriority="high"`
 
 ## Definition of Done
 
