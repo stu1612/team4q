@@ -30,11 +30,6 @@ export type FixtureListByTeamQueryVariables = Exact<{
 
 export type FixtureListByTeamQuery = { fixtureModels: Array<{ heading: string, date: string, startTime: string, endTime: string, location: string, homeTeam: string, awayTeam: string, isActive: IsActive, teamModel: { name: string, slug: string, teamAffiliation: string | null, affiliationUrl: string | null, affiliationLogo: { url: string, width: number | null, height: number | null } | null } | null }> };
 
-export type HeroContentQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type HeroContentQuery = { heroModels: Array<{ heading: string, subheading: string | null, ctaLabel: string | null, ctaUrl: string | null, coverImage: { url: string, width: number | null, height: number | null } }> };
-
 export type NewsCardFieldsFragment = { heading: string, slug: string, publishedDate: string, excerpt: string, body: { html: string, text: string }, coverImage: { url: string, width: number | null, height: number | null } | null, teamModel: { name: string, slug: string } | null, clubMemberModel: { name: string | null, role: string | null, profileImage: { url: string, width: number | null, height: number | null } | null } | null };
 
 export type NewsCardListQueryVariables = Exact<{ [key: string]: never; }>;

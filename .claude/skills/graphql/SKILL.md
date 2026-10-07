@@ -74,13 +74,13 @@ Every model is assigned one strategy below — none are left uncategorised, and 
 
 **`fetchWithFallback` — editorial content:**
 
-- **NewsCardModel, SponsorModel, HeroModel, TeamPageModel** — a visitor should never see an error state for these. On failure, `fallback.ts` supplies RD-shaped fake-but-realistic content, which flows through the mapper's normal transform logic identically to a real response.
-- HeroModel specifically: it is HG-sourced content (Heading, Cover Image, Subheading, CTA) like any other editorial model, not static build-time markup — it must not be treated as having no runtime dependency.
-- TeamPageModel specifically: despite being structurally load-bearing (it is the entire `/mens`, `/womens`, `/juniors` route), it's grouped with editorial content because the organising principle for this split is how often content changes and how dangerous staleness is — not how important the page is. Low-frequency, rarely-changing content stays editorial regardless of page significance.
+- **NewsCardModel, SponsorModel, TeamPageModel** — a visitor should never see an error state for these. On failure, `fallback.ts` supplies RD-shaped fake-but-realistic content, which flows through the mapper's normal transform logic identically to a real response.
+- **HeroModel — retired 2026-10-07.** The homepage hero is static markup in code (`src/components/Hero/index.astro`), not HG content — see No runtime dependency below. Don't reintroduce a Hero query.
+- TeamPageModel specifically: despite being structurally load-bearing (it is the entire `/herrlaget`, `/damlaget`, `/ungdomslaget` route), it's grouped with editorial content because the organising principle for this split is how often content changes and how dangerous staleness is — not how important the page is. Low-frequency, rarely-changing content stays editorial regardless of page significance.
 
 **No runtime dependency:**
 
-- **Nav, Layout, and other structural chrome** — built at Astro build time, no HG fetch involved, no failure strategy needed. This is markup/layout only — it does not include HeroModel, which is HG-sourced.
+- **Nav, Layout, the homepage Hero, and other structural chrome** — built at Astro build time, no HG fetch involved, no failure strategy needed. The Hero joined this group on 2026-10-07: it is brand framing the developer owns (three team photos and one heading), not content the club updates.
 
 ## Contact Details
 

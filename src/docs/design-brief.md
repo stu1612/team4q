@@ -28,6 +28,8 @@ Specifically test the brand red in the Man Utd CTA-button shape (white text on s
 **Hero (src/images/screenshots/img-1 + img-5)**
 Bold condensed type, one dramatic full-bleed photo, sparse copy, single CTA, no competing clutter. Matches T4Q's own principle: hero is emotive, not informational. Maps to `HeroModel` (Heading, Subheading, Cover Image, CTA Label + CTA URL).
 
+> **Superseded 2026-10-07.** The hero is now a static three-photo block (one photo per team: ungdom, herr, dam) with one heading in a white label box: no CTA, no subheading, no motion. The inspiration is adidas/Nike block layouts. `HeroModel` is retired. See `progress-tracker.md`.
+
 **News cards (src/images/screenshots/img-2)**
 One large featured card + a grid of smaller cards, each with heading, image, timestamp, and a small tag label. For T4Q, the tag shows the TeamTag value — **HERR / DAM / UNGDOM** — derived from NewsCardModel's TeamTag relation in the mapper, never stored as separate text. General club news (no TeamTag) shows no tag. Maps to `NewsCardModel`.
 
