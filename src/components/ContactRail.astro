@@ -12,13 +12,15 @@ const ITEM_CLASS =
 
 <nav
   aria-label="Kontakt och sociala medier"
-  class="fixed top-1/2 right-0 z-40 hidden -translate-y-1/2 rounded-l-card border border-r-0 border-white/10 bg-black/90 p-1.5 shadow-[-8px_0_24px_rgb(0_0_0/0.25)] backdrop-blur-sm lg:block"
+  class="fixed top-1/2 right-0 z-40 hidden -translate-y-1/2 rounded-l-card border border-r-0 border-white/10 bg-black p-1.5 shadow-[-8px_0_24px_rgb(0_0_0/0.25)] lg:block"
 >
+  {/* Solid black, not translucent: over a white section a 90% backdrop lifts to ~#2e2e2e,
+      where the red icons drop to 2.7:1 — under the 3:1 non-text minimum. On black, 3.56:1. */}
   <ul class="m-0 flex list-none flex-col items-center gap-1 p-0">
     {
       SOCIAL_LINKS.map((s) => (
         <li>
-          <a href={s.href} class={ITEM_CLASS} aria-label={s.label} rel="me noopener" target="_blank">
+          <a href={s.href} class={ITEM_CLASS} aria-label={`${s.label} (öppnas i ny flik)`} rel="me noopener" target="_blank">
             <SocialIcon network={s.network} size={20} />
           </a>
         </li>

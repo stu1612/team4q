@@ -22,7 +22,7 @@ const [featured, ...rest] = await getNewsCardVMs();
 
   {
     featured && (
-      <article class="group relative isolate mb-8 flex aspect-4/5 items-end overflow-hidden rounded-card bg-black md:mb-10 md:aspect-video lg:aspect-[21/9]">
+      <article class="group relative isolate mb-8 flex aspect-4/5 items-end overflow-hidden rounded-card bg-black md:mb-10 md:aspect-video lg:aspect-21/9">
         <ResolvedImage
           src={featured.coverImage}
           alt={featured.heading}

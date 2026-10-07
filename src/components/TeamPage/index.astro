@@ -7,6 +7,7 @@
 // so the links never point at nothing; `html { scroll-padding-top }` keeps them clear of the
 // sticky header.
 import ResolvedImage from "../ResolvedImage.astro";
+import { CARD_TEXT_SHADOW } from "../cardStyles";
 import { getTeamPageVM } from "./mappers";
 
 interface Props {
@@ -29,13 +30,15 @@ const JUMP_LINK_CLASS =
     loading="eager"
     class="absolute inset-0 -z-10 h-full w-full object-cover object-[50%_35%]"
   />
+  {/* md+ scrim holds ~0.55 up to the eyebrow (about 55–60% up the band) so its small text
+      keeps 4.5:1 even over a light hall floor, then clears towards the top. */}
   <div
-    class="absolute inset-0 -z-10 bg-[linear-gradient(to_top,rgb(0_0_0/0.85)_0%,rgb(0_0_0/0.55)_55%,rgb(0_0_0/0.2)_100%)] md:bg-[linear-gradient(to_top,rgb(0_0_0/0.85)_0%,rgb(0_0_0/0.4)_45%,rgb(0_0_0/0)_75%)]"
+    class="absolute inset-0 -z-10 bg-[linear-gradient(to_top,rgb(0_0_0/0.85)_0%,rgb(0_0_0/0.55)_55%,rgb(0_0_0/0.2)_100%)] md:bg-[linear-gradient(to_top,rgb(0_0_0/0.85)_0%,rgb(0_0_0/0.65)_45%,rgb(0_0_0/0.5)_65%,rgb(0_0_0/0.2)_85%,rgb(0_0_0/0)_100%)]"
   >
   </div>
 
-  <div class="mx-auto flex w-full max-w-6xl flex-col items-start gap-4 px-4 pt-10 pb-[clamp(2rem,6vw,4rem)]">
-    <p class="m-0 flex items-center gap-3 font-data text-label uppercase text-white/85">
+  <div class={`mx-auto flex w-full max-w-6xl flex-col items-start gap-4 px-4 pt-10 pb-[clamp(2rem,6vw,4rem)] ${CARD_TEXT_SHADOW}`}>
+    <p class="m-0 flex items-center gap-3 font-data text-label uppercase text-white">
       <span aria-hidden="true" class="block h-0.5 w-8 bg-brand-red"></span>
       T4Q Helsingborg
     </p>
