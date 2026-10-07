@@ -30,7 +30,9 @@ const { result, class: className = "" } = Astro.props;
     <h3 class="sr-only">Senaste resultat</h3>
     {/* Same stroke + single meta line as the news cards; centred from md with the scoreboard. */}
     <span aria-hidden="true" class={CARD_STROKE}></span>
-    <p class="m-0 mb-4 flex flex-wrap items-center gap-x-2 font-data text-label uppercase text-white/80 md:justify-center">
+    {/* Solid white: this tile's scrim is lighter than the cards' (the score is the focus),
+        and white/80 measured 4.4:1 at the top of it. */}
+    <p class="m-0 mb-4 flex flex-wrap items-center gap-x-2 font-data text-label uppercase text-white md:justify-center">
       {result.hasTeam && (
         <>
           <span class="text-white">{result.tagLabel}</span>

@@ -1,5 +1,5 @@
 ---
-// Homepage hero — full-bleed photo with an entrance sequence and a "Våra lag" rail.
+// Homepage hero — full-bleed static photo with a copy entrance sequence and a "Våra lag" rail.
 // Zero JS by design (load time): entrance and hover are plain CSS, and the
 // scroll-out parallax uses CSS scroll-driven animations as progressive enhancement —
 // browsers without `animation-timeline` simply get a static hero.
@@ -27,24 +27,25 @@ const afterWords = WORD_START + words.length * WORD_STEP;
   aria-labelledby="hero-heading"
   class="hero relative isolate flex min-h-[clamp(36rem,88svh,54rem)] w-full flex-col overflow-hidden bg-black"
 >
-  {/* Parallax (scroll) on the outer layer, entrance + slow drift on the inner — two
-      wrappers so the two transforms never fight over one element. */}
+  {/* The photo itself is static — no Ken Burns zoom/drift (removed: on phones the scaling
+      image visibly jumped under the finger, and an endless drift needs a pause control under
+      WCAG 2.2.2). Only the scroll-out parallax below moves it. */}
   <div class="hero-parallax absolute inset-0 -z-10">
-    <div class="hero-kenburns absolute inset-0">
-      <ResolvedImage
-        src={hero.coverImage}
-        alt={hero.heading}
-        width={2400}
-        height={1350}
-        loading="eager"
-        class="h-full w-full object-cover object-[50%_20%]"
-      />
-    </div>
+    <ResolvedImage
+      src={hero.coverImage}
+      alt={hero.heading}
+      width={2400}
+      height={1350}
+      loading="eager"
+      class="h-full w-full object-cover object-[50%_20%]"
+    />
   </div>
   {/* Bottom scrim everywhere; from lg a left-side wash too, so the copy column stays legible
-      whatever image the club uploads. */}
+      whatever image the club uploads. Below lg the copy reaches ~70% up the hero (eyebrow),
+      so the mobile scrim holds ~0.5 that high. From lg the bottom band holds ~0.6 up through
+      the "Våra lag" rail on the right, which the left wash doesn't reach. */}
   <div
-    class="absolute inset-0 -z-10 bg-[linear-gradient(to_top,rgb(0_0_0/0.9)_0%,rgb(0_0_0/0.6)_45%,rgb(0_0_0/0.25)_100%)] lg:bg-[linear-gradient(to_top,rgb(0_0_0/0.85)_0%,rgb(0_0_0/0.3)_45%,rgb(0_0_0/0)_75%),linear-gradient(to_right,rgb(0_0_0/0.65)_0%,rgb(0_0_0/0.25)_45%,rgb(0_0_0/0)_70%)]"
+    class="absolute inset-0 -z-10 bg-[linear-gradient(to_top,rgb(0_0_0/0.9)_0%,rgb(0_0_0/0.65)_45%,rgb(0_0_0/0.5)_75%,rgb(0_0_0/0.3)_100%)] lg:bg-[linear-gradient(to_top,rgb(0_0_0/0.85)_0%,rgb(0_0_0/0.6)_45%,rgb(0_0_0/0)_80%),linear-gradient(to_right,rgb(0_0_0/0.65)_0%,rgb(0_0_0/0.25)_45%,rgb(0_0_0/0)_70%)]"
   >
   </div>
 
@@ -58,7 +59,7 @@ const afterWords = WORD_START + words.length * WORD_STEP;
 
   <div class="hero-content mx-auto grid w-full max-w-6xl flex-1 items-end gap-8 px-4 pt-24 pb-8 md:pb-12 lg:grid-cols-[1fr_auto] lg:gap-16">
     <div class="flex flex-col items-start">
-      <p class={`m-0 mb-5 flex items-center gap-3 font-data text-label uppercase text-white/85 ${CARD_TEXT_SHADOW}`}>
+      <p class={`m-0 mb-5 flex items-center gap-3 font-data text-label uppercase text-white ${CARD_TEXT_SHADOW}`}>
         <span aria-hidden="true" class="hero-stroke block h-0.5 w-10 origin-left bg-brand-red" style="--d:250ms"></span>
         <span class="hero-rise" style="--d:350ms">Basket i Helsingborg · Sedan 2016</span>
       </p>
@@ -109,8 +110,8 @@ const afterWords = WORD_START + words.length * WORD_STEP;
       </div>
     </div>
 
-    <nav aria-label="Våra lag" class="lg:w-72">
-      <p aria-hidden="true" class="hero-rise m-0 mb-3 hidden font-data text-label uppercase text-white/70 lg:block" style={`--d:${afterWords + 150}ms`}>
+    <nav aria-label="Våra lag" class={`lg:w-72 ${CARD_TEXT_SHADOW}`}>
+      <p aria-hidden="true" class="hero-rise m-0 mb-3 hidden font-data text-label uppercase text-white/90 lg:block" style={`--d:${afterWords + 150}ms`}>
         Våra lag
       </p>
       <ul class="m-0 grid list-none grid-cols-3 gap-2 p-0 lg:grid-cols-1 lg:gap-3">
@@ -127,7 +128,7 @@ const afterWords = WORD_START + words.length * WORD_STEP;
                   class="absolute inset-0 origin-left scale-x-0 bg-brand-red transition-transform duration-500 ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100 motion-reduce:transition-none"
                 />
                 <span class="relative flex items-center gap-4">
-                  <span aria-hidden="true" class="hidden text-white/60 transition-colors duration-500 group-hover:text-white lg:inline">
+                  <span aria-hidden="true" class="hidden text-white/80 transition-colors duration-500 group-hover:text-white lg:inline">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <span class="lg:text-sm">{team.label}</span>
@@ -152,11 +153,6 @@ const afterWords = WORD_START + words.length * WORD_STEP;
 <style>
   /* Entrance: every animated element reads its delay from --d (set inline per element) and
      uses fill-mode `both`, so it sits in its start state until its turn. */
-  .hero-kenburns {
-    animation:
-      hero-reveal 1.6s cubic-bezier(0.22, 1, 0.36, 1) both,
-      hero-drift 24s ease-in-out 1.6s infinite alternate;
-  }
   .hero-stroke {
     animation: hero-draw 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0ms) both;
   }
@@ -192,23 +188,6 @@ const afterWords = WORD_START + words.length * WORD_STEP;
     }
   }
 
-  /* Scale only, no opacity fade: an opacity-0 image would hold back LCP. */
-  @keyframes hero-reveal {
-    from {
-      transform: scale(1.12);
-    }
-    to {
-      transform: scale(1.04);
-    }
-  }
-  @keyframes hero-drift {
-    from {
-      transform: scale(1.04);
-    }
-    to {
-      transform: scale(1.1) translate3d(-1.5%, -1%, 0);
-    }
-  }
   @keyframes hero-draw {
     from {
       transform: scaleX(0);
@@ -268,7 +247,6 @@ const afterWords = WORD_START + words.length * WORD_STEP;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .hero-kenburns,
     .hero-stroke,
     .hero-word,
     .hero-rise,

@@ -65,7 +65,7 @@ const objectPosition = (position?: string) => `object-position: ${position ?? "5
             width={1200}
             height={900}
             loading="lazy"
-            class="aspect-[4/3] w-full rounded-card object-cover"
+            class="aspect-4/3 w-full rounded-card object-cover"
             style={objectPosition(intro.images.primary.position)}
           />
           {intro.images.secondary && (
@@ -108,7 +108,7 @@ const objectPosition = (position?: string) => `object-position: ${position ?? "5
                     width={800}
                     height={640}
                     loading="lazy"
-                    class="aspect-[5/4] w-full object-cover"
+                    class="aspect-5/4 w-full object-cover"
                     style={objectPosition(stage.image.position)}
                   />
                   <span
