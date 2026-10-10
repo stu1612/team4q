@@ -1,116 +1,108 @@
 ---
+// Homepage mission section, "Vårt uppdrag": a black statement block, then a full-bleed band
+// of three team photos, in the same block language as the hero (photos edge to edge, text
+// in white label boxes). Static, with no data layer: copy and images live here.
+//
+//   Statement  contained. From lg it's a two-column editorial grid: the heading alone on the
+//              left (its whitespace is what gives it authority), the copy on the right as a
+//              lead paragraph plus body. Below lg it stacks.
+//   Band       full-bleed; each photo is one link into that team's training times (what
+//              most homepage visitors came for).
+//              base: "1 + 2", Ungdomslaget full width with Herrlaget + Damlaget 2-up below.
+//              md+:  three equal portrait tiles.
+//
+// DOM order is the visual order at every breakpoint (Ungdom, Herr, Dam, as in the hero), so
+// tab order matches what's on screen. Sized with aspect ratios only, never viewport units
+// (iPhone Safari's toolbar resizes the viewport on touch).
 import { Image } from "astro:assets";
 import missionJunior from "../../images/fallback/mission/team4q_mission_jnr.jpg";
 import missionMen from "../../images/fallback/mission/team4q_mission_men.jpg";
 import missionWomen from "../../images/fallback/mission/team4q_mission_women.jpg";
 import { teamLabel } from "../../lib/teamLabel";
-import { CARD_SCRIM, CARD_TEXT_SHADOW } from "../cardStyles";
 
-// Photo order is deliberate: Ungdomslaget is the featured tile — centred and larger from md
-// up, and full width above the other two (2-up) on mobile.
+// TODO(club): replace with original club photos. Herr and dam repeat the hero's photos, and
+// the junior image looks AI-generated.
 const TEAMS = [
-  { slug: "damlaget", image: missionWomen, featured: false },
-  { slug: "ungdomslaget", image: missionJunior, featured: true },
-  { slug: "herrlaget", image: missionMen, featured: false },
+  { slug: "ungdomslaget", image: missionJunior, position: "50% 40%", featured: true },
+  { slug: "herrlaget", image: missionMen, position: "45% 40%", featured: false },
+  { slug: "damlaget", image: missionWomen, position: "50% 75%", featured: false },
 ].map((team) => ({ ...team, label: teamLabel(team.slug) }));
 ---
 
-<section aria-labelledby="om-oss-heading" class="bg-zinc-200 px-4 py-10 md:py-18">
-  <div class="mx-auto max-w-6xl">
-    <div class="mb-4 flex flex-wrap justify-center md:mb-6 items-center gap-4 before:hidden before:flex-1 md:before:block before:border-b before:border-black/20 after:hidden after:flex-1 md:after:block after:border-b after:border-black/20">
-      <h2 id="om-oss-heading" class="m-0 font-heading text-3xl font-bold text-black md:text-5xl">Om oss</h2>
+<section aria-labelledby="mission-heading" class="bg-black text-white">
+  <div class="mx-auto grid max-w-6xl gap-8 px-4 py-16 md:py-24 lg:grid-cols-12 lg:gap-x-16 lg:py-28">
+    <div class="flex flex-col items-start gap-5 lg:col-span-5">
+      <p class="m-0 flex items-center gap-3 font-data text-label uppercase text-white/80">
+        <span aria-hidden="true" class="block h-0.5 w-8 bg-brand-red"></span>
+        Om T4Q
+      </p>
+      <h2 id="mission-heading" class="m-0 font-heading text-5xl leading-none font-bold text-white md:text-7xl">
+        Vårt uppdrag
+      </h2>
     </div>
 
-    <div class="mb-6 flex flex-col gap-4 text-left text-body text-black md:mx-auto md:max-w-[65ch] md:text-center md:text-lg">
-      <p class="m-0">
+    {/* TODO(club): review wording. */}
+    <div class="flex max-w-[60ch] flex-col items-start gap-5 lg:col-span-7 lg:pt-9">
+      <p class="m-0 text-xl leading-snug text-white md:text-2xl">
         Sedan 2016 har Team4Q byggt en basketförening i Helsingborg där barn, ungdomar och seniorer
         tränar, tävlar och utvecklas tillsammans.
       </p>
-      <p class="m-0">
+      <p class="m-0 text-body text-white/75 md:text-lg">
         I tre hallar runt om i staden — GA Hallen, Rydebäck och Harlyckehallen — tränar våra lag med
         målmedvetenhet, på och utanför planen. Men klubben har aldrig bara handlat om basket. Det
         handlar om människorna som kommer tillbaka vecka efter vecka, vänskapen som växer fram, och
         en gemenskap som sträcker sig långt bortom slutsignalen.
       </p>
-      <p class="m-0">
+      <p class="m-0 text-body text-white/75 md:text-lg">
         Vi bygger för framtiden — för spelarna som lär sig spelet idag, och för klubben de en dag för vidare.
       </p>
-    </div>
-
-    {/* Each team photo doubles as the way into that team's training times — training is
-        the one thing most homepage visitors actually came for. The link covers the whole
-        tile (one tab stop, big hit area) and draws its label bottom-left; photos are
-        alt="" because the label names the team. */}
-    {/* Mobile: the featured tile moves first via `order` (visual only — DOM/tab order stays
-        Dam, Ungdom, Herr, matching the md+ row). */}
-    <ul class="m-0 grid list-none grid-cols-2 gap-3 p-0 pt-6 md:grid-cols-[1fr_1.6fr_1fr] md:items-center md:gap-4 md:pt-9">
-      {
-        TEAMS.map((team) => (
-          <li
-            class:list={[
-              "group relative isolate rounded-card shadow-lg shadow-black/15",
-              team.featured ? "order-first col-span-2 aspect-4/3 md:order-0 md:col-span-1 md:aspect-square" : "aspect-square",
-            ]}
-          >
-            {/* Visual layers clip here, not on the <li>, so the link's focus outline isn't cut off. */}
-            <div class="absolute inset-0 -z-10 overflow-hidden rounded-card bg-black">
-              <Image
-                src={team.image}
-                alt=""
-                width={800}
-                height={800}
-                class="absolute inset-0 h-full w-full object-cover saturate-[1.1] contrast-[1.05] transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-              />
-              {/* Shared card scrim grounds the white label; a deeper scrim fades in on hover. */}
-              <div class={`absolute inset-0 ${CARD_SCRIM}`} />
-              <div class="absolute inset-0 bg-linear-to-t from-black/65 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 motion-reduce:transition-none" />
-              <div class="absolute inset-0 rounded-card ring-1 ring-inset ring-white/10" />
-            </div>
-
-            <a
-              href={`/${team.slug}#traning`}
-              class={`absolute inset-0 flex items-end justify-start rounded-card p-4 no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black md:px-8 md:pb-10 ${CARD_TEXT_SHADOW}`}
-            >
-              <span class="inline-flex items-center gap-3 md:gap-4">
-                <span class="flex flex-col text-left leading-none">
-                  {/* The small 2-up mobile tiles drop the eyebrow visually; screen readers still
-                      hear "Träningstider Damlaget". */}
-                  <span class:list={["font-data text-label uppercase text-white/80", !team.featured && "sr-only md:not-sr-only"]}>
-                    Träningstider
-                  </span>
-                  <span
-                    class:list={[
-                      "font-data font-bold uppercase tracking-wide text-white md:mt-1.5 md:text-2xl",
-                      team.featured ? "mt-1.5 text-xl" : "text-sm",
-                    ]}
-                  >
-                    {team.label}
-                  </span>
-                </span>
-                {/* Badge flips red → white on the same 500ms curve as the photo zoom and scrim. */}
-                <span
-                  aria-hidden="true"
-                  class:list={[
-                    "grid shrink-0 place-items-center rounded-full bg-brand-red text-white shadow-lg shadow-black/40 transition-colors duration-500 ease-out group-hover:bg-white group-hover:text-brand-red motion-reduce:transition-none md:size-10",
-                    team.featured ? "size-9" : "size-7",
-                  ]}
-                >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h12M9 3l5 5-5 5" /></svg>
-                </span>
-              </span>
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-
-    <div class="flex justify-center pt-6 md:pt-9">
       <a
         href="/traning"
-      class="font-data text-small uppercase text-black hover:underline hover:underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+        class="group mt-3 inline-flex min-h-11 items-center gap-2 font-data text-label uppercase text-white no-underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-white"
       >
-        Se alla träningstider
+        <span class="underline decoration-transparent decoration-1 underline-offset-4 transition-colors group-hover:decoration-white motion-reduce:transition-none">
+          Se alla träningstider
+        </span>
+        <span aria-hidden="true" class="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none">→</span>
       </a>
     </div>
   </div>
+
+  <ul class="m-0 grid list-none grid-cols-2 gap-0.5 p-0 md:grid-cols-3">
+    {
+      TEAMS.map((team) => (
+        <li class:list={["relative", team.featured ? "col-span-2 aspect-4/3 md:col-span-1" : "aspect-square", "md:aspect-3/4 lg:aspect-4/5"]}>
+          <a
+            href={`/${team.slug}#traning`}
+            class="group absolute inset-0 isolate flex items-end overflow-hidden p-4 no-underline focus-visible:outline-hidden md:p-6"
+          >
+            <Image
+              src={team.image}
+              alt=""
+              widths={[480, 800, 1200, 1600].filter((w) => w <= team.image.width)}
+              sizes={team.featured ? "(min-width: 48rem) 33vw, 100vw" : "(min-width: 48rem) 33vw, 50vw"}
+              loading="lazy"
+              class="absolute inset-0 -z-10 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+              style={`object-position: ${team.position}`}
+            />
+            {/* Same soft bottom shade as the hero: grounds the label box, purely visual. */}
+            <span aria-hidden="true" class="absolute inset-x-0 bottom-0 -z-10 h-1/2 bg-linear-to-t from-black/55 via-black/20 to-transparent" />
+            {/* Focus ring drawn on an overlay so it sits above the photo and inset, so it's
+                never clipped at the screen edge. Two-tone (white + black), visible on any image. */}
+            <span
+              aria-hidden="true"
+              class="pointer-events-none absolute inset-0 group-focus-visible:shadow-[inset_0_0_0_3px_#fafafa,inset_0_0_0_6px_#181818]"
+            />
+            <span class="relative flex flex-col bg-white px-3 py-2 shadow-[0_8px_24px_rgb(0_0_0/0.25)] md:px-4 md:py-3">
+              <span class="font-data text-label uppercase text-black/70">Träningstider</span>
+              <span class="flex items-center gap-2 font-data text-lg leading-tight font-bold uppercase text-black md:text-2xl">
+                {team.label}
+                <span aria-hidden="true" class="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none">→</span>
+              </span>
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
 </section>
