@@ -15,3 +15,6 @@ export const CARD_STROKE =
 
 /** Faint shadow under white text on photos — covers leftover bright spots the scrim misses. */
 export const CARD_TEXT_SHADOW = "[text-shadow:0_1px_2px_rgb(0_0_0/0.35)]";
+
+/** The same shadow from md up only, for cards whose mobile layout puts the text on white. */
+export const CARD_TEXT_SHADOW_MD = "md:[text-shadow:0_1px_2px_rgb(0_0_0/0.35)]";

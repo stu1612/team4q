@@ -1,9 +1,10 @@
 ---
 // Sponsor commercial-slot tile — the sponsor's commercial image with their logo and
-// tagline; the whole tile links to the sponsor.
+// tagline; the whole tile links to the sponsor. Same card language as NewsCard and
+// ContactTile: photo on top, text on white below.
 import ResolvedImage from "../ResolvedImage.astro";
 import type { CommercialSlotVM } from "../CommercialSlot/types";
-import { CARD_SCRIM, CARD_STROKE, CARD_TEXT_SHADOW } from "../cardStyles";
+import { CARD_STROKE } from "../cardStyles";
 
 interface Props {
   sponsor: CommercialSlotVM;
@@ -16,25 +17,29 @@ const { sponsor, class: className = "" } = Astro.props;
 
 <a
   href={sponsor.sponsorUrl}
-  class={`group relative isolate flex min-h-min flex-col items-start justify-end overflow-hidden rounded-card bg-black p-5 md:p-6 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black ${CARD_TEXT_SHADOW} ${className}`}
+  class={`group relative flex flex-col border-t border-black/15 pt-4 no-underline md:border-0 md:pt-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black md:overflow-hidden md:rounded-card md:bg-white ${className}`}
 >
-  {/* Decorative backdrop — the logo's alt and the tagline carry the meaning. */}
-  <ResolvedImage
-    src={sponsor.image}
-    alt=""
-    width={1200}
-    height={800}
-    loading="lazy"
-    class="absolute inset-0 -z-10 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-  />
-  <div class={`absolute inset-0 -z-10 ${CARD_SCRIM}`} />
-  <span aria-hidden="true" class={CARD_STROKE}></span>
-  <p class="m-0 mb-3 font-data text-label uppercase text-white/80">Partner</p>
-  {/* White chip so logos of any colour stay legible on the dark scrim. The logo's alt is
-      the heading's text. */}
-  <h3 class="m-0 rounded-chip bg-white px-3 py-2.5">
-    <ResolvedImage src={sponsor.logo} alt={sponsor.sponsorName} width={240} height={80} fit="contain" loading="lazy" class="h-8 w-auto" />
-  </h3>
-  {sponsor.tagline && <p class="m-0 mt-3 line-clamp-3 text-body text-white/90">{sponsor.tagline}</p>}
-  <span aria-hidden="true" class="mt-4 font-data text-label uppercase text-white">Besök {sponsor.sponsorName} →</span>
+  {/* Below lg: an in-flow 16:9 photo. lg: the card is square (layout lookup) and the photo
+      fills whatever height the text panel leaves, with a floor so it never collapses.
+      Decorative: the logo's alt and the tagline carry the meaning. */}
+  <div class="relative aspect-video overflow-hidden rounded-card md:rounded-none lg:aspect-auto lg:min-h-24 lg:flex-1">
+    <ResolvedImage
+      src={sponsor.image}
+      alt=""
+      width={1200}
+      height={800}
+      loading="lazy"
+      class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+    />
+  </div>
+  <div class="flex flex-col items-start pt-3 md:p-5">
+    <span aria-hidden="true" class={CARD_STROKE}></span>
+    <p class="m-0 mb-2 font-data text-label uppercase text-black/60">Partner</p>
+    {/* The logo's alt is the heading's text. On white, so no backing chip is needed. */}
+    <h3 class="m-0">
+      <ResolvedImage src={sponsor.logo} alt={sponsor.sponsorName} width={240} height={80} fit="contain" loading="lazy" class="h-8 w-auto" />
+    </h3>
+    {sponsor.tagline && <p class="m-0 mt-3 line-clamp-2 text-body text-black/70">{sponsor.tagline}</p>}
+    <span aria-hidden="true" class="mt-3 font-data text-label uppercase text-black">Besök {sponsor.sponsorName} →</span>
+  </div>
 </a>

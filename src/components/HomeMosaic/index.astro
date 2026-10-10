@@ -6,12 +6,16 @@
 // Result and the commercial slot are both optional (no/stale result, no sponsor with a slot),
 // so the layout is looked up by how many "big" tiles are present rather than fixed:
 //
-//   3 big   base: big tiles full width (photo tiles 4:5), socials 2-up
+//   3 big   base: big tiles full width, socials 2-up
 //           md:   Result spans 2 cols (2:1) / Sponsor CTA / Insta FB
-//           lg:   Result (2 cols) Sponsor / CTA Insta FB — Result stretches to the
-//                 square Sponsor's height, the same trick as NewsCard's card5
-//   2 big   md+:  2×2, all tiles the same shape
+//           lg:   Result (2 cols) Sponsor / CTA Insta FB
+//   2 big   md+:  2×2
 //   1 big   (CTA only) md: CTA spans 2 cols / Insta FB;  lg: one row of three
+//
+// Sponsor and Contact are news-style cards (photo on top, text on white below). Below lg
+// they size themselves (16:9 photo + text). From lg they take the row's shape (square
+// beside the socials) and the photo shrinks to whatever the text panel leaves, so the
+// rows line up and the copy is never clipped.
 //
 // The socials are static constants (SOCIAL_LINKS), so they're always the "small" tiles.
 import ResultTile from "./ResultTile.astro";
@@ -27,31 +31,32 @@ const [result, slot] = await Promise.all([getLatestResultVM(), getCommercialSlot
 const bigCount = 1 + (result ? 1 : 0) + (slot ? 1 : 0);
 
 // Below md every big tile is full width; the socials pair up as squares. The scoreboard is
-// 4:3, the photo-and-copy tiles 4:5 portrait (as NewsCard) so their bottom-left text stays
-// inside the scrim's dark band.
+// 4:3; the news-style cards size themselves (16:9 photo + text).
 const BIG_BASE = "col-span-2 aspect-4/3";
-const PHOTO_BASE = "col-span-2 aspect-4/5";
+const CARD_BASE = "col-span-2";
 
 const LAYOUT = {
   3: {
     grid: "lg:grid-cols-3",
-    result: `${BIG_BASE} md:aspect-2/1 lg:aspect-auto lg:h-full`,
-    sponsor: `${PHOTO_BASE} md:col-span-1 md:aspect-square`,
-    contact: `${PHOTO_BASE} md:col-span-1 md:aspect-square`,
+    // lg: no ratio, so it stretches to the Sponsor card's height in row 1.
+    result: `${BIG_BASE} md:aspect-2/1 lg:aspect-auto`,
+    sponsor: `${CARD_BASE} md:col-span-1 lg:aspect-square`,
+    contact: `${CARD_BASE} md:col-span-1 lg:aspect-square`,
     social: "aspect-square",
   },
   2: {
     grid: "lg:grid-cols-2",
-    result: `${BIG_BASE} md:col-span-1 lg:aspect-2/1`,
-    sponsor: `${PHOTO_BASE} md:col-span-1 md:aspect-4/3 lg:aspect-2/1`,
-    contact: `${PHOTO_BASE} md:col-span-1 md:aspect-4/3 lg:aspect-2/1`,
+    result: `${BIG_BASE} md:col-span-1 md:aspect-auto`,
+    // Half-width columns: square would be ~600px tall, so 4:3.
+    sponsor: `${CARD_BASE} md:col-span-1 lg:aspect-4/3`,
+    contact: `${CARD_BASE} md:col-span-1 lg:aspect-4/3`,
     social: "aspect-square md:aspect-4/3 lg:aspect-2/1",
   },
   1: {
     grid: "lg:grid-cols-3",
     result: "",
     sponsor: "",
-    contact: `${PHOTO_BASE} md:aspect-2/1 lg:col-span-1 lg:aspect-square`,
+    contact: `${CARD_BASE} lg:col-span-1 lg:aspect-square`,
     social: "aspect-square",
   },
 }[bigCount]!;

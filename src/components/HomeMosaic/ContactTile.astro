@@ -1,9 +1,10 @@
 ---
-// "Bli en del av T4Q" contact CTA tile — mailto, the site's only contact channel.
+// "Bli en del av T4Q" contact CTA tile — mailto, the site's only contact channel. Same card
+// language as NewsCard and SponsorTile: photo on top, text on white below.
 import { Image } from "astro:assets";
 import ctaImage from "../../images/fallback/news/team-news.jpg";
 import { CLUB_CONTACT } from "../../constants/contact";
-import { CARD_SCRIM, CARD_STROKE, CARD_TEXT_SHADOW } from "../cardStyles";
+import { CARD_STROKE } from "../cardStyles";
 
 interface Props {
   /** Grid-placement classes from HomeMosaic's layout lookup. */
@@ -15,23 +16,28 @@ const { class: className = "" } = Astro.props;
 
 <a
   href={`mailto:${CLUB_CONTACT.email}`}
-  class={`group relative isolate flex min-h-min flex-col items-start justify-end overflow-hidden rounded-card bg-black p-5 md:p-6 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black ${CARD_TEXT_SHADOW} ${className}`}
+  class={`group relative flex flex-col border-t border-black/15 pt-4 no-underline md:border-0 md:pt-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black md:overflow-hidden md:rounded-card md:bg-white ${className}`}
 >
-  {/* Decorative backdrop — the copy carries the meaning. */}
-  <Image
-    src={ctaImage}
-    alt=""
-    width={1200}
-    height={800}
-    loading="lazy"
-    class="absolute inset-0 -z-10 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-  />
-  <div class={`absolute inset-0 -z-10 ${CARD_SCRIM}`} />
-  <span aria-hidden="true" class={CARD_STROKE}></span>
-  <p class="m-0 mb-2 font-data text-label uppercase text-white/80">Engagera dig</p>
-  <h3 class="m-0 text-balance font-heading text-xl leading-tight font-bold text-white md:text-2xl">Bli en del av T4Q</h3>
-  <p class="m-0 mt-2 text-body text-white/90">
-    Vill du spela, engagera dig som ledare eller synas som sponsor? Hör av dig så berättar vi mer.
-  </p>
-  <span class="mt-4 font-data text-label uppercase text-white">Kontakta oss →</span>
+  {/* Below lg: an in-flow 16:9 photo. lg: the card is square (layout lookup) and the photo
+      fills whatever height the text panel leaves, with a floor so it never collapses.
+      Decorative: the copy carries the meaning. */}
+  <div class="relative aspect-video overflow-hidden rounded-card md:rounded-none lg:aspect-auto lg:min-h-24 lg:flex-1">
+    <Image
+      src={ctaImage}
+      alt=""
+      width={1200}
+      height={800}
+      loading="lazy"
+      class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+    />
+  </div>
+  <div class="flex flex-col items-start pt-3 md:p-5">
+    <span aria-hidden="true" class={CARD_STROKE}></span>
+    <p class="m-0 mb-2 font-data text-label uppercase text-black/60">Engagera dig</p>
+    <h3 class="m-0 text-balance font-heading text-2xl leading-tight font-bold text-black lg:text-xl">Bli en del av T4Q</h3>
+    <p class="m-0 mt-2 text-body text-black/70">
+      Vill du spela, engagera dig som ledare eller synas som sponsor? Hör av dig så berättar vi mer.
+    </p>
+    <span class="mt-3 font-data text-label uppercase text-black">Kontakta oss →</span>
+  </div>
 </a>
