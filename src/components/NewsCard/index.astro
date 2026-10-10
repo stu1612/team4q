@@ -5,8 +5,10 @@
 //
 // Mobile-first, cards square from md:
 //
-//   base   1 col     every card full-bleed, 4:5 portrait (image + scrim, text bottom-left)
-//   md     2 cols    card1 card2 / card3 card4 / card5 spanning both columns — still all
+//   base   1 col     a news list on white, stories split by hairlines. card1 and card5 are
+//                    lead stories (16:9 photo, then heading, excerpt, meta line); 2/3/4 are
+//                    rows (4:3 thumbnail left, heading right, meta pinned to the bottom).
+//   md     2 cols    card1 card2 / card3 card4 / card5 spanning both columns — all
 //                    full-bleed
 //   lg     3 cols    card1 card2 card3 / card4 card5 (card5 spans col2+col3). card1 and
 //                    card5 stay full-bleed; 2/3/4 switch to half image / half white
@@ -17,7 +19,7 @@
 // flip between the full-bleed and half/half treatments at lg, rather than two duplicated
 // trees shown/hidden per breakpoint.
 import ResolvedImage from "../ResolvedImage.astro";
-import { CARD_SCRIM, CARD_STROKE, CARD_TEXT_SHADOW } from "../cardStyles";
+import { CARD_SCRIM, CARD_STROKE, CARD_TEXT_SHADOW_MD } from "../cardStyles";
 import { getNewsCardVMs } from "./mappers";
 import type { NewsCardVM } from "./types";
 
@@ -69,51 +71,20 @@ const slots: Slot[] = [
     // Guards against a short data set (fewer than 5 items) rather than rendering a broken
     // mosaic with holes in it — render nothing until there are enough to fill it.
     cards.length === HOMEPAGE_NEWS_COUNT && (
-      <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {slots.map(({ card, variant, wrapClass, imgWidth, imgHeight }) =>
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+        {slots.map(({ card, variant, wrapClass, imgWidth, imgHeight }, i) =>
           variant === "bleed" ? (
-            <article class={`group relative isolate flex aspect-4/5 items-end overflow-hidden rounded-card bg-black md:aspect-square ${wrapClass}`}>
-              <ResolvedImage
-                src={card.coverImage}
-                alt={card.heading}
-                width={imgWidth}
-                height={imgHeight}
-                loading="lazy"
-                class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-              />
-              <div class={`absolute inset-0 ${CARD_SCRIM}`} />
-              {/* z-10 (not `relative`) lifts the text above the image/scrim while keeping the
-                  <article> as the containing block for the heading link's stretched ::after,
-                  so the whole card is clickable, not just the text block. */}
-              <div class={`z-10 flex flex-col items-start p-5 md:p-6 ${CARD_TEXT_SHADOW}`}>
-                {/* Red accent stroke — grows in length and thickness when the card is hovered. */}
-                <span aria-hidden="true" class={CARD_STROKE}></span>
-                {/* Team + date share one meta line above the heading (editorial convention). */}
-                <p class="m-0 mb-2 flex flex-wrap items-center gap-x-2 font-data text-label uppercase text-white/80">
-                  {card.hasTeam && (
-                    <>
-                      <span class="text-white">{card.tagLabel}</span>
-                      <span aria-hidden="true">·</span>
-                    </>
-                  )}
-                  <span>{card.dateLabel}</span>
-                </p>
-                <h3 class="m-0 text-balance font-heading text-xl leading-tight font-bold text-white md:text-2xl">
-                  <a href={card.href} class="after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
-                    {card.heading}
-                  </a>
-                </h3>
-                <p class="m-0 mt-2 line-clamp-2 text-body text-white/90 text-shadow-none">{card.excerpt}</p>
-                {/* Visual cue only — the heading link's stretched ::after already makes the card
-                    clickable, so this is aria-hidden rather than a second link to the same URL. */}
-                <span aria-hidden="true" class="mt-4 font-data text-label uppercase text-white md:hidden">Läs mer →</span>
-              </div>
-            </article>
-          ) : (
-            <article class="group relative isolate flex aspect-4/5 flex-col justify-end overflow-hidden rounded-card bg-black md:aspect-square lg:bg-white">
-              {/* Below lg: absolute full-card image. From lg: a fixed in-flow top 45%, so all three
-                  split cards line up whatever their copy length. */}
-              <div class="absolute inset-0 lg:relative lg:inset-auto lg:basis-[45%] lg:shrink-0">
+            <article
+              class:list={[
+                "group relative isolate flex flex-col md:aspect-square md:justify-end md:overflow-hidden md:rounded-card md:bg-black",
+                // Mobile list: a hairline separates each story from the one above.
+                i > 0 && "border-t border-black/15 pt-4 md:border-0 md:pt-0",
+                wrapClass,
+              ]}
+            >
+              {/* Mobile: an in-flow 16:9 photo with the text below it on white. md+: the photo
+                  fills the card behind the text. */}
+              <div class="relative aspect-video overflow-hidden rounded-card md:absolute md:inset-0 md:aspect-auto md:rounded-none">
                 <ResolvedImage
                   src={card.coverImage}
                   alt={card.heading}
@@ -123,28 +94,80 @@ const slots: Slot[] = [
                   class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                 />
               </div>
-              {/* Scrim only exists while the text sits over the photo (below lg). */}
-              <div class={`absolute inset-0 lg:hidden ${CARD_SCRIM}`} />
-              <div class={`z-10 flex flex-col items-start p-5 md:p-6 ${CARD_TEXT_SHADOW} lg:min-h-0 lg:flex-1 lg:justify-start lg:overflow-hidden lg:bg-white lg:p-5 lg:text-shadow-none`}>
+              {/* md only: the text sits on the photo, so it needs the full scrim. From lg the meta
+                  line and heading are opaque white label boxes (as in the Hero), so the scrim
+                  gives way to the Hero's soft bottom shade, which is purely visual. */}
+              <div class={`absolute inset-0 hidden md:block lg:hidden ${CARD_SCRIM}`} />
+              <div class="absolute inset-x-0 bottom-0 hidden h-1/2 bg-linear-to-t from-black/55 via-black/20 to-transparent lg:block" />
+              {/* z-10 (not `relative`) lifts the text above the image/scrim while keeping the
+                  <article> as the containing block for the heading link's stretched ::after,
+                  so the whole card is clickable, not just the text block. */}
+              <div class={`z-10 flex flex-col items-start pt-3 md:p-6 ${CARD_TEXT_SHADOW_MD} lg:text-shadow-none`}>
                 {/* Red accent stroke — grows in length and thickness when the card is hovered. */}
                 <span aria-hidden="true" class={CARD_STROKE}></span>
-                <p class="m-0 mb-2 flex flex-wrap items-center gap-x-2 font-data text-label uppercase text-white/80 lg:text-black/60">
+                {/* Team + date share one meta line: under the excerpt on mobile (news-list
+                    convention), above the heading from md. Visual order only; it isn't focusable. */}
+                <p class="order-last m-0 mt-3 flex flex-wrap items-center gap-x-2 font-data text-label uppercase text-black/60 md:order-none md:mt-0 md:mb-2 md:text-white/80 lg:mb-1 lg:bg-white lg:px-4 lg:py-1 lg:text-black/60 lg:shadow-[0_8px_24px_rgb(0_0_0/0.25)]">
                   {card.hasTeam && (
                     <>
-                      <span class="text-white lg:text-black">{card.tagLabel}</span>
+                      <span class="text-black md:text-white lg:text-black">{card.tagLabel}</span>
                       <span aria-hidden="true">·</span>
                     </>
                   )}
                   <span>{card.dateLabel}</span>
                 </p>
-                <h3 class="m-0 text-balance font-heading text-xl leading-tight font-bold text-white md:text-2xl lg:text-xl lg:text-black">
-                  <a href={card.href} class="after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:focus-visible:outline-black">
+                {/* From lg the heading is a white label box too, and the excerpt is dropped. */}
+                <h3 class="m-0 text-balance font-heading text-2xl leading-tight font-bold text-black md:text-white lg:bg-white lg:px-4 lg:py-2 lg:text-black lg:shadow-[0_8px_24px_rgb(0_0_0/0.25)]">
+                  <a href={card.href} class="after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black md:focus-visible:outline-white lg:focus-visible:outline-black">
                     {card.heading}
                   </a>
                 </h3>
-                {/* The half-height panel only has room for the excerpt from xl up. */}
-                <p class="m-0 mt-2 line-clamp-2 text-body text-white/90 text-shadow-none lg:hidden lg:text-black/70 xl:line-clamp-2">{card.excerpt}</p>
-                <span aria-hidden="true" class="mt-4 font-data text-label uppercase text-white md:hidden">Läs mer →</span>
+                <p class="m-0 mt-2 line-clamp-2 text-body text-black/70 text-shadow-none md:text-white/90 lg:hidden">{card.excerpt}</p>
+              </div>
+            </article>
+          ) : (
+            <article class="group relative isolate flex flex-row gap-3 border-t border-black/15 pt-4 md:aspect-square md:flex-col md:justify-end md:gap-0 md:overflow-hidden md:rounded-card md:border-0 md:bg-black md:pt-0 lg:bg-white">
+              {/* Mobile: a 4:3 thumbnail on the left of a list row. md: absolute full-card image.
+                  From lg: a fixed in-flow top 45%, so all three split cards line up whatever
+                  their copy length. */}
+              {/* `md:self-auto` matters: a non-stretch align-self on an absolute box shrinks it to
+                  fit instead of filling its insets (height 0 at md, width 0 at lg). */}
+              <div class="relative aspect-4/3 w-[45%] shrink-0 self-start overflow-hidden rounded-card md:absolute md:inset-0 md:aspect-auto md:w-auto md:self-auto md:rounded-none lg:relative lg:inset-auto lg:basis-[45%]">
+                <ResolvedImage
+                  src={card.coverImage}
+                  alt={card.heading}
+                  width={imgWidth}
+                  height={imgHeight}
+                  loading="lazy"
+                  class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                />
+              </div>
+              {/* Scrim only exists while the text sits over the photo (md only). */}
+              <div class={`absolute inset-0 hidden md:block lg:hidden ${CARD_SCRIM}`} />
+              <div class={`z-10 flex min-w-0 flex-1 flex-col items-start md:flex-none md:p-6 ${CARD_TEXT_SHADOW_MD} lg:min-h-0 lg:flex-1 lg:justify-start lg:overflow-hidden lg:bg-white lg:p-5 lg:text-shadow-none`}>
+                {/* Red accent stroke (md+ only; the mobile list row stays plain). Grows in length
+                    and thickness when the card is hovered. */}
+                <span aria-hidden="true" class="hidden md:block">
+                  <span class={CARD_STROKE}></span>
+                </span>
+                {/* Mobile: pinned to the bottom of the row, under the heading. md+: above it. */}
+                <p class="order-last m-0 mt-auto flex flex-wrap items-center gap-x-2 pt-2 font-data text-label uppercase text-black/60 md:order-none md:mt-0 md:mb-2 md:pt-0 md:text-white/80 lg:text-black/60">
+                  {card.hasTeam && (
+                    <>
+                      <span class="text-black md:text-white lg:text-black">{card.tagLabel}</span>
+                      <span aria-hidden="true">·</span>
+                    </>
+                  )}
+                  <span>{card.dateLabel}</span>
+                </p>
+                <h3 class="m-0 text-balance font-heading text-lg leading-snug font-bold text-black md:text-2xl md:leading-tight md:text-white lg:text-xl lg:text-black">
+                  <a href={card.href} class="after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black md:focus-visible:outline-white lg:focus-visible:outline-black">
+                    {card.heading}
+                  </a>
+                </h3>
+                {/* md+: two lines of excerpt (on the photo at md, in the white panel from lg). The
+                    mobile row has no room for it. */}
+                <p class="m-0 mt-2 hidden text-body text-white/90 text-shadow-none md:line-clamp-2 lg:text-black/70">{card.excerpt}</p>
               </div>
             </article>
           ),
