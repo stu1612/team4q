@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <path d="M256 24 L456 84 V244 C456 368 372 446 256 492 C140 446 56 368 56 244 V84 Z" fill="#181818" stroke="#ffffff" stroke-width="14"/>
+  <path d="M256 60 L424 110 V244 C424 350 354 418 256 458 C158 418 88 350 88 244 V110 Z" fill="none" stroke="#db1d24" stroke-width="8"/>
+  <circle cx="256" cy="372" r="46" fill="#db1d24"/>
+  <path d="M210 372 H302 M256 326 V418 M224 340 C244 356 244 388 224 404 M288 340 C268 356 268 388 288 404" fill="none" stroke="#181818" stroke-width="6"/>
+  <path d="M120 148 q34 -18 68 0 t68 0 t68 0 t68 0" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+  <text x="256" y="300" text-anchor="middle" font-family="Impact, 'Arial Black', Helvetica, sans-serif" font-size="150" font-weight="900" fill="#ffffff" letter-spacing="4">SB</text>
+</svg>

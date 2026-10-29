@@ -19,7 +19,7 @@ const { article, isFallback } = result;
 
 // OG image must be absolute: Hygraph URLs already are; a local placeholder is optimised
 // and resolved against the site origin.
-const site = Astro.site ?? new URL("https://team4q.se");
+const site = Astro.site ?? new URL("https://team4q.vercel.app");
 const ogImage =
   typeof article.coverImage === "string"
     ? article.coverImage

@@ -1,80 +1,48 @@
 // RD-shaped fallback for SponsorModel (fetchWithFallback). Same shape as the SponsorList
 // query result. Logos are local imports so <Image> keeps optimising them. Taglines are
 // populated here to exercise the non-empty path (every live sponsor currently has null).
+// Every sponsor is fictional; URLs point at example.com so no real business is linked.
 
-import edumentLogo from "../../images/fallback/sponsors/edument-logo.png";
-import swedbankLogo from "../../images/fallback/sponsors/swedbank-logo.png";
-import sparbankLogo from "../../images/fallback/sponsors/sparbank-logo.png";
-import lokaLogo from "../../images/fallback/sponsors/loka-logo.png";
-import direktenLogo from "../../images/fallback/sponsors/direkten-logo.png";
-import intersportLogo from "../../images/fallback/sponsors/intersport-logo.png";
-import commercialImage from "../../images/fallback/sponsors/edument_cover_image.jpg";
+import fyrvaktarenLogo from "../../images/fallback/sponsors/fyrvaktaren-logo.svg";
+import saltstankLogo from "../../images/fallback/sponsors/saltstank-logo.svg";
+import vagbrytarenLogo from "../../images/fallback/sponsors/vagbrytaren-logo.svg";
+import ljusgardenLogo from "../../images/fallback/sponsors/ljusgarden-logo.svg";
+import kompassenLogo from "../../images/fallback/sponsors/kompassen-logo.svg";
+import hamnljusLogo from "../../images/fallback/sponsors/hamnljus-logo.svg";
+import commercialImage from "../../images/fallback/sponsors/sponsor-cover.jpg";
 import type { SponsorResponseRD } from "./types";
 
-const TAGLINE = "Stolt sponsor av T4Q Helsingborg";
+const TAGLINE = "Stolt sponsor av Sundet Basket";
+const SPONSOR_URL = "https://example.com/";
+
+const partner = (name: string, logo: ImageMetadata) => ({
+  name,
+  logo,
+  url: SPONSOR_URL,
+  tier: "partner" as const,
+  isActive: "active" as const,
+  tagline: TAGLINE,
+  hasCommercialSlot: false,
+  commercialImage: null,
+});
 
 export const sponsorFallback: SponsorResponseRD = {
   sponsorModels: [
     {
-      name: "Edument",
-      logo: edumentLogo,
-      url: "https://www.edument.se/",
+      name: "Fyrvaktaren Bygg",
+      logo: fyrvaktarenLogo,
+      url: SPONSOR_URL,
       tier: "main",
       isActive: "active",
       tagline:
-        "I över 10 år har vi med passion hjälpt organisationer driva innovativ teknik, genom att ombilda och utveckla talanger.",
+        "Vi har byggt hem och arbetsplatser längs kusten i över 20 år – och vi bygger gärna gemenskap också.",
       hasCommercialSlot: true,
       commercialImage: commercialImage,
     },
-    {
-      name: "Swedbank",
-      logo: swedbankLogo,
-      url: "https://www.swedbank.se/",
-      tier: "partner",
-      isActive: "active",
-      tagline: TAGLINE,
-      hasCommercialSlot: false,
-      commercialImage: null,
-    },
-    {
-      name: "Sparbanken Skåne",
-      logo: sparbankLogo,
-      url: "https://www.sparbankenskane.se/",
-      tier: "partner",
-      isActive: "active",
-      tagline: TAGLINE,
-      hasCommercialSlot: false,
-      commercialImage: null,
-    },
-    {
-      name: "Loka",
-      logo: lokaLogo,
-      url: "https://loka.nu/",
-      tier: "partner",
-      isActive: "active",
-      tagline: TAGLINE,
-      hasCommercialSlot: false,
-      commercialImage: null,
-    },
-    {
-      name: "Direkten",
-      logo: direktenLogo,
-      url: "https://direkten.se/",
-      tier: "partner",
-      isActive: "active",
-      tagline: TAGLINE,
-      hasCommercialSlot: false,
-      commercialImage: null,
-    },
-    {
-      name: "Intersport",
-      logo: intersportLogo,
-      url: "https://intersport.se/",
-      tier: "partner",
-      isActive: "active",
-      tagline: TAGLINE,
-      hasCommercialSlot: false,
-      commercialImage: null,
-    },
+    partner("Saltstänk Café", saltstankLogo),
+    partner("Vågbrytaren Fastigheter", vagbrytarenLogo),
+    partner("Ljusgården Optik", ljusgardenLogo),
+    partner("Kompassen Sport", kompassenLogo),
+    partner("Hamnljus El", hamnljusLogo),
   ],
 };

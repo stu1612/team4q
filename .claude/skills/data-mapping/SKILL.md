@@ -22,12 +22,14 @@ src/components/[componentName]/
   mappers.ts
   types.ts
   fallback.ts   ← only present when the component uses fetchWithFallback (see below)
+  demo.ts       ← only present when the component uses fetchOrFail (demo mode, see /graphql)
 ```
 
 - `index.astro` — UI only, renders VM values, no data logic
 - `mappers.ts` — fetches data via `hygraphClient.ts`, transforms raw response to VM, returns a safe object
 - `types.ts` — RD and VM type definitions for this component
 - `fallback.ts` — RD-shaped fallback data, only for components using the fallback strategy (see Request Failure Handling)
+- `demo.ts` — RD-shaped demo data for `fetchOrFail` components, served only when `CONTENT_SOURCE` is `"demo"`. Exports one function taking an optional team slug, standing in for both the list and by-team queries. Never a failure fallback.
 
 ## Naming Convention
 

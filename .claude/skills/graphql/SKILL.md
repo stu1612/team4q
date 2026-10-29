@@ -47,9 +47,19 @@ Internally two layers, but only two functions are ever called by a mapper:
 **Public interface — the only two things a mapper calls:**
 
 - **`fetchWithFallback<T>(query, fallbackData: T): Promise<T>`** — always resolves. On any technical failure, returns `fallbackData` (imported from that component's `fallback.ts`) instead of throwing. Used by mappers for editorial content, where a visitor should never see an error state.
-- **`fetchOrFail<T>(query): Promise<Result<T, HGError>>`** — never silently resolves on failure. Returns a typed result the mapper must check (`result.ok`). Used by mappers for time-sensitive content, where showing nothing (or an explicit message) is safer than showing wrong or stale data.
+- **`fetchOrFail<T>(query, variables?, demoData?): Promise<Result<T, HGError>>`** — never silently resolves on failure. Returns a typed result the mapper must check (`result.ok`). Used by mappers for time-sensitive content, where showing nothing (or an explicit message) is safer than showing wrong or stale data.
 
 `hygraphClient.ts` has no awareness of what any model's fallback content looks like, or what message a failure should show a visitor — both are mapper-layer decisions per `/data-mapping`. The client's only job is: validate, fetch, categorise technical failures, and expose the two functions above.
+
+## Demo Mode (`CONTENT_SOURCE`)
+
+The showpiece runs on a fictional club, so by default no Hygraph request is sent. `CONTENT_SOURCE` (`astro:env`, `"demo"` | `"hygraph"`, default `"demo"`) is read by `hygraphClient.ts` only — demo mode is a transport concern, and no mapper or component branches on it.
+
+- In demo mode, Layer 1 validation still runs (queries stay correct while switched off); Layer 2 is skipped.
+- `fetchWithFallback` returns its `fallbackData` — the component's `fallback.ts` doubles as its demo content.
+- `fetchOrFail` returns `{ ok: true, data: demoData }`, where `demoData` comes from the component's `demo.ts`. Calling it in demo mode without `demoData` throws, so a missed call site fails the build.
+- `demo.ts` is **not** a failure fallback. With `CONTENT_SOURCE="hygraph"`, `fetchOrFail` models still never show fake data on failure — the strategies below are unchanged.
+- Demo dates are generated relative to render time (`src/lib/demoDates.ts`), so fixtures stay upcoming and results stay inside their visibility window.
 
 ## How Mappers Call the Client
 

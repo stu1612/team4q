@@ -1,8 +1,8 @@
-# T4Q — Project Overview
+# Club Site — Project Overview
 
 ## What this is
 
-A full rebuild of team4q.se, the website for a basketball club based in Helsingborg, Sweden. The existing site is built on an outdated, non-responsive drag-and-drop platform and is being replaced entirely with a modern, architecturally considered stack.
+A full rebuild of the existing website for a basketball club based in Helsingborg, Sweden. The existing site is built on an outdated, non-responsive drag-and-drop platform and is being replaced entirely with a modern, architecturally considered stack.
 
 ## Who it's for
 
@@ -12,14 +12,14 @@ A full rebuild of team4q.se, the website for a basketball club based in Helsingb
 
 ## Design intent
 
-Editorial, content-first, not visually chaotic — closer to a professional football club's site (Manchester United, Juventus) translated into basketball, at a scale appropriate for a small regional club rather than a global one. Activity (news, fixtures) is surfaced before static "about" content. Hero sections are emotive, not informational. Brand colours are black, white, and a T4Q red — used deliberately and restrictively, not applied everywhere just because it's the brand colour (see `/accessibility` skill for the exact contrast rules governing this).
+Editorial, content-first, not visually chaotic — closer to a professional football club's site (Manchester United, Juventus) translated into basketball, at a scale appropriate for a small regional club rather than a global one. Activity (news, fixtures) is surfaced before static "about" content. Hero sections are emotive, not informational. Brand colours are black, white, and a club red — used deliberately and restrictively, not applied everywhere just because it's the brand colour (see `/accessibility` skill for the exact contrast rules governing this).
 
 Full design reference material — screenshots, extracted patterns, locked and open decisions — lives in `design-brief.md` and `design-patterns.md`.
 
 ## Tech stack
 
 - **Framework:** Astro 7, TypeScript (strict mode)
-- **CMS:** Hygraph (GraphQL headless CMS) — schema fully built and reconciled against the actual live config
+- **CMS:** Hygraph (GraphQL headless CMS) — schema fully built and reconciled against the actual live config. Switched off by default: `CONTENT_SOURCE="demo"` serves every model from local data about a fictional club, Sundets Basketförening (see `/graphql`). The rendered site never names the real club.
 - **Styling:** Tailwind CSS 4 via the Vite plugin — no `tailwind.config.js`, design tokens live in an `@theme` block
 - **Data layer:** `graphql-request` (chosen over Apollo — Astro is server-rendered/static, Apollo's client-side caching is dead weight here) + `graphql-codegen` (schema-generated types feed every RD type — never hand-written)
 - **Hosting:** Vercel, connected to GitHub, environment variables configured

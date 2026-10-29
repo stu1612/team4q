@@ -15,17 +15,17 @@
 // tab order matches what's on screen. Sized with aspect ratios only, never viewport units
 // (iPhone Safari's toolbar resizes the viewport on touch).
 import { Image } from "astro:assets";
-import missionJunior from "../../images/fallback/mission/team4q_mission_jnr.jpg";
-import missionMen from "../../images/fallback/mission/team4q_mission_men.jpg";
-import missionWomen from "../../images/fallback/mission/team4q_mission_women.jpg";
+import missionJunior from "../../images/fallback/mission/mission-junior.jpg";
+import missionMen from "../../images/fallback/mission/mission-men.jpg";
+import missionWomen from "../../images/fallback/mission/mission-women.jpg";
 import { teamLabel } from "../../lib/teamLabel";
 
 // TODO(club): replace with original club photos. Herr and dam repeat the hero's photos, and
 // the junior image looks AI-generated.
 const TEAMS = [
-  { slug: "ungdomslaget", image: missionJunior, position: "50% 40%", featured: true },
-  { slug: "herrlaget", image: missionMen, position: "45% 40%", featured: false },
-  { slug: "damlaget", image: missionWomen, position: "50% 75%", featured: false },
+  { slug: "ungdomslaget", image: missionJunior, position: "50% 60%", featured: true },
+  { slug: "herrlaget", image: missionMen, position: "50% 60%", featured: false },
+  { slug: "damlaget", image: missionWomen, position: "50% 55%", featured: false },
 ].map((team) => ({ ...team, label: teamLabel(team.slug) }));
 ---
 
@@ -34,7 +34,7 @@ const TEAMS = [
     <div class="flex flex-col items-start gap-5 lg:col-span-5">
       <p class="m-0 flex items-center gap-3 font-data text-label uppercase text-white/80">
         <span aria-hidden="true" class="block h-0.5 w-8 bg-brand-red"></span>
-        Om T4Q
+        Om Sundet Basket
       </p>
       <h2 id="mission-heading" class="m-0 font-heading text-5xl leading-none font-bold text-white md:text-7xl">
         Vårt uppdrag
@@ -44,11 +44,11 @@ const TEAMS = [
     {/* TODO(club): review wording. */}
     <div class="flex max-w-[60ch] flex-col items-start gap-5 lg:col-span-7 lg:pt-9">
       <p class="m-0 text-xl leading-snug text-white md:text-2xl">
-        Sedan 2016 har Team4Q byggt en basketförening i Helsingborg där barn, ungdomar och seniorer
+        Sedan 2011 har Sundet Basket byggt en basketförening i Helsingborg där barn, ungdomar och seniorer
         tränar, tävlar och utvecklas tillsammans.
       </p>
       <p class="m-0 text-body text-white/75 md:text-lg">
-        I tre hallar runt om i staden — GA Hallen, Rydebäck och Harlyckehallen — tränar våra lag med
+        I tre hallar runt om i staden — Sundshallen, Hamnhallen och Kajhallen — tränar våra lag med
         målmedvetenhet, på och utanför planen. Men klubben har aldrig bara handlat om basket. Det
         handlar om människorna som kommer tillbaka vecka efter vecka, vänskapen som växer fram, och
         en gemenskap som sträcker sig långt bortom slutsignalen.

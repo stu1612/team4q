@@ -20,8 +20,8 @@ const { seo } = Astro.props;
 
 // Global defaults — set once, never page to page (see /seo skill).
 const DEFAULT_DESCRIPTION =
-  "Team Fourth Quarter (T4Q) är en basketklubb i Helsingborg med herr-, dam- och ungdomslag.";
-const SITE_ORIGIN = Astro.site?.href ?? "https://team4q.se";
+  "Sundets Basketförening är en basketklubb i Helsingborg med herr-, dam- och ungdomslag.";
+const SITE_ORIGIN = Astro.site?.href ?? "https://team4q.vercel.app";
 
 const canonical = new URL(Astro.url.pathname, SITE_ORIGIN).href;
 const description = seo.description || DEFAULT_DESCRIPTION;
@@ -33,10 +33,10 @@ const description = seo.description || DEFAULT_DESCRIPTION;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <!-- Club crest. favicon.ico holds 16/32/48px; no SVG icon, since the crest only exists as
-         a raster (public/logo.png, 512px). iOS fills the touch icon's transparency with black,
-         which suits the crest. -->
-    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <!-- Club crest (fictional demo club). Source is src/images/logos/club-crest.svg; the icons
+         are rasters exported from it, since its text relies on system fonts. favicon.ico holds
+         48px. iOS fills the touch icon's transparency with black, which suits the crest. -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#181818" />

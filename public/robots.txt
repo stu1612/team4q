@@ -1,4 +1,2 @@
 User-agent: *
-Allow: /
-
-Sitemap: https://team4q.se/sitemap-index.xml
+Disallow: /
