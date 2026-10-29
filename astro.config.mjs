@@ -9,7 +9,7 @@ import vercel from '@astrojs/vercel';
 export default defineConfig({
   // The showpiece's own Vercel URL, never the club's real domain. Drives absolute
   // canonical/OG/JSON-LD URLs (src/components/SEO), so nothing here claims to be the real site.
-  site: 'https://team4q.vercel.app',
+  site: 'https://sundet-basket.vercel.app',
 
   env: {
     schema: {

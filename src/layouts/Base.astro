@@ -21,7 +21,7 @@ const { seo } = Astro.props;
 // Global defaults — set once, never page to page (see /seo skill).
 const DEFAULT_DESCRIPTION =
   "Sundets Basketförening är en basketklubb i Helsingborg med herr-, dam- och ungdomslag.";
-const SITE_ORIGIN = Astro.site?.href ?? "https://team4q.vercel.app";
+const SITE_ORIGIN = Astro.site?.href ?? "https://sundet-basket.vercel.app";
 
 const canonical = new URL(Astro.url.pathname, SITE_ORIGIN).href;
 const description = seo.description || DEFAULT_DESCRIPTION;
