@@ -36,7 +36,7 @@ const ORG_NAME = "Sundets Basketförening";
 
 // Single source for the origin: mirrors `site` in astro.config.mjs (Astro injects it as
 // import.meta.env.SITE). The fallback keeps type-checking of this file standalone.
-const SITE_ORIGIN = import.meta.env.SITE ?? "https://team4q.vercel.app";
+const SITE_ORIGIN = import.meta.env.SITE ?? "https://sundet-basket.vercel.app";
 const abs = (path: string): string => new URL(path, SITE_ORIGIN).href;
 
 const OG_DEFAULT = abs("/og-default.jpg");
