@@ -12,7 +12,7 @@ export const teamPageFallbackBySlug: Record<string, TeamPageResponseRD> = {
       {
         heading: "Herrlaget",
         subheading:
-          "Herrlaget representerar T4Q i Skånes högsta serier med hjärta och lagkänsla.",
+          "Herrlaget representerar Sundet Basket i Skånes högsta serier med hjärta och lagkänsla.",
         coverImage: mensCover,
         teamModel: { name: "Herr", slug: "herrlaget", teamAffiliation: null, affiliationUrl: null, affiliationLogo: null },
       },

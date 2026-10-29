@@ -41,7 +41,7 @@ const TILE: Record<
   },
 };
 
-// "https://www.instagram.com/team4q/" → "@team4q"
+// "https://www.instagram.com/<handle>/" → "@<handle>"
 const handle = `@${new URL(href).pathname.replace(/\//g, "")}`;
 const { lead, name, text, bg, scrim, image } = TILE[network];
 ---

@@ -27,7 +27,7 @@ src/constants/seo.ts             — hand-written static SEO data for every non-
 
 Set once in `Base.astro`. Never changes page to page.
 
-- Site name — T4Q Helsingborg
+- Site name — the club's short name + city (`SITE_NAME` in `src/components/SEO/index.astro`)
 - Default meta description — club description in Swedish
 - Default OG image — `public/og-default.jpg` (static, 1200×630; absolute URL)
 - Canonical URL — derived from `Astro.url`

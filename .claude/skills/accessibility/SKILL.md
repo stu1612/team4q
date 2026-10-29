@@ -73,7 +73,7 @@ Use ARIA only when semantic HTML cannot communicate the role, state or property.
 
 ## Colour Contrast
 
-T4Q brand colours — black and red on white backgrounds.
+Club brand colours — black and red on white backgrounds.
 
 - Black on white — passes AA ✓
 - White on black — passes AA ✓

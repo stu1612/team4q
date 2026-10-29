@@ -1,8 +1,9 @@
 import { gql } from "graphql-request";
-import clubCrest from "../../images/logos/t4q-logo.png";
+import clubCrest from "../../images/logos/club-crest.png";
 import opponentCrest from "../../images/fallback/fixture/opponent-crest.svg";
 import { CLUB_CONTACT } from "../../constants/contact";
 import { fetchOrFail } from "../../lib/hygraphClient";
+import { fixtureDemo } from "./demo";
 import { resolveImageOrNull } from "../../lib/resolveImage";
 import { formatDatePartsSv, formatDateWeekdaySv, hasPassedStockholm } from "../../lib/formatDate";
 import { teamLabel, teamTagShort } from "../../lib/teamLabel";
@@ -60,8 +61,8 @@ const FIXTURE_BY_TEAM_QUERY = gql`
 `;
 
 // homeTeam/awayTeam are free text, so the club's side is recognised by name. Editors enter
-// "T4Q"; the longer forms are accepted so a spelled-out entry still resolves.
-const CLUB_NAME = /^(t4q|team\s*4\s*q|team fourth quarter)$/i;
+// the short name; the longer forms are accepted so a spelled-out entry still resolves.
+const CLUB_NAME = /^(sundet|sundet basket|sundets basketförening)$/i;
 
 function isClub(name: string): boolean {
   return CLUB_NAME.test(name.trim());
@@ -111,7 +112,7 @@ function mapActiveFixtures(rows: FixtureRD[]): FixtureVM[] {
 }
 
 export async function getFixtureVMs(): Promise<FixtureListVM> {
-  const res = await fetchOrFail<FixtureResponseRD>(FIXTURE_QUERY);
+  const res = await fetchOrFail<FixtureResponseRD>(FIXTURE_QUERY, undefined, fixtureDemo());
   // Time-sensitive content: no fake data on failure. UI shows a full message block with
   // contact details.
   if (!res.ok) return { ok: false, contact: CLUB_CONTACT };
@@ -134,7 +135,7 @@ export async function getUpcomingFixtureVMs(limit: number): Promise<FixtureListV
  *  fixtures are dropped — a played match belongs to the Resultat section, which has the
  *  score. */
 export async function getUpcomingFixtureVMsByTeam(slug: string): Promise<FixtureListVM> {
-  const res = await fetchOrFail<FixtureResponseRD>(FIXTURE_BY_TEAM_QUERY, { slug });
+  const res = await fetchOrFail<FixtureResponseRD>(FIXTURE_BY_TEAM_QUERY, { slug }, fixtureDemo(slug));
   if (!res.ok) return { ok: false, contact: CLUB_CONTACT };
   const fixtures = mapActiveFixtures(res.data.fixtureModels)
     .filter((fixture) => fixture.isUpcoming)

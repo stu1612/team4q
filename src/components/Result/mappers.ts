@@ -1,5 +1,6 @@
 import { gql } from "graphql-request";
 import { fetchOrFail } from "../../lib/hygraphClient";
+import { resultDemo } from "./demo";
 import { resolveImage } from "../../lib/resolveImage";
 import { formatDateSv } from "../../lib/formatDate";
 import { teamLabel, teamTagShort } from "../../lib/teamLabel";
@@ -79,7 +80,7 @@ function toVM(rd: ResultRD): ResultVM {
 }
 
 export async function getResultVMs(): Promise<ResultVM[]> {
-  const res = await fetchOrFail<ResultResponseRD>(RESULT_QUERY);
+  const res = await fetchOrFail<ResultResponseRD>(RESULT_QUERY, undefined, resultDemo());
   // ResultModel is a cosmetic banner — on failure render nothing, no message (per /graphql).
   if (!res.ok) return [];
   return res.data.resultModels.filter(isVisible).map(toVM);
@@ -94,7 +95,7 @@ export async function getLatestResultVM(): Promise<ResultVM | null> {
 /** Every currently-visible result for one team, most recent first (used by the team-page
  *  results section). The 28-day staleness window already bounds the list length. */
 export async function getResultVMsByTeam(slug: string): Promise<ResultVM[]> {
-  const res = await fetchOrFail<ResultResponseRD>(RESULT_BY_TEAM_QUERY, { slug });
+  const res = await fetchOrFail<ResultResponseRD>(RESULT_BY_TEAM_QUERY, { slug }, resultDemo(slug));
   if (!res.ok) return [];
   return res.data.resultModels.filter(isVisible).map(toVM);
 }

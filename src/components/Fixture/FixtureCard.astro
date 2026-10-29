@@ -27,7 +27,7 @@ const { fixture } = Astro.props;
   </div>
 
   {/* Crests are alt="" — the team names directly below them are the text. Reads as
-      "T4Q mot Lund Basket" to a screen reader. */}
+      "<club> mot <opponent>" to a screen reader. */}
   <h3 class="m-0 mt-5 grid grid-cols-[1fr_auto_1fr] items-start gap-3">
     <span class="flex min-w-0 flex-col items-center gap-3 text-center">
       <ResolvedImage src={fixture.homeCrest} alt="" width={160} height={160} fit="contain" class="size-14 object-contain md:size-20" />

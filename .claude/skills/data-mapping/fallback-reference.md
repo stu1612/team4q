@@ -5,6 +5,10 @@ Reconciled against the **live** Hygraph schema + real content on **2026-08-29**
 `/data-mapping` skill — this doc holds the schema-specific data, `/data-mapping`
 holds the pattern.
 
+## Demo mode
+
+With `CONTENT_SOURCE="demo"` (the default — see `/graphql`), no Hygraph request is sent: `fetchWithFallback` models render their `fallback.ts`, and `fetchOrFail` models (Fixture, Training, Result) render their `demo.ts`. All of it describes a fictional club, Sundets Basketförening ("Sundet Basket"). The Required/Flag/Default treatment below still applies to that data, because it flows through the same mappers.
+
 ## How to read this table
 
 - **Required** — enforced by Hygraph at the schema level. No mapper fallback; a null
@@ -57,7 +61,7 @@ holds the pattern.
   image by design decision; the field stays in the schema, unqueried, until something
   renders it (it would return as **Flag**, `hasCoverImage`).
 - Crests / home-away (2026-09-30, match card) — derived, no schema field. `homeTeam` /
-  `awayTeam` are free text; the mapper recognises the club's side by name (`T4Q`, or the
+  `awayTeam` are free text; the mapper recognises the club's side by name (its short name, or the
   spelled-out forms) and derives `venueLabel` (`"Hemma"` / `"Borta"`, `""` if neither side
   matches) plus `homeCrest` / `awayCrest` — the club logo on the club's side, the bundled
   generic opponent crest (`src/images/fallback/fixture/opponent-crest.svg`) on the other.

@@ -4,13 +4,19 @@
 // categorise technical failures. It has no awareness of any model's fallback
 // content, no visitor-facing messages, and no per-model branching — those are
 // mapper-layer concerns.
+//
+// CONTENT_SOURCE="demo" (the default) is the one exception to "always fetch": no request is
+// sent, and each function resolves to the local data its caller supplies — the component's
+// fallback.ts for fetchWithFallback, its demo.ts for fetchOrFail. The queries are still
+// validated, so the Hygraph path stays correct while it's switched off.
 
 import { ClientError, GraphQLClient } from "graphql-request";
 import type { RequestDocument, Variables } from "graphql-request";
 import { parse } from "graphql";
-import { HYGRAPH_API_URL, HYGRAPH_TOKEN } from "astro:env/server";
+import { CONTENT_SOURCE, HYGRAPH_API_URL, HYGRAPH_TOKEN } from "astro:env/server";
 
 const REQUEST_TIMEOUT_MS = 10_000;
+const DEMO = CONTENT_SOURCE === "demo";
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -139,6 +145,7 @@ export async function fetchWithFallback<T>(
   variables?: Variables,
 ): Promise<T> {
   assertValidQuery(query);
+  if (DEMO) return fallbackData;
   try {
     return await execute<T>(query, variables);
   } catch (error) {
@@ -153,12 +160,22 @@ export async function fetchWithFallback<T>(
  * resolves on failure — returns a `Result` the mapper must check. On failure the
  * mapper decides between a full message block and rendering nothing, per the
  * model's entry in the /graphql skill's failure-strategy table.
+ *
+ * `demoData` is what demo mode resolves to (the component's demo.ts). It is never used as a
+ * failure fallback. Demo mode without it throws: a call site was missed, so fail the build.
  */
 export async function fetchOrFail<T>(
   query: RequestDocument,
   variables?: Variables,
+  demoData?: T,
 ): Promise<Result<T>> {
   assertValidQuery(query);
+  if (DEMO) {
+    if (demoData === undefined) {
+      throw new Error("hygraphClient: CONTENT_SOURCE is \"demo\" but no demoData was passed");
+    }
+    return { ok: true, data: demoData };
+  }
   try {
     const data = await execute<T>(query, variables);
     return { ok: true, data };

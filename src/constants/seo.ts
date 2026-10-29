@@ -32,11 +32,11 @@ interface SeoStatic {
   team: Record<TeamKey, SeoEntry>;
 }
 
-const ORG_NAME = "Team Fourth Quarter";
+const ORG_NAME = "Sundets Basketförening";
 
 // Single source for the origin: mirrors `site` in astro.config.mjs (Astro injects it as
 // import.meta.env.SITE). The fallback keeps type-checking of this file standalone.
-const SITE_ORIGIN = import.meta.env.SITE ?? "https://team4q.se";
+const SITE_ORIGIN = import.meta.env.SITE ?? "https://team4q.vercel.app";
 const abs = (path: string): string => new URL(path, SITE_ORIGIN).href;
 
 const OG_DEFAULT = abs("/og-default.jpg");
@@ -59,7 +59,7 @@ const teamEntry = (key: TeamKey): SeoEntry => {
   const noun = { mens: "herrbasket", womens: "dambasket", juniors: "ungdomsbasket" }[key];
   return {
     title: `${label} | ${ORG_NAME}`,
-    description: `${label} i ${ORG_NAME} – matcher, resultat, träningstider och nyheter för T4Q:s ${noun} i Helsingborg.`,
+    description: `${label} i ${ORG_NAME} – matcher, resultat, träningstider och nyheter för Sundets ${noun} i Helsingborg.`,
     ogImage: OG_DEFAULT,
     jsonLd: {
       "@context": "https://schema.org",
@@ -81,7 +81,7 @@ export const SEO_STATIC: SeoStatic = {
   home: {
     title: `${ORG_NAME} | Basketklubb i Helsingborg`,
     description:
-      "Team Fourth Quarter (T4Q) är en basketklubb i Helsingborg med herr-, dam- och ungdomslag. Följ nyheter, matcher och träningstider.",
+      "Sundets Basketförening är en basketklubb i Helsingborg med herr-, dam- och ungdomslag. Följ nyheter, matcher och träningstider.",
     ogImage: OG_DEFAULT,
     jsonLd: {
       "@context": "https://schema.org",
@@ -101,7 +101,7 @@ export const SEO_STATIC: SeoStatic = {
   newsListing: {
     title: `Nyheter | ${ORG_NAME}`,
     description:
-      "Senaste nytt från Team Fourth Quarter – matchrapporter, klubbnyheter och information om herr-, dam- och ungdomslagen.",
+      "Senaste nytt från Sundets Basketförening – matchrapporter, klubbnyheter och information om herr-, dam- och ungdomslagen.",
     ogImage: OG_DEFAULT,
     jsonLd: null,
   },
@@ -110,7 +110,7 @@ export const SEO_STATIC: SeoStatic = {
   training: {
     title: `Träningstider | ${ORG_NAME}`,
     description:
-      "Träningstider för Team Fourth Quarters herrlag, damlag och ungdomslag i Helsingborg – dagar, tider, hallar och tränare.",
+      "Träningstider för Sundets herrlag, damlag och ungdomslag i Helsingborg – dagar, tider, hallar och tränare.",
     ogImage: OG_DEFAULT,
     jsonLd: null,
   },

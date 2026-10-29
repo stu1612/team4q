@@ -4,20 +4,27 @@ import { defineConfig, envField } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
 import vercel from '@astrojs/vercel';
-import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // Production domain. Drives absolute canonical/OG URLs (src/components/SEO) and is
-  // required for @astrojs/sitemap to emit anything. Set before DNS is pointed (Phase 6).
-  site: 'https://team4q.se',
+  // The showpiece's own Vercel URL, never the club's real domain. Drives absolute
+  // canonical/OG/JSON-LD URLs (src/components/SEO), so nothing here claims to be the real site.
+  site: 'https://team4q.vercel.app',
 
   env: {
     schema: {
       // Hygraph endpoint + permanent-auth token. Server-only secrets: read via
       // `astro:env/server` in src/lib/hygraphClient.ts, kept out of the client bundle.
       HYGRAPH_API_URL: envField.string({ context: 'server', access: 'secret' }),
-      HYGRAPH_TOKEN: envField.string({ context: 'server', access: 'secret' })
+      HYGRAPH_TOKEN: envField.string({ context: 'server', access: 'secret' }),
+      // "demo" serves every model from local data (fallback.ts / demo.ts) with no Hygraph
+      // request: the showpiece runs on a fictional club. "hygraph" restores live content.
+      CONTENT_SOURCE: envField.enum({
+        values: ['demo', 'hygraph'],
+        context: 'server',
+        access: 'public',
+        default: 'demo'
+      })
     },
     // Fail the build on a missing/blank secret rather than a runtime request.
     validateSecrets: true
@@ -40,6 +47,5 @@ export default defineConfig({
     isr: {
       expiration: 60 * 60
     }
-  }),
-  integrations: [sitemap()]
+  })
 });

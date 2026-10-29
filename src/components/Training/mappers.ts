@@ -5,6 +5,7 @@ import { gql } from "graphql-request";
 import { CLUB_CONTACT } from "../../constants/contact";
 import { formatDatePartsSv } from "../../lib/formatDate";
 import { fetchOrFail } from "../../lib/hygraphClient";
+import { trainingDemo } from "./demo";
 import { resolveImageOrNull } from "../../lib/resolveImage";
 import { teamLabel } from "../../lib/teamLabel";
 import type {
@@ -109,7 +110,7 @@ function toVM(rd: TrainingRD): TrainingVM {
 }
 
 export async function getTrainingVMs(): Promise<TrainingListVM> {
-  const res = await fetchOrFail<TrainingResponseRD>(TRAINING_QUERY);
+  const res = await fetchOrFail<TrainingResponseRD>(TRAINING_QUERY, undefined, trainingDemo());
   if (!res.ok) return { ok: false, contact: CLUB_CONTACT };
   const sessions = res.data.trainingModels
     .filter((rd) => rd.isActive === "active")
@@ -151,7 +152,7 @@ export async function getTrainingVMsGroupedByTeam(): Promise<TrainingByTeamVM> {
  *  contact details (team-page training section). No date filtering — isActive is the sole
  *  visibility gate. */
 export async function getTrainingVMsByTeam(slug: string): Promise<TrainingListVM> {
-  const res = await fetchOrFail<TrainingResponseRD>(TRAINING_BY_TEAM_QUERY, { slug });
+  const res = await fetchOrFail<TrainingResponseRD>(TRAINING_BY_TEAM_QUERY, { slug }, trainingDemo(slug));
   if (!res.ok) return { ok: false, contact: CLUB_CONTACT };
   const sessions = res.data.trainingModels
     .filter((rd) => rd.isActive === "active")

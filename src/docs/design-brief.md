@@ -1,4 +1,4 @@
-# T4Q Design Brief — for Claude Code's Design System Proposal
+# Club Site Design Brief — for Claude Code's Design System Proposal
 
 ## How to use this brief
 
@@ -10,12 +10,12 @@ This is not a finished design system — it's a brief. Propose a design token sy
 
 ## Brand Constraints (non-negotiable)
 
-- Colours: black, white, T4Q brand red — no other primary colours
+- Colours: black, white, club brand red — no other primary colours
 - proposed red #db1d24
 - proposed black #181818
 - proposed white #fafafa
 - Site language: Swedish, `lang="sv"`
-- Reference sites are football clubs at a much larger scale than T4Q — borrow _pattern_, not _density_. T4Q is a small regional club; avoid replicating the sheer content volume (multi-row sponsor grids, video carousels, membership banner systems) these sites carry. Match the editorial restraint, not the scale.
+- Reference sites are football clubs at a much larger scale than this club — borrow _pattern_, not _density_. This is a small regional club; avoid replicating the sheer content volume (multi-row sponsor grids, video carousels, membership banner systems) these sites carry. Match the editorial restraint, not the scale.
 
 ## Accessibility Constraint (already decided, not open for revision)
 
@@ -26,12 +26,12 @@ Specifically test the brand red in the Man Utd CTA-button shape (white text on s
 ## Patterns to Propose Against
 
 **Hero (src/images/screenshots/img-1 + img-5)**
-Bold condensed type, one dramatic full-bleed photo, sparse copy, single CTA, no competing clutter. Matches T4Q's own principle: hero is emotive, not informational. Maps to `HeroModel` (Heading, Subheading, Cover Image, CTA Label + CTA URL).
+Bold condensed type, one dramatic full-bleed photo, sparse copy, single CTA, no competing clutter. Matches the club's own principle: hero is emotive, not informational. Maps to `HeroModel` (Heading, Subheading, Cover Image, CTA Label + CTA URL).
 
 > **Superseded 2026-10-07.** The hero is now a static three-photo block (one photo per team: ungdom, herr, dam) with one heading in a white label box: no CTA, no subheading, no motion. The inspiration is adidas/Nike block layouts. `HeroModel` is retired. See `progress-tracker.md`.
 
 **News cards (src/images/screenshots/img-2)**
-One large featured card + a grid of smaller cards, each with heading, image, timestamp, and a small tag label. For T4Q, the tag shows the TeamTag value — **HERR / DAM / UNGDOM** — derived from NewsCardModel's TeamTag relation in the mapper, never stored as separate text. General club news (no TeamTag) shows no tag. Maps to `NewsCardModel`.
+One large featured card + a grid of smaller cards, each with heading, image, timestamp, and a small tag label. Here, the tag shows the TeamTag value — **HERR / DAM / UNGDOM** — derived from NewsCardModel's TeamTag relation in the mapper, never stored as separate text. General club news (no TeamTag) shows no tag. Maps to `NewsCardModel`.
 
 **Other content (check other images in src/images/screenshots to build content)**
 

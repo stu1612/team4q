@@ -6,7 +6,7 @@
 //
 // TODO(developer): confirm the real values for every field flagged below — the email is
 // from the club's ClubMemberModel record; phone and address are placeholders. Socials
-// confirmed by the developer 2026-09-24 (same accounts the old team4q.se linked to).
+// confirmed by the developer 2026-09-24 (same accounts the club's current site links to).
 // An empty string means "not set" — consumers omit that line/link entirely.
 
 export interface ClubContact {
@@ -29,11 +29,11 @@ export interface ClubContact {
 }
 
 export const CLUB_CONTACT: ClubContact = {
-  email: "info@team4q.se",
+  email: "info@sundetbasket.example",
   phone: "",
   social: {
-    instagram: "https://www.instagram.com/team4q/",
-    facebook: "https://www.facebook.com/team4q/"
+    instagram: "https://www.instagram.com/sundetbasket.demo/",
+    facebook: "https://www.facebook.com/sundetbasket.demo/"
   },
   address: {
     street: "",

@@ -19,13 +19,16 @@ interface Props {
 
 const { title, description, ogImage, canonical, jsonLd = null, noindex = false } = Astro.props;
 
-const SITE_NAME = "T4Q Helsingborg";
+const SITE_NAME = "Sundet Basket";
 ---
 
 <title>{title}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
-<meta name="robots" content={noindex ? "noindex, follow" : "index, follow"} />
+{/* Showpiece build, never indexed: always noindex, nofollow, so `noindex` currently has no
+    effect. If the site ever launches, restore
+    `noindex ? "noindex, follow" : "index, follow"`. */}
+<meta name="robots" content="noindex, nofollow" />
 
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content={SITE_NAME} />
